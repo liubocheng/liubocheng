@@ -1,0 +1,64 @@
+@startuml
+skinparam sequenceMessageAlign center
+skinparam backgroundColor #FEFEFE
+
+actor 用户 as User
+participant "商户系统" as Merchant
+participant "聚合支付平台" as AggPay
+
+box "支付渠道" #LightBlue
+  participant "微信支付" as WeChat
+  participant "支付宝" as Alipay
+endbox
+
+participant "银行系统" as Bank
+participant "央行清算系统" as CentralBank
+
+== 用户发起支付流程 ==
+User -> Merchant: 提交订单(金额、商品)
+Merchant -> AggPay: 发起支付请求
+note right: 传入订单号、金额、支付方式
+AggPay --> Merchant: 返回收银台URL/二维码
+Merchant --> User: 展示支付页面/二维码
+
+== 支付渠道处理 ==
+alt 微信支付
+  User -> WeChat: 跳转至微信收银台
+  WeChat -> User: 用户确认支付(密码/指纹)
+  WeChat --> AggPay: 异步通知支付结果
+else 支付宝支付
+  User -> Alipay: 跳转至支付宝收银台
+  Alipay -> User: 用户确认支付(密码/刷脸)
+  Alipay --> AggPay: 异步通知支付结果
+else 支付超时/取消
+  note right of AggPay: 订单标记为已关闭
+  AggPay --> Merchant: 回调通知(超时)
+  Merchant --> User: 提示订单已过期
+end
+
+== 资金清算与通知 ==
+alt 支付成功 #LightGreen
+  AggPay -> Bank: 发起资金清算
+  Bank -> CentralBank: 提交跨行清算指令
+  CentralBank --> Bank: 资金划拨完成
+  Bank --> AggPay: 清算完成
+  note right of AggPay: 扣除手续费后,行间完成资金划拨
+  AggPay -> Merchant: 异步回调(成功)
+  Merchant --> User: 订单状态→已支付
+else 支付失败 #LightPink
+  AggPay -> Merchant: 异步回调(失败)
+  Merchant --> User: 提示重新支付
+end
+
+== 对账与结算 ==
+par 并行下载对账文件
+  AggPay -> WeChat: 拉取T日对账单
+  AggPay -> Alipay: 拉取T日对账单
+end
+AggPay -> Bank: 发起批量商户结算
+Bank -> CentralBank: 提交批量结算指令
+CentralBank --> Bank: 批量资金划拨完成
+Bank --> Merchant: 结算资金到账
+note right: T+1 自动结算至商户银行账户
+
+@enduml
