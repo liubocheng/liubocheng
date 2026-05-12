@@ -77,6 +77,7 @@
             </div>
             <canvas id="next-piece" width="120" height="120"></canvas>
             <button id="pause-btn">暂停/继续</button>
+            <button id="restart-btn" style="background:#e74c3c">重新开始</button>
         </div>
     </div>
 
@@ -88,6 +89,7 @@
         const scoreElement = document.getElementById('score');
         const highScoreElement = document.getElementById('high-score');
         const pauseBtn = document.getElementById('pause-btn');
+        const restartBtn = document.getElementById('restart-btn');
 
         const BLOCK_SIZE = 30;
         const COLS = 10;
@@ -275,6 +277,16 @@
         pauseBtn.addEventListener('click', () => {
             isPaused = !isPaused;
             pauseBtn.textContent = isPaused ? '继续游戏' : '暂停';
+        });
+
+        restartBtn.addEventListener('click', () => {
+            clearInterval(gameLoop);
+            board = Array(ROWS).fill().map(() => Array(COLS).fill(0));
+            score = 0;
+            scoreElement.textContent = score;
+            isPaused = false;
+            pauseBtn.textContent = '暂停/继续';
+            initGame();
         });
 
         initGame();
