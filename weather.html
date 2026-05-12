@@ -1,0 +1,1397 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Weather • iOS 18 设计</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0a0a14 0%, #141428 25%, #1a1a35 50%, #141428 75%, #0a0a14 100%);
+    background-size: 400% 400%;
+    animation: bgShift 20s ease infinite;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    color: #fff;
+    -webkit-font-smoothing: antialiased;
+    user-select: none;
+  }
+
+  @keyframes bgShift {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* Ambient glow orbs */
+  body::before, body::after {
+    content: '';
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(120px);
+    pointer-events: none;
+    z-index: 0;
+  }
+  body::before {
+    width: 600px; height: 600px;
+    top: -200px; left: -200px;
+    background: radial-gradient(circle, rgba(255,107,53,0.12), transparent 70%);
+    animation: orbFloat1 12s ease-in-out infinite alternate;
+  }
+  body::after {
+    width: 500px; height: 500px;
+    bottom: -200px; right: -200px;
+    background: radial-gradient(circle, rgba(52,152,219,0.10), transparent 70%);
+    animation: orbFloat2 15s ease-in-out infinite alternate;
+  }
+
+  @keyframes orbFloat1 {
+    0%   { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(120px, 80px) scale(1.2); }
+  }
+  @keyframes orbFloat2 {
+    0%   { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(-100px, -60px) scale(1.3); }
+  }
+
+  .app-container {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+    padding: 24px;
+    width: 100%;
+    height: 100vh;
+    justify-content: center;
+  }
+
+  /* ---- Cards Row ---- */
+  .cards-row {
+    display: flex;
+    gap: 18px;
+    justify-content: center;
+    align-items: stretch;
+    width: 100%;
+    max-width: 1360px;
+    flex: 1;
+    min-height: 0;
+    padding: 8px 0;
+  }
+
+  /* ---- Individual Card ---- */
+  .card {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    border-radius: 28px;
+    overflow: hidden;
+    background: rgba(255,255,255,0.04);
+    backdrop-filter: blur(30px) saturate(1.3);
+    -webkit-backdrop-filter: blur(30px) saturate(1.3);
+    border: 0.5px solid rgba(255,255,255,0.08);
+    box-shadow:
+      0 12px 48px rgba(0,0,0,0.5),
+      0 2px 8px rgba(0,0,0,0.3),
+      inset 0 1px 0 rgba(255,255,255,0.06);
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease;
+    display: flex;
+    flex-direction: column;
+    cursor: default;
+  }
+
+  .card:hover {
+    transform: translateY(-4px) scale(1.012);
+    box-shadow:
+      0 20px 64px rgba(0,0,0,0.6),
+      0 4px 16px rgba(0,0,0,0.3),
+      inset 0 1px 0 rgba(255,255,255,0.08);
+  }
+
+  .card:active {
+    transform: translateY(-1px) scale(1.005);
+    transition-duration: 0.1s;
+  }
+
+  /* Card background gradient */
+  .card-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    transition: opacity 0.8s ease;
+    opacity: 0;
+  }
+  .card-bg.active {
+    opacity: 1;
+  }
+
+  /* Canvas for particle animations */
+  .card-canvas {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    display: block;
+    pointer-events: none;
+  }
+
+  /* Card content overlay */
+  .card-content {
+    position: relative;
+    z-index: 2;
+    padding: 28px 24px 24px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    justify-content: space-between;
+  }
+
+  .card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .card-location {
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: rgba(255,255,255,0.5);
+    text-transform: uppercase;
+  }
+
+  .card-cycle-btn {
+    position: relative;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 0.5px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.06);
+    color: rgba(255,255,255,0.5);
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    outline: none;
+    line-height: 1;
+  }
+
+  .card-cycle-btn:hover {
+    background: rgba(255,255,255,0.12);
+    color: rgba(255,255,255,0.8);
+    border-color: rgba(255,255,255,0.25);
+    transform: rotate(180deg) scale(1.1);
+  }
+
+  .card-cycle-btn:active {
+    transform: rotate(180deg) scale(0.9);
+  }
+
+  .card-middle {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    margin-top: 8px;
+  }
+
+  .card-temp {
+    font-size: 72px;
+    font-weight: 200;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    color: rgba(255,255,255,0.95);
+    text-shadow: 0 2px 20px rgba(0,0,0,0.3);
+  }
+
+  .card-temp sup {
+    font-size: 28px;
+    font-weight: 300;
+    vertical-align: super;
+  }
+
+  .card-condition {
+    font-size: 16px;
+    font-weight: 500;
+    letter-spacing: 0.3em;
+    color: rgba(255,255,255,0.6);
+    margin-top: 4px;
+    text-transform: uppercase;
+  }
+
+  .card-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding-top: 16px;
+    border-top: 0.5px solid rgba(255,255,255,0.06);
+  }
+
+  .card-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+
+  .card-stat-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    color: rgba(255,255,255,0.3);
+    text-transform: uppercase;
+  }
+
+  .card-stat-value {
+    font-size: 14px;
+    font-weight: 400;
+    color: rgba(255,255,255,0.7);
+    letter-spacing: 0.02em;
+  }
+
+  /* ---- Controls ---- */
+  .controls {
+    display: flex;
+    gap: 8px;
+    padding: 6px;
+    background: rgba(255,255,255,0.04);
+    backdrop-filter: blur(20px) saturate(1.3);
+    -webkit-backdrop-filter: blur(20px) saturate(1.3);
+    border-radius: 40px;
+    border: 0.5px solid rgba(255,255,255,0.06);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+  }
+
+  .ctrl-btn {
+    padding: 10px 28px;
+    border: none;
+    border-radius: 32px;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    cursor: pointer;
+    transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    background: transparent;
+    color: rgba(255,255,255,0.4);
+    outline: none;
+    font-family: inherit;
+    position: relative;
+  }
+
+  .ctrl-btn:hover {
+    color: rgba(255,255,255,0.7);
+    background: rgba(255,255,255,0.04);
+  }
+
+  .ctrl-btn.active {
+    background: rgba(255,255,255,0.12);
+    color: rgba(255,255,255,0.95);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  }
+
+  .ctrl-btn:active {
+    transform: scale(0.96);
+  }
+
+  /* ---- Transition overlay for weather change ---- */
+  .card-flash {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border-radius: inherit;
+  }
+  .card-flash.active {
+    opacity: 1;
+  }
+
+  /* ---- Responsive ---- */
+  @media (max-width: 900px) {
+    .cards-row {
+      flex-direction: column;
+      gap: 12px;
+      padding: 0;
+    }
+    .card { min-height: 200px; }
+    .card-temp { font-size: 52px; }
+    .card-temp sup { font-size: 20px; }
+    .app-container { padding: 16px; gap: 20px; }
+  }
+
+  @media (max-width: 1200px) and (min-width: 901px) {
+    .card-temp { font-size: 56px; }
+    .card-temp sup { font-size: 22px; }
+  }
+
+  /* ---- Scrollbar hide ---- */
+  ::-webkit-scrollbar { display: none; }
+
+  /* Glass inner highlight */
+  .card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    border-radius: inherit;
+    background: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, transparent 40%);
+    pointer-events: none;
+  }
+
+  /* Weather badges */
+  .weather-tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.06);
+    border: 0.5px solid rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.5);
+    text-transform: uppercase;
+  }
+</style>
+</head>
+<body>
+
+<div class="app-container">
+  <div class="cards-row" id="cardsRow">
+    <!-- Cards injected by JS -->
+  </div>
+
+  <div class="controls" id="controls">
+    <button class="ctrl-btn" data-intensity="0">平静</button>
+    <button class="ctrl-btn active" data-intensity="1">中等</button>
+    <button class="ctrl-btn" data-intensity="2">强烈</button>
+  </div>
+</div>
+
+<script>
+// ============================================================
+//  Weather Configuration
+// ============================================================
+const WEATHERS = ['sunny', 'windy', 'rainy', 'snowy'];
+
+const WEATHER_META = {
+  sunny: {
+    label: '晴天',
+    emoji: '☀️',
+    temps: ['32°', '28°', '25°', '38°'],
+    feels: ['体感 34°', '体感 30°', '体感 26°', '体感 41°'],
+    uv: ['紫外线 8', '紫外线 6', '紫外线 4', '紫外线 10'],
+    loc: ['三亚', '广州', '昆明', '吐鲁番'],
+  },
+  windy: {
+    label: '大风',
+    emoji: '💨',
+    temps: ['8°', '5°', '2°', '12°'],
+    feels: ['体感 4°', '体感 1°', '体感 -3°', '体感 9°'],
+    uv: ['风速 32km/h', '风速 45km/h', '风速 58km/h', '风速 25km/h'],
+    loc: ['兰州', '乌鲁木齐', '西宁', '拉萨'],
+  },
+  rainy: {
+    label: '暴雨',
+    emoji: '🌧️',
+    temps: ['10°', '7°', '4°', '15°'],
+    feels: ['体感 6°', '体感 3°', '体感 0°', '体感 12°'],
+    uv: ['降水 85%', '降水 95%', '降水 70%', '降水 60%'],
+    loc: ['成都', '重庆', '武汉', '上海'],
+  },
+  snowy: {
+    label: '暴雪',
+    emoji: '❄️',
+    temps: ['-2°', '-8°', '-15°', '1°'],
+    feels: ['体感 -7°', '体感 -14°', '体感 -22°', '体感 -4°'],
+    uv: ['降雪 90%', '降雪 100%', '降雪 80%', '降雪 65%'],
+    loc: ['哈尔滨', '长春', '沈阳', '呼和浩特'],
+  },
+};
+
+// Background color gradients for each weather
+const BG_COLORS = {
+  sunny: { from: '#1a0a00', to: '#2d1500', accent: 'rgba(255,150,50,0.15)' },
+  windy: { from: '#0a1414', to: '#0d1f1a', accent: 'rgba(78,205,196,0.12)' },
+  rainy: { from: '#080e18', to: '#0c1628', accent: 'rgba(52,152,219,0.12)' },
+  snowy: { from: '#0e1218', to: '#161e28', accent: 'rgba(200,220,240,0.08)' },
+};
+
+// ============================================================
+//  Particle System Base
+// ============================================================
+class ParticleSystem {
+  constructor(canvas) {
+    this.canvas = canvas;
+    this.ctx = canvas.getContext('2d');
+    this.running = false;
+    this.lastTime = 0;
+    this.intensity = 1; // 0=calm, 1=moderate, 2=intense
+    this.w = 0;
+    this.h = 0;
+    this.resize();
+  }
+
+  resize() {
+    const rect = this.canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    this.w = rect.width;
+    this.h = rect.height;
+    this.canvas.width = rect.width * dpr;
+    this.canvas.height = rect.height * dpr;
+    this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  start() {
+    this.running = true;
+    this.lastTime = performance.now();
+    this.loop(this.lastTime);
+  }
+
+  stop() {
+    this.running = false;
+  }
+
+  setIntensity(level) {
+    this.intensity = level;
+  }
+
+  loop(time) {
+    if (!this.running) return;
+    const dt = Math.min(time - this.lastTime, 50) / 1000;
+    this.lastTime = time;
+    this.update(dt);
+    this.draw();
+    requestAnimationFrame((t) => this.loop(t));
+  }
+
+  update(dt) {}
+  draw() {}
+
+  lerp(a, b, t) { return a + (b - a) * t; }
+  rand(a, b) { return a + Math.random() * (b - a); }
+  randInt(a, b) { return Math.floor(this.rand(a, b + 1)); }
+}
+
+// ============================================================
+//  Sunny Animation
+// ============================================================
+class SunnySystem extends ParticleSystem {
+  constructor(canvas) {
+    super(canvas);
+    this.rayAngle = 0;
+    this.pulse = 0;
+    this.particles = [];
+    for (let i = 0; i < 20; i++) {
+      this.particles.push(this.createParticle());
+    }
+  }
+
+  createParticle() {
+    return {
+      x: this.rand(0.1, 0.9),
+      y: this.rand(0.1, 0.9),
+      size: this.rand(1.5, 4),
+      speed: this.rand(0.02, 0.06),
+      phase: this.rand(0, Math.PI * 2),
+      drift: this.rand(-0.3, 0.3),
+      opacity: this.rand(0.3, 0.8),
+    };
+  }
+
+  update(dt) {
+    const speed = this.intensity === 0 ? 0.3 : this.intensity === 1 ? 0.6 : 1.0;
+    this.rayAngle += dt * speed * 0.4;
+    this.pulse += dt * speed * 1.2;
+
+    for (const p of this.particles) {
+      p.y -= dt * p.speed * speed;
+      p.x += Math.sin(this.pulse * 0.5 + p.phase) * dt * p.drift * 0.2;
+      if (p.y < -0.05) {
+        p.y = 1.05;
+        p.x = this.rand(0.05, 0.95);
+      }
+      if (p.x < -0.05) p.x = 1.05;
+      if (p.x > 1.05) p.x = -0.05;
+    }
+  }
+
+  draw() {
+    const { ctx, w, h } = this;
+    ctx.clearRect(0, 0, w, h);
+
+    const cx = w * 0.5;
+    const cy = h * 0.4;
+    const maxDim = Math.max(w, h);
+
+    // Outer glow
+    const glowSize = maxDim * 0.6;
+    const glowPulse = 1 + Math.sin(this.pulse) * 0.08;
+
+    const g1 = ctx.createRadialGradient(cx, cy, 0, cx, cy, glowSize * glowPulse);
+    g1.addColorStop(0, 'rgba(255,200,100,0.20)');
+    g1.addColorStop(0.3, 'rgba(255,150,50,0.10)');
+    g1.addColorStop(0.6, 'rgba(255,100,30,0.04)');
+    g1.addColorStop(1, 'rgba(255,50,0,0)');
+    ctx.fillStyle = g1;
+    ctx.fillRect(0, 0, w, h);
+
+    // Secondary glow
+    const g2 = ctx.createRadialGradient(cx, cy, 0, cx, cy, glowSize * 0.5 * glowPulse);
+    g2.addColorStop(0, 'rgba(255,220,150,0.25)');
+    g2.addColorStop(0.5, 'rgba(255,180,80,0.08)');
+    g2.addColorStop(1, 'rgba(255,100,30,0)');
+    ctx.fillStyle = g2;
+    ctx.fillRect(0, 0, w, h);
+
+    // Sun rays
+    const rayCount = this.intensity === 0 ? 6 : this.intensity === 1 ? 10 : 14;
+    const rayLen = maxDim * (this.intensity === 0 ? 0.35 : this.intensity === 1 ? 0.45 : 0.55);
+    ctx.save();
+    ctx.translate(cx, cy);
+    for (let i = 0; i < rayCount; i++) {
+      const angle = this.rayAngle + (i / rayCount) * Math.PI * 2;
+      const alpha = 0.06 + Math.sin(this.pulse * 0.8 + i) * 0.04;
+      ctx.save();
+      ctx.rotate(angle);
+      const grad = ctx.createLinearGradient(0, 0, rayLen, 0);
+      grad.addColorStop(0, `rgba(255,200,100,${alpha})`);
+      grad.addColorStop(0.5, `rgba(255,150,50,${alpha * 0.3})`);
+      grad.addColorStop(1, 'rgba(255,100,30,0)');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, -1.5, rayLen, 3);
+      ctx.restore();
+    }
+    ctx.restore();
+
+    // Sun core
+    const sunR = maxDim * 0.07;
+    // Bright core
+    const g3 = ctx.createRadialGradient(cx, cy, 0, cx, cy, sunR);
+    g3.addColorStop(0, 'rgba(255,255,255,1)');
+    g3.addColorStop(0.3, 'rgba(255,240,200,0.95)');
+    g3.addColorStop(0.7, 'rgba(255,200,100,0.7)');
+    g3.addColorStop(1, 'rgba(255,150,50,0.3)');
+    ctx.fillStyle = g3;
+    ctx.beginPath();
+    ctx.arc(cx, cy, sunR, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Inner bright spot
+    const g4 = ctx.createRadialGradient(cx - sunR * 0.2, cy - sunR * 0.2, 0, cx, cy, sunR * 0.6);
+    g4.addColorStop(0, 'rgba(255,255,255,0.6)');
+    g4.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = g4;
+    ctx.beginPath();
+    ctx.arc(cx - sunR * 0.2, cy - sunR * 0.2, sunR * 0.6, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Particles (dust motes)
+    const count = this.intensity === 0 ? 8 : this.intensity === 1 ? 15 : 25;
+    while (this.particles.length < count) {
+      this.particles.push(this.createParticle());
+    }
+    while (this.particles.length > count) {
+      this.particles.pop();
+    }
+
+    for (const p of this.particles) {
+      const px = p.x * w;
+      const py = p.y * h;
+      const g5 = ctx.createRadialGradient(px, py, 0, px, py, p.size * 3);
+      g5.addColorStop(0, `rgba(255,220,150,${p.opacity * 0.6})`);
+      g5.addColorStop(1, 'rgba(255,220,150,0)');
+      ctx.fillStyle = g5;
+      ctx.beginPath();
+      ctx.arc(px, py, p.size * 3, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = `rgba(255,240,210,${p.opacity * 0.8})`;
+      ctx.beginPath();
+      ctx.arc(px, py, p.size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+}
+
+// ============================================================
+//  Windy Animation (clouds + trees + wind lines)
+// ============================================================
+class WindySystem extends ParticleSystem {
+  constructor(canvas) {
+    super(canvas);
+    this.clouds = [];
+    this.windLines = [];
+    this.debris = [];
+    this.treeSway = 0;
+    this.initParticles();
+  }
+
+  initParticles() {
+    for (let i = 0; i < 4; i++) {
+      this.clouds.push(this.createCloud(true));
+    }
+    for (let i = 0; i < 12; i++) {
+      this.windLines.push(this.createWindLine(true));
+    }
+    for (let i = 0; i < 6; i++) {
+      this.debris.push(this.createDebris(true));
+    }
+  }
+
+  createCloud(randomize) {
+    const baseX = randomize ? this.rand(-0.2, 1.2) : this.rand(0, 1);
+    return {
+      x: baseX, y: this.rand(0.05, 0.45),
+      w: this.rand(0.12, 0.22), h: this.rand(0.04, 0.08),
+      speed: this.rand(0.02, 0.06) * (1 + this.intensity * 0.4),
+      opacity: this.rand(0.15, 0.4),
+      phase: this.rand(0, Math.PI * 2),
+    };
+  }
+
+  createWindLine(randomize) {
+    return {
+      y: randomize ? this.rand(0.05, 0.7) : this.rand(0.05, 0.7),
+      x: randomize ? this.rand(-0.1, 1.1) : this.rand(0, 1),
+      len: this.rand(0.08, 0.25),
+      speed: this.rand(0.1, 0.3),
+      opacity: this.rand(0.05, 0.2),
+    };
+  }
+
+  createDebris(randomize) {
+    return {
+      x: randomize ? this.rand(-0.1, 1.1) : this.rand(0, 1),
+      y: this.rand(0.5, 0.9),
+      size: this.rand(2, 5),
+      speedX: this.rand(0.08, 0.2),
+      speedY: this.rand(-0.02, 0.02),
+      rotation: this.rand(0, Math.PI * 2),
+      rotSpeed: this.rand(-2, 2),
+      opacity: this.rand(0.2, 0.6),
+    };
+  }
+
+  update(dt) {
+    const speedMul = this.intensity === 0 ? 0.5 : this.intensity === 1 ? 1.0 : 1.8;
+    this.treeSway += dt * speedMul * 1.5;
+
+    // Clouds
+    const cloudCount = this.intensity === 0 ? 2 : this.intensity === 1 ? 4 : 6;
+    while (this.clouds.length < cloudCount) this.clouds.push(this.createCloud(false));
+    while (this.clouds.length > cloudCount) this.clouds.pop();
+
+    for (const c of this.clouds) {
+      c.x -= dt * c.speed * speedMul;
+      if (c.x + c.w < -0.1) {
+        Object.assign(c, this.createCloud(false));
+        c.x = 1.1;
+      }
+    }
+
+    // Wind lines
+    const lineCount = this.intensity === 0 ? 5 : this.intensity === 1 ? 10 : 18;
+    while (this.windLines.length < lineCount) this.windLines.push(this.createWindLine(false));
+    while (this.windLines.length > lineCount) this.windLines.pop();
+
+    for (const l of this.windLines) {
+      l.x -= dt * l.speed * speedMul * 1.5;
+      if (l.x + l.len < -0.1) {
+        Object.assign(l, this.createWindLine(false));
+        l.x = 1.1;
+      }
+    }
+
+    // Debris
+    const debrisCount = this.intensity === 0 ? 0 : this.intensity === 1 ? 4 : 10;
+    while (this.debris.length < debrisCount) this.debris.push(this.createDebris(false));
+    while (this.debris.length > debrisCount) this.debris.pop();
+
+    for (const d of this.debris) {
+      d.x -= dt * d.speedX * speedMul;
+      d.y += dt * d.speedY * speedMul;
+      d.rotation += dt * d.rotSpeed * speedMul;
+      if (d.x < -0.1 || d.y > 1.1) {
+        Object.assign(d, this.createDebris(false));
+        d.x = 1.1;
+      }
+    }
+  }
+
+  draw() {
+    const { ctx, w, h } = this;
+    ctx.clearRect(0, 0, w, h);
+
+    // Ground
+    const groundY = h * 0.82;
+    const gGround = ctx.createLinearGradient(0, groundY, 0, h);
+    gGround.addColorStop(0, 'rgba(30,60,50,0.15)');
+    gGround.addColorStop(1, 'rgba(20,40,35,0.25)');
+    ctx.fillStyle = gGround;
+    ctx.fillRect(0, groundY, w, h - groundY);
+
+    // Draw trees
+    const treePositions = this.intensity === 0 ? [0.2, 0.8] : this.intensity === 1 ? [0.15, 0.45, 0.75, 0.9] : [0.1, 0.3, 0.5, 0.7, 0.85, 0.95];
+    const swayIntensity = this.intensity === 0 ? 0.02 : this.intensity === 1 ? 0.05 : 0.10;
+    const treeScale = this.intensity === 2 ? 1.2 : 1;
+
+    for (const tx of treePositions) {
+      const sway = Math.sin(this.treeSway * 0.8 + tx * 3) * swayIntensity;
+      this.drawTree(tx * w, groundY, h * 0.2 * treeScale, sway);
+    }
+
+    // Draw clouds
+    for (const c of this.clouds) {
+      ctx.save();
+      ctx.globalAlpha = c.opacity * (this.intensity === 2 ? 1.3 : 1);
+      ctx.translate(c.x * w, c.y * h);
+      ctx.scale(w / 400, h / 400);
+
+      const cw = c.w * 400;
+      const ch = c.h * 400;
+
+      ctx.fillStyle = 'rgba(220,235,245,0.5)';
+      ctx.beginPath();
+      ctx.ellipse(0, 0, cw * 0.3, ch * 0.5, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.ellipse(cw * 0.25, -ch * 0.2, cw * 0.35, ch * 0.6, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.ellipse(-cw * 0.2, -ch * 0.1, cw * 0.25, ch * 0.45, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.ellipse(cw * 0.1, ch * 0.2, cw * 0.2, ch * 0.3, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    // Draw wind lines
+    ctx.save();
+    for (const l of this.windLines) {
+      const alpha = l.opacity * (this.intensity === 2 ? 1.5 : 1);
+      if (alpha < 0.01) continue;
+      const y = l.y * h;
+      const x1 = l.x * w;
+      const x2 = x1 + l.len * w;
+
+      const grad = ctx.createLinearGradient(x1, y, x2, y);
+      grad.addColorStop(0, `rgba(180,220,230,0)`);
+      grad.addColorStop(0.3, `rgba(180,220,230,${alpha})`);
+      grad.addColorStop(0.7, `rgba(180,220,230,${alpha})`);
+      grad.addColorStop(1, `rgba(180,220,230,0)`);
+
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = this.intensity === 2 ? 2 : 1;
+      ctx.beginPath();
+      ctx.moveTo(x1, y);
+      ctx.quadraticCurveTo((x1 + x2) / 2, y + Math.sin(l.x * 5) * 3, x2, y);
+      ctx.stroke();
+    }
+    ctx.restore();
+
+    // Draw debris
+    for (const d of this.debris) {
+      ctx.save();
+      ctx.translate(d.x * w, d.y * h);
+      ctx.rotate(d.rotation);
+      ctx.globalAlpha = d.opacity;
+      ctx.fillStyle = 'rgba(180,180,160,0.6)';
+      ctx.fillRect(-d.size / 2, -d.size / 4, d.size, d.size / 2);
+      ctx.restore();
+    }
+  }
+
+  drawTree(x, baseY, height, sway) {
+    const { ctx } = this;
+    ctx.save();
+    ctx.translate(x, baseY);
+    ctx.rotate(sway);
+
+    // Trunk
+    ctx.fillStyle = 'rgba(40,30,20,0.5)';
+    const trunkW = height * 0.04;
+    const trunkH = height * 0.45;
+    ctx.fillRect(-trunkW / 2, -trunkH, trunkW, trunkH);
+
+    // Foliage - layered triangles
+    const layers = 4;
+    const layerH = height * 0.55 / layers;
+    for (let i = 0; i < layers; i++) {
+      const ly = -trunkH - layerH * i;
+      const lw = height * 0.35 * (1 - i * 0.15);
+      const alpha = 0.25 - i * 0.03;
+      ctx.fillStyle = `rgba(50,100,70,${alpha})`;
+      ctx.beginPath();
+      ctx.moveTo(0, ly - layerH);
+      ctx.lineTo(lw, ly);
+      ctx.lineTo(-lw, ly);
+      ctx.closePath();
+      ctx.fill();
+
+      // Highlight
+      ctx.fillStyle = `rgba(80,140,100,${alpha * 0.3})`;
+      ctx.beginPath();
+      ctx.moveTo(0, ly - layerH);
+      ctx.lineTo(lw * 0.5, ly);
+      ctx.lineTo(0, ly);
+      ctx.closePath();
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+}
+
+// ============================================================
+//  Rainy Animation (drops + splashes + puddles + lightning)
+// ============================================================
+class RainySystem extends ParticleSystem {
+  constructor(canvas) {
+    super(canvas);
+    this.drops = [];
+    this.splashes = [];
+    this.puddles = [];
+    this.lightningFlash = 0;
+    this.lightningTimer = 0;
+    this.time = 0;
+    this.initParticles();
+  }
+
+  initParticles() {
+    const count = this.intensity === 0 ? 30 : this.intensity === 1 ? 60 : 100;
+    for (let i = 0; i < count; i++) {
+      this.drops.push(this.createDrop(true));
+    }
+  }
+
+  createDrop(randomize) {
+    return {
+      x: this.rand(0, 1),
+      y: randomize ? this.rand(-0.1, 1.1) : this.rand(-0.1, 0),
+      len: this.rand(0.02, 0.045),
+      speed: this.rand(0.4, 0.8),
+      opacity: this.rand(0.3, 0.7),
+      width: this.rand(0.8, 1.5),
+    };
+  }
+
+  update(dt) {
+    this.time += dt;
+    const speedMul = this.intensity === 0 ? 0.6 : this.intensity === 1 ? 1.0 : 1.6;
+    const dropCount = this.intensity === 0 ? 40 : this.intensity === 1 ? 80 : 140;
+
+    while (this.drops.length < dropCount) this.drops.push(this.createDrop(false));
+    while (this.drops.length > dropCount) this.drops.pop();
+
+    // Rain drops
+    for (const d of this.drops) {
+      d.y += dt * d.speed * speedMul;
+      d.x -= dt * 0.06 * speedMul; // wind angle
+      if (d.y > 1.1) {
+        // Splash
+        if (Math.random() < (this.intensity === 2 ? 0.4 : 0.2)) {
+          this.splashes.push({
+            x: d.x, y: 0.82,
+            life: 0, maxLife: this.rand(0.3, 0.6),
+            particles: Array.from({ length: this.randInt(3, 8) }, () => ({
+              dx: this.rand(-8, 8), dy: this.rand(-15, -3),
+              size: this.rand(1, 3), life: 0, maxLife: this.rand(0.2, 0.4),
+            })),
+          });
+        }
+        Object.assign(d, this.createDrop(false));
+        d.y = -this.rand(0, 0.1);
+      }
+    }
+
+    // Splashes
+    for (let i = this.splashes.length - 1; i >= 0; i--) {
+      const s = this.splashes[i];
+      s.life += dt;
+      let dead = true;
+      for (const p of s.particles) {
+        p.life += dt;
+        if (p.life < p.maxLife) dead = false;
+      }
+      if (dead || s.life > s.maxLife) {
+        this.splashes.splice(i, 1);
+      }
+    }
+
+    // Puddles
+    if (Math.random() < dt * (this.intensity === 0 ? 0.05 : this.intensity === 1 ? 0.15 : 0.3)) {
+      this.puddles.push({
+        x: this.rand(0.1, 0.9),
+        size: this.rand(5, 12),
+        maxSize: this.intensity === 0 ? 15 : this.intensity === 1 ? 25 : 40,
+        opacity: this.rand(0.1, 0.25),
+        growRate: this.rand(3, 8),
+      });
+    }
+    for (let i = this.puddles.length - 1; i >= 0; i--) {
+      const p = this.puddles[i];
+      p.size += dt * p.growRate;
+      if (p.size > p.maxSize || p.size > this.w * 0.15) {
+        this.puddles.splice(i, 1);
+      }
+    }
+    // Cap puddles
+    while (this.puddles.length > 8) this.puddles.shift();
+
+    // Lightning
+    const lightningFreq = this.intensity === 0 ? 999 : this.intensity === 1 ? 8 : 3;
+    this.lightningTimer -= dt;
+    if (this.lightningTimer <= 0 && this.intensity > 0) {
+      this.lightningTimer = this.rand(lightningFreq * 0.5, lightningFreq * 1.5);
+      if (Math.random() < (this.intensity === 1 ? 0.3 : 0.6)) {
+        this.lightningFlash = this.intensity === 1 ? 0.4 : 0.7;
+      }
+    }
+    this.lightningFlash *= 0.92;
+    if (this.lightningFlash < 0.01) this.lightningFlash = 0;
+  }
+
+  draw() {
+    const { ctx, w, h } = this;
+    ctx.clearRect(0, 0, w, h);
+
+    // Lightning flash
+    if (this.lightningFlash > 0.01) {
+      ctx.fillStyle = `rgba(200,220,255,${this.lightningFlash * 0.3})`;
+      ctx.fillRect(0, 0, w, h);
+    }
+
+    const groundY = h * 0.82;
+
+    // Draw puddles
+    for (const p of this.puddles) {
+      ctx.save();
+      ctx.translate(p.x * w, groundY);
+      ctx.scale(1, 0.25);
+      const grad = ctx.createRadialGradient(0, 0, 0, 0, 0, p.size);
+      grad.addColorStop(0, `rgba(100,180,230,${p.opacity})`);
+      grad.addColorStop(0.6, `rgba(80,160,220,${p.opacity * 0.5})`);
+      grad.addColorStop(1, `rgba(60,140,210,0)`);
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(0, 0, p.size, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+
+      // Ripple ring
+      if (p.size > 8) {
+        ctx.strokeStyle = `rgba(180,220,255,${0.08 * (1 - p.size / p.maxSize)})`;
+        ctx.lineWidth = 0.5;
+        ctx.beginPath();
+        ctx.ellipse(p.x * w, groundY, p.size, p.size * 0.25, 0, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+    }
+
+    // Ground line
+    ctx.fillStyle = 'rgba(30,40,60,0.2)';
+    ctx.fillRect(0, groundY, w, h - groundY);
+
+    // Draw splashes
+    for (const s of this.splashes) {
+      for (const p of s.particles) {
+        const progress = p.life / p.maxLife;
+        const alpha = (1 - progress) * 0.5;
+        const x = s.x * w + p.dx * (progress * 2);
+        const y = groundY + p.dy + p.dy * progress * 1.5 + 5;
+        ctx.fillStyle = `rgba(180,220,255,${alpha})`;
+        ctx.beginPath();
+        ctx.arc(x, y, p.size * (1 - progress * 0.3), 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    // Draw rain
+    const angle = -0.08;
+    ctx.save();
+    for (const d of this.drops) {
+      const x = d.x * w;
+      const y = d.y * h;
+      const len = d.len * h;
+
+      ctx.strokeStyle = `rgba(180,210,240,${d.opacity * 0.6})`;
+      ctx.lineWidth = d.width;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(x + Math.sin(angle) * len, y + Math.cos(angle) * len);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+}
+
+// ============================================================
+//  Snowy Animation (flakes + accumulation)
+// ============================================================
+class SnowySystem extends ParticleSystem {
+  constructor(canvas) {
+    super(canvas);
+    this.flakes = [];
+    this.accumulation = 0;
+    this.maxAccumulation = 0;
+    this.time = 0;
+    this.initParticles();
+  }
+
+  initParticles() {
+    const count = this.intensity === 0 ? 40 : this.intensity === 1 ? 80 : 140;
+    for (let i = 0; i < count; i++) {
+      this.flakes.push(this.createFlake(true));
+    }
+  }
+
+  createFlake(randomize) {
+    return {
+      x: this.rand(0, 1),
+      y: randomize ? this.rand(-0.1, 1.1) : this.rand(-0.1, 0),
+      size: this.rand(1.5, 5),
+      speed: this.rand(0.12, 0.35),
+      drift: this.rand(0.3, 1.0),
+      driftPhase: this.rand(0, Math.PI * 2),
+      opacity: this.rand(0.4, 0.9),
+      rotation: this.rand(0, Math.PI * 2),
+      rotSpeed: this.rand(-1, 1),
+      wobble: this.rand(0, Math.PI * 2),
+      wobbleSpeed: this.rand(0.5, 2),
+    };
+  }
+
+  update(dt) {
+    this.time += dt;
+    const speedMul = this.intensity === 0 ? 0.5 : this.intensity === 1 ? 1.0 : 2.0;
+
+    const flakeCount = this.intensity === 0 ? 50 : this.intensity === 1 ? 100 : 180;
+    while (this.flakes.length < flakeCount) this.flakes.push(this.createFlake(false));
+    while (this.flakes.length > flakeCount) this.flakes.pop();
+
+    // Accumulation rate
+    const accRate = this.intensity === 0 ? 0.02 : this.intensity === 1 ? 0.05 : 0.12;
+    this.maxAccumulation = this.intensity === 0 ? 0.03 : this.intensity === 1 ? 0.07 : 0.15;
+    if (this.accumulation < this.maxAccumulation) {
+      this.accumulation += dt * accRate * 0.01;
+      if (this.accumulation > this.maxAccumulation) this.accumulation = this.maxAccumulation;
+    }
+
+    for (const f of this.flakes) {
+      f.wobble += dt * f.wobbleSpeed * speedMul;
+      f.rotation += dt * f.rotSpeed * speedMul;
+      f.y += dt * f.speed * speedMul;
+      f.x += Math.sin(f.wobble) * dt * f.drift * 0.12 * speedMul;
+
+      if (f.y > 1.1) {
+        Object.assign(f, this.createFlake(false));
+        f.y = -this.rand(0, 0.05);
+      }
+      if (f.x > 1.1) f.x = -0.05;
+      if (f.x < -0.05) f.x = 1.1;
+    }
+  }
+
+  draw() {
+    const { ctx, w, h } = this;
+    ctx.clearRect(0, 0, w, h);
+
+    const groundY = h * (0.82 - this.accumulation * 0.5);
+
+    // Snow accumulation at bottom
+    if (this.accumulation > 0) {
+      const accH = this.accumulation * h;
+      const gAcc = ctx.createLinearGradient(0, groundY - accH, 0, groundY + 10);
+      gAcc.addColorStop(0, 'rgba(220,235,250,0)');
+      gAcc.addColorStop(0.3, `rgba(220,235,250,${0.08 * (this.intensity + 1)})`);
+      gAcc.addColorStop(1, `rgba(220,235,250,${0.15 * (this.intensity + 1)})`);
+      ctx.fillStyle = gAcc;
+      ctx.beginPath();
+      ctx.moveTo(0, groundY - accH);
+      for (let x = 0; x <= w; x += 4) {
+        const noise = Math.sin(x * 0.05 + this.time) * 2 + Math.sin(x * 0.12 + this.time * 0.7) * 1.5;
+        ctx.lineTo(x, groundY - accH + noise);
+      }
+      ctx.lineTo(w, h);
+      ctx.lineTo(0, h);
+      ctx.closePath();
+      ctx.fill();
+
+      // Bottom white glow
+      const gBot = ctx.createLinearGradient(0, groundY - accH, 0, h);
+      gBot.addColorStop(0, 'rgba(200,220,240,0)');
+      gBot.addColorStop(1, 'rgba(200,220,240,0.06)');
+      ctx.fillStyle = gBot;
+      ctx.fillRect(0, groundY - accH, w, h - groundY + accH);
+    }
+
+    // Draw snowflakes
+    for (const f of this.flakes) {
+      const px = f.x * w;
+      const py = f.y * h;
+
+      // Glow
+      const glowR = f.size * 4;
+      const gGlow = ctx.createRadialGradient(px, py, 0, px, py, glowR);
+      gGlow.addColorStop(0, `rgba(255,255,255,${f.opacity * 0.15})`);
+      gGlow.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.fillStyle = gGlow;
+      ctx.beginPath();
+      ctx.arc(px, py, glowR, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Core snowflake
+      ctx.save();
+      ctx.translate(px, py);
+      ctx.rotate(f.rotation);
+      ctx.globalAlpha = f.opacity;
+
+      // Main circle
+      ctx.fillStyle = 'rgba(255,255,255,0.8)';
+      ctx.beginPath();
+      ctx.arc(0, 0, f.size, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Crystal arms for larger flakes
+      if (f.size > 3) {
+        ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+        ctx.lineWidth = 0.5;
+        for (let a = 0; a < 6; a++) {
+          const angle = (a / 6) * Math.PI * 2;
+          ctx.beginPath();
+          ctx.moveTo(0, 0);
+          ctx.lineTo(Math.cos(angle) * f.size * 1.8, Math.sin(angle) * f.size * 1.8);
+          ctx.stroke();
+          // Twig
+          const tx = Math.cos(angle) * f.size * 1.4;
+          const ty = Math.sin(angle) * f.size * 1.4;
+          ctx.beginPath();
+          ctx.moveTo(tx, ty);
+          ctx.lineTo(
+            tx + Math.cos(angle + 0.5) * f.size * 0.6,
+            ty + Math.sin(angle + 0.5) * f.size * 0.6
+          );
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(tx, ty);
+          ctx.lineTo(
+            tx + Math.cos(angle - 0.5) * f.size * 0.6,
+            ty + Math.sin(angle - 0.5) * f.size * 0.6
+          );
+          ctx.stroke();
+        }
+      }
+
+      ctx.restore();
+    }
+  }
+}
+
+// ============================================================
+//  Card Manager
+// ============================================================
+const systems = {
+  sunny: SunnySystem,
+  windy: WindySystem,
+  rainy: RainySystem,
+  snowy: SnowySystem,
+};
+
+const animations = new Map(); // cardId -> { system, weather }
+
+function buildCards() {
+  const row = document.getElementById('cardsRow');
+  row.innerHTML = '';
+
+  const defaultWeathers = ['sunny', 'windy', 'rainy', 'snowy'];
+  const locationIndices = [0, 1, 2, 3];
+
+  defaultWeathers.forEach((weather, i) => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.dataset.index = i;
+    card.dataset.weather = weather;
+    card.dataset.locationIdx = locationIndices[i];
+
+    card.innerHTML = `
+      <div class="card-bg active" style="background: linear-gradient(180deg, ${BG_COLORS[weather].from}, ${BG_COLORS[weather].to});"></div>
+      <div class="card-bg-alt" style="position:absolute;inset:0;z-index:0;background:radial-gradient(ellipse at 50% 0%, ${BG_COLORS[weather].accent}, transparent 70%);"></div>
+      <canvas class="card-canvas"></canvas>
+      <div class="card-flash"></div>
+      <div class="card-content">
+        <div class="card-top">
+          <span class="weather-tag" id="tag-${i}">${WEATHER_META[weather].label}</span>
+          <button class="card-cycle-btn" data-index="${i}" title="切换天气">↻</button>
+        </div>
+        <div class="card-middle">
+          <div class="card-temp" id="temp-${i}">${WEATHER_META[weather].temps[i]}<sup>C</sup></div>
+          <div class="card-condition" id="cond-${i}">${WEATHER_META[weather].emoji} ${WEATHER_META[weather].label}</div>
+        </div>
+        <div class="card-bottom">
+          <div class="card-stat">
+            <span class="card-stat-label">体感</span>
+            <span class="card-stat-value" id="feels-${i}">${WEATHER_META[weather].feels[i]}</span>
+          </div>
+          <div class="card-stat" style="text-align:right;">
+            <span class="card-stat-label" id="stat-label-${i}">${WEATHER_META[weather].label === '晴天' ? '紫外线' : WEATHER_META[weather].label === '大风' ? '风速' : '降水'}</span>
+            <span class="card-stat-value" id="stat-value-${i}">${WEATHER_META[weather].uv[i]}</span>
+          </div>
+        </div>
+      </div>
+    `;
+
+    row.appendChild(card);
+  });
+}
+
+function initAnimations() {
+  document.querySelectorAll('.card').forEach((card, i) => {
+    const canvas = card.querySelector('.card-canvas');
+    const weather = card.dataset.weather;
+    const SystemClass = systems[weather];
+    const system = new SystemClass(canvas);
+    system.start();
+    animations.set(i, { system, weather, card });
+
+    // Cycle button
+    const btn = card.querySelector('.card-cycle-btn');
+    btn.addEventListener('click', () => cycleCardWeather(i));
+  });
+
+  // Resize handler
+  let resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      animations.forEach(({ system }) => system.resize());
+    }, 100);
+  });
+}
+
+function cycleCardWeather(index) {
+  const entry = animations.get(index);
+  if (!entry) return;
+
+  const current = entry.weather;
+  const nextIdx = (WEATHERS.indexOf(current) + 1) % WEATHERS.length;
+  const nextWeather = WEATHERS[nextIdx];
+
+  // Stop old animation
+  entry.system.stop();
+
+  const card = entry.card;
+  card.dataset.weather = nextWeather;
+
+  // Flash transition
+  const flash = card.querySelector('.card-flash');
+  flash.style.background = 'rgba(255,255,255,0.15)';
+  flash.classList.add('active');
+  setTimeout(() => flash.classList.remove('active'), 300);
+
+  // Update background
+  const bg = card.querySelector('.card-bg');
+  bg.style.background = `linear-gradient(180deg, ${BG_COLORS[nextWeather].from}, ${BG_COLORS[nextWeather].to})`;
+
+  // Start new animation with current intensity
+  const canvas = card.querySelector('.card-canvas');
+  const SystemClass = systems[nextWeather];
+  const newSystem = new SystemClass(canvas);
+  newSystem.setIntensity(currentIntensity);
+  newSystem.start();
+
+  // Update content
+  const li = card.dataset.locationIdx;
+  const meta = WEATHER_META[nextWeather];
+
+  card.querySelector('.weather-tag').textContent = meta.label;
+  card.querySelector('.card-temp').innerHTML = `${meta.temps[li]}<sup>C</sup>`;
+  card.querySelector('.card-condition').textContent = `${meta.emoji} ${meta.label}`;
+
+  // Update stat label
+  const statLabel = card.querySelector('.card-stat:last-child .card-stat-label');
+  if (nextWeather === 'rainy' || nextWeather === 'snowy') {
+    statLabel.textContent = '降水';
+  } else if (nextWeather === 'windy') {
+    statLabel.textContent = '风速';
+  } else {
+    statLabel.textContent = '紫外线';
+  }
+
+  // Update feels
+  const feelsEl = card.querySelector('.card-stat:first-child .card-stat-value');
+  feelsEl.textContent = meta.feels[li];
+
+  // Update second stat
+  const valEl = card.querySelector('.card-stat:last-child .card-stat-value');
+  valEl.textContent = meta.uv[li];
+
+  // Store
+  entry.system = newSystem;
+  entry.weather = nextWeather;
+}
+
+// ============================================================
+//  Intensity Controls
+// ============================================================
+let currentIntensity = 1;
+
+function initControls() {
+  document.querySelectorAll('.ctrl-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.ctrl-btn').forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const intensity = parseInt(btn.dataset.intensity, 10);
+      currentIntensity = intensity;
+
+      animations.forEach(({ system }) => {
+        system.setIntensity(intensity);
+      });
+    });
+  });
+}
+
+// ============================================================
+//  Init
+// ============================================================
+buildCards();
+initAnimations();
+initControls();
+
+// Rebuild feels/stat elements since the innerHTML was hardcoded
+document.querySelectorAll('.card').forEach((card, i) => {
+  const weather = card.dataset.weather;
+  const li = parseInt(card.dataset.locationIdx, 10);
+  const meta = WEATHER_META[weather];
+
+  // Ensure feels element exists
+  const feelsVal = card.querySelector('.card-stat:first-child .card-stat-value');
+  if (feelsVal) feelsVal.textContent = meta.feels[li];
+
+  // Ensure UV element exists
+  const statVal = card.querySelector('.card-stat:last-child .card-stat-value');
+  if (statVal) statVal.textContent = meta.uv[li];
+
+  // Ensure tag exists
+  const tag = card.querySelector('.weather-tag');
+  if (tag) tag.textContent = meta.label;
+});
+
+console.log('🌤 天气页面加载完成！点击卡片上的 "↻" 按钮切换天气。');
+</script>
+</body>
+</html>

@@ -1,0 +1,1631 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="format-detection" content="telephone=no,email=no,address=no">
+    <title>今日红包 × 团购特惠</title>
+    <style>
+        :root {
+            --bg-red: #e53935;
+            --bg-red-deep: #b71c1c;
+            --bg-red-darkest: #7f1015;
+            --gold: #ffd700;
+            --gold-deep: #c9a227;
+            --gold-soft: #f6dd88;
+            --rose-gold: #e8b4b8;
+            --warm-white: #fff8e7;
+            --ink: #2d1810;
+            --success: #4caf50;
+            --warning: #ff9800;
+            --discount: #2196f3;
+            --surface: rgba(255, 248, 231, 0.92);
+            --shadow-heavy: 0 28px 64px rgba(93, 11, 15, 0.28);
+            --shadow-soft: 0 14px 36px rgba(144, 31, 31, 0.14);
+            --radius-xl: 36px;
+            --radius-lg: 28px;
+            --radius-md: 22px;
+            --radius-sm: 16px;
+            --space-1: 8px;
+            --space-2: 16px;
+            --space-3: 24px;
+            --space-4: 32px;
+            --space-5: 48px;
+            --font-ui: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            --font-num: "DIN Alternate", "DIN Next LT W23", "Avenir Next Condensed", "Helvetica Neue", sans-serif;
+            --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: var(--font-ui);
+            color: var(--ink);
+            background:
+                radial-gradient(circle at top, rgba(255, 215, 0, 0.18), transparent 34%),
+                linear-gradient(180deg, #ae1217 0%, #d62f2d 22%, #f7e3c4 56%, #fff6e8 100%);
+            overflow-x: hidden;
+            padding-bottom: calc(112px + env(safe-area-inset-bottom));
+        }
+
+        body::before,
+        body::after {
+            content: "";
+            position: fixed;
+            inset: auto auto 14% -14%;
+            width: 260px;
+            height: 260px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.14), transparent 70%);
+            filter: blur(10px);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        body::after {
+            inset: 28% -18% auto auto;
+            width: 220px;
+            height: 220px;
+        }
+
+        img {
+            display: block;
+            max-width: 100%;
+        }
+
+        button {
+            font: inherit;
+        }
+
+        .page-shell {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero {
+            position: relative;
+            min-height: 30vh;
+            padding: calc(18px + env(safe-area-inset-top)) 18px 24px;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(circle at 50% 26%, rgba(255, 215, 0, 0.34), transparent 26%),
+                linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent 48%);
+            pointer-events: none;
+        }
+
+        .hero::after {
+            content: "";
+            position: absolute;
+            left: -22%;
+            right: -22%;
+            top: -12%;
+            height: 72%;
+            background: conic-gradient(from 0deg, transparent 0deg, rgba(255, 215, 0, 0.18) 24deg, transparent 50deg, transparent 310deg, rgba(255, 215, 0, 0.14) 340deg, transparent 360deg);
+            opacity: 0.7;
+            animation: haloSpin 14s linear infinite;
+            pointer-events: none;
+        }
+
+        .hero-topbar {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .hero-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 999px;
+            color: var(--warm-white);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16);
+            font-size: 12px;
+            letter-spacing: 0.08em;
+        }
+
+        .countdown {
+            min-width: 128px;
+            padding: 10px 12px;
+            border-radius: 20px;
+            background: rgba(66, 10, 12, 0.34);
+            color: var(--gold);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 215, 0, 0.22);
+            text-align: right;
+        }
+
+        .countdown-label {
+            display: block;
+            font-size: 11px;
+            color: rgba(255, 248, 231, 0.78);
+            margin-bottom: 4px;
+        }
+
+        .countdown-value {
+            display: block;
+            font-family: var(--font-num);
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+        }
+
+        .hero-main {
+            position: relative;
+            z-index: 2;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr);
+            gap: 18px;
+            padding-top: 18px;
+        }
+
+        .hero-copy {
+            text-align: center;
+            color: var(--warm-white);
+            animation: fadeUp 0.7s var(--ease-out) both;
+        }
+
+        .hero-kicker {
+            display: inline-block;
+            margin-bottom: 10px;
+            padding: 5px 10px;
+            border-radius: 999px;
+            background: rgba(255, 215, 0, 0.16);
+            color: var(--gold-soft);
+            font-size: 12px;
+            letter-spacing: 0.2em;
+        }
+
+        .hero-copy h1 {
+            font-size: clamp(30px, 7.4vw, 42px);
+            line-height: 1.06;
+            letter-spacing: 0.04em;
+            text-shadow: 0 8px 18px rgba(69, 5, 10, 0.4);
+        }
+
+        .hero-copy p {
+            margin-top: 10px;
+            font-size: 14px;
+            color: rgba(255, 248, 231, 0.86);
+        }
+
+        .hero-stage {
+            position: relative;
+            display: grid;
+            justify-items: center;
+            padding-top: 10px;
+            animation: fadeUp 0.85s var(--ease-out) 0.1s both;
+        }
+
+        .hero-glow {
+            position: absolute;
+            top: 36px;
+            width: min(86vw, 320px);
+            height: 190px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.34), rgba(255, 215, 0, 0.08) 46%, transparent 74%);
+            filter: blur(4px);
+            pointer-events: none;
+        }
+
+        .red-envelope {
+            position: relative;
+            width: min(72vw, 248px);
+            aspect-ratio: 0.84;
+            border: 0;
+            background: none;
+            cursor: pointer;
+            transform-origin: center;
+        }
+
+        .red-envelope:focus-visible {
+            outline: 2px solid rgba(255, 248, 231, 0.75);
+            outline-offset: 8px;
+        }
+
+        .envelope-body {
+            position: absolute;
+            inset: 0;
+            border-radius: 26px;
+            overflow: hidden;
+            box-shadow: var(--shadow-heavy);
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.18), transparent 24%),
+                linear-gradient(160deg, #ff5c53 0%, #d62828 40%, #9d161c 100%);
+        }
+
+        .envelope-body::before {
+            content: "";
+            position: absolute;
+            inset: 14px;
+            border-radius: 18px;
+            border: 1px solid rgba(255, 215, 0, 0.28);
+            background:
+                linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent 34%),
+                repeating-linear-gradient(135deg, rgba(255, 215, 0, 0.06) 0 10px, transparent 10px 20px);
+            opacity: 0.95;
+        }
+
+        .envelope-flap {
+            position: absolute;
+            left: 8%;
+            right: 8%;
+            top: 0;
+            height: 43%;
+            transform-origin: top center;
+            transition: transform 0.72s var(--ease-out);
+            clip-path: polygon(0 0, 100% 0, 50% 100%);
+            background: linear-gradient(180deg, #f14f46 0%, #c71f24 100%);
+            filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.2));
+            z-index: 3;
+        }
+
+        .envelope-card {
+            position: absolute;
+            inset: auto 14% 14% 14%;
+            height: 56%;
+            padding: 18px 16px 14px;
+            border-radius: 18px;
+            background:
+                linear-gradient(180deg, rgba(255, 253, 245, 0.98), rgba(255, 244, 219, 0.94)),
+                var(--warm-white);
+            box-shadow: 0 18px 30px rgba(125, 26, 30, 0.25);
+            display: grid;
+            align-content: space-between;
+            justify-items: center;
+            text-align: center;
+            transform: translateY(28%);
+            opacity: 0;
+            transition: transform 0.72s var(--ease-out), opacity 0.4s ease;
+            z-index: 1;
+        }
+
+        .envelope-card strong {
+            color: var(--bg-red);
+            font-size: 19px;
+            letter-spacing: 0.08em;
+        }
+
+        .envelope-card span {
+            color: #8e4b26;
+            font-size: 12px;
+        }
+
+        .seal {
+            position: absolute;
+            left: 50%;
+            top: 48%;
+            width: 62px;
+            height: 62px;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            display: grid;
+            place-items: center;
+            background: radial-gradient(circle at 30% 30%, #fff0a8 0%, var(--gold) 42%, var(--gold-deep) 100%);
+            color: var(--bg-red-darkest);
+            font-size: 28px;
+            font-weight: 900;
+            box-shadow: 0 10px 18px rgba(0, 0, 0, 0.22);
+            z-index: 4;
+            transition: opacity 0.18s ease;
+        }
+
+        .envelope-hint {
+            margin-top: 12px;
+            color: rgba(255, 248, 231, 0.82);
+            font-size: 13px;
+            letter-spacing: 0.06em;
+        }
+
+        .red-envelope.is-opened {
+            animation: envelopePop 0.88s var(--ease-out) forwards;
+        }
+
+        .red-envelope.is-opened .envelope-flap {
+            transform: rotateX(180deg);
+        }
+
+        .red-envelope.is-opened .envelope-card {
+            transform: translateY(-8%);
+            opacity: 1;
+        }
+
+        .red-envelope.is-opened .seal {
+            opacity: 0;
+        }
+
+        .spark-layer,
+        .rain-layer {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .spark {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.95), rgba(255, 215, 0, 0.14));
+            box-shadow: 0 0 12px rgba(255, 215, 0, 0.5);
+            animation: drift 5.4s linear infinite;
+        }
+
+        .gold-rain {
+            position: absolute;
+            top: -18%;
+            width: 4px;
+            border-radius: 999px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 215, 0, 0.95), rgba(255, 215, 0, 0));
+            opacity: 0;
+            animation: rainFall linear infinite;
+        }
+
+        .section {
+            width: min(100%, 460px);
+            margin: 0 auto;
+            padding: 0 16px;
+        }
+
+        .section + .section {
+            margin-top: 22px;
+        }
+
+        .panel {
+            position: relative;
+            border-radius: var(--radius-xl);
+            padding: 22px 16px 18px;
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.44), rgba(255, 255, 255, 0.18)),
+                var(--surface);
+            box-shadow: var(--shadow-soft);
+            border: 1px solid rgba(255, 255, 255, 0.46);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            overflow: hidden;
+        }
+
+        .panel::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.12), transparent 32%, transparent 70%, rgba(229, 57, 53, 0.05));
+            pointer-events: none;
+        }
+
+        .section-head {
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .section-title-wrap h2 {
+            font-size: 22px;
+            color: var(--bg-red-deep);
+            letter-spacing: 0.04em;
+        }
+
+        .section-title-wrap p {
+            margin-top: 5px;
+            color: rgba(45, 24, 16, 0.66);
+            font-size: 12px;
+        }
+
+        .section-pill {
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.18), rgba(201, 162, 39, 0.1));
+            color: #8d5b13;
+            font-size: 12px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .coupon-list {
+            display: grid;
+            gap: 14px;
+        }
+
+        .coupon {
+            position: relative;
+            display: grid;
+            grid-template-columns: 98px minmax(0, 1fr);
+            min-height: 126px;
+            border-radius: 26px;
+            overflow: hidden;
+            box-shadow: 0 18px 30px rgba(126, 34, 34, 0.12);
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .coupon.loaded,
+        .deal-card.loaded {
+            animation: fadeUp 0.7s var(--ease-out) forwards;
+        }
+
+        .coupon::before,
+        .coupon::after {
+            content: "";
+            position: absolute;
+            left: 98px;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            transform: translateX(-50%);
+            background: #f7e5ca;
+            z-index: 3;
+        }
+
+        .coupon::before {
+            top: -11px;
+        }
+
+        .coupon::after {
+            bottom: -11px;
+        }
+
+        .coupon-aside {
+            position: relative;
+            padding: 18px 12px;
+            display: grid;
+            justify-items: center;
+            align-content: center;
+            color: #fff;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .coupon-aside::after {
+            content: "";
+            position: absolute;
+            right: 0;
+            top: 12%;
+            bottom: 12%;
+            border-right: 2px dashed rgba(255, 255, 255, 0.28);
+        }
+
+        .coupon-badge {
+            position: absolute;
+            left: 10px;
+            top: 10px;
+            padding: 4px 8px;
+            border-radius: 999px;
+            font-size: 10px;
+            background: rgba(255, 255, 255, 0.14);
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .coupon-amount {
+            font-family: var(--font-num);
+            font-size: 36px;
+            line-height: 1;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+        }
+
+        .coupon-amount small {
+            font-size: 14px;
+            vertical-align: top;
+            margin-right: 2px;
+        }
+
+        .coupon-kind {
+            margin-top: 8px;
+            font-size: 12px;
+            letter-spacing: 0.06em;
+            opacity: 0.92;
+        }
+
+        .coupon-body {
+            position: relative;
+            display: grid;
+            gap: 12px;
+            padding: 18px 16px 16px;
+            background:
+                linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(255, 248, 231, 0.92));
+        }
+
+        .coupon-top strong {
+            display: block;
+            font-size: 18px;
+            color: #4f1f10;
+        }
+
+        .coupon-top p {
+            margin-top: 6px;
+            color: rgba(45, 24, 16, 0.68);
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .coupon-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            color: #8e5d2f;
+            font-size: 11px;
+        }
+
+        .coupon-meta span {
+            padding: 4px 8px;
+            border-radius: 999px;
+            background: rgba(255, 215, 0, 0.12);
+        }
+
+        .coupon-action {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .coupon-stock {
+            min-width: 0;
+        }
+
+        .coupon-stock strong {
+            display: block;
+            font-family: var(--font-num);
+            font-size: 18px;
+            color: var(--bg-red);
+        }
+
+        .coupon-stock span {
+            display: block;
+            font-size: 11px;
+            color: rgba(45, 24, 16, 0.6);
+        }
+
+        .claim-btn,
+        .deal-btn,
+        .claim-all-btn {
+            border: 0;
+            cursor: pointer;
+            transition: transform 0.22s var(--ease-out), box-shadow 0.22s var(--ease-out), opacity 0.2s ease;
+        }
+
+        .claim-btn:active,
+        .deal-btn:active,
+        .claim-all-btn:active {
+            transform: scale(0.98);
+        }
+
+        .claim-btn {
+            min-width: 90px;
+            padding: 12px 16px;
+            border-radius: 999px;
+            color: var(--warm-white);
+            font-size: 14px;
+            font-weight: 800;
+            box-shadow: 0 12px 20px rgba(189, 38, 38, 0.18);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .claim-btn::after {
+            content: "";
+            position: absolute;
+            inset: 0 auto 0 -58%;
+            width: 44%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.36), transparent);
+            transform: skewX(-24deg);
+            animation: buttonSweep 3s infinite 1.2s;
+        }
+
+        .claim-btn.claimed {
+            background: linear-gradient(135deg, #67c36d, #2f8e46);
+            box-shadow: none;
+            color: #fff;
+            pointer-events: none;
+        }
+
+        .claim-btn.claimed::after {
+            display: none;
+        }
+
+        .coupon-full .coupon-aside {
+            background: linear-gradient(160deg, #ff6258 0%, #da2e2a 42%, #a6161d 100%);
+        }
+
+        .coupon-full .coupon-body {
+            background:
+                linear-gradient(135deg, rgba(255, 252, 244, 0.96), rgba(255, 241, 221, 0.96));
+        }
+
+        .coupon-full .claim-btn {
+            background-image: linear-gradient(135deg, #f35d50, #b71c1c);
+        }
+
+        .coupon-discount .coupon-aside {
+            background: linear-gradient(160deg, #ffb145 0%, #ef8e14 46%, #bc6110 100%);
+        }
+
+        .coupon-discount .claim-btn {
+            background-image: linear-gradient(135deg, #ffb545, #ea8315);
+            color: #612d06;
+        }
+
+        .coupon-exchange .coupon-aside {
+            background: linear-gradient(160deg, #c91f2e 0%, #8f1420 52%, #601019 100%);
+        }
+
+        .coupon-exchange .coupon-body {
+            background:
+                linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 241, 220, 0.94)),
+                #fff;
+        }
+
+        .coupon-exchange .claim-btn {
+            background-image: linear-gradient(135deg, #d5b35e, #a87d1a);
+        }
+
+        .deals {
+            display: grid;
+            gap: 14px;
+        }
+
+        .deal-card {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr);
+            border-radius: 28px;
+            overflow: hidden;
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(255, 250, 240, 0.96));
+            box-shadow: 0 20px 34px rgba(103, 21, 25, 0.1);
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .deal-media {
+            position: relative;
+            min-height: 162px;
+            overflow: hidden;
+            background:
+                radial-gradient(circle at 30% 20%, rgba(255, 215, 0, 0.28), transparent 20%),
+                linear-gradient(140deg, #f95a52 0%, #d52a2d 45%, #8a1519 100%);
+        }
+
+        .deal-card.alt .deal-media {
+            background:
+                radial-gradient(circle at 70% 16%, rgba(255, 215, 0, 0.24), transparent 16%),
+                linear-gradient(140deg, #f8a934 0%, #d06a12 48%, #8e370c 100%);
+        }
+
+        .deal-card.exchange-tone .deal-media {
+            background:
+                radial-gradient(circle at 50% 18%, rgba(255, 215, 0, 0.26), transparent 20%),
+                linear-gradient(140deg, #d32537 0%, #8e1421 48%, #5a0a12 100%);
+        }
+
+        .deal-pattern {
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(circle, rgba(255, 255, 255, 0.18) 1px, transparent 1px) 0 0 / 20px 20px,
+                linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.16));
+            opacity: 0.54;
+        }
+
+        .deal-illustration {
+            position: absolute;
+            inset: 22px;
+            display: grid;
+            place-items: center;
+            border-radius: 24px;
+            background: linear-gradient(180deg, rgba(255, 248, 231, 0.16), rgba(255, 248, 231, 0.04));
+            border: 1px solid rgba(255, 248, 231, 0.2);
+        }
+
+        .deal-badge {
+            position: absolute;
+            left: 14px;
+            top: 14px;
+            z-index: 2;
+            padding: 7px 12px;
+            border-radius: 999px;
+            background: rgba(255, 248, 231, 0.16);
+            border: 1px solid rgba(255, 248, 231, 0.22);
+            color: var(--warm-white);
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .deal-content {
+            padding: 18px 16px 16px;
+            display: grid;
+            gap: 14px;
+        }
+
+        .deal-copy strong {
+            display: block;
+            font-size: 18px;
+            line-height: 1.4;
+            color: #4f1f10;
+        }
+
+        .deal-copy p {
+            margin-top: 6px;
+            color: rgba(45, 24, 16, 0.68);
+            font-size: 13px;
+            line-height: 1.55;
+        }
+
+        .deal-data {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .deal-price strong {
+            font-family: var(--font-num);
+            font-size: 32px;
+            color: var(--bg-red);
+            line-height: 1;
+            letter-spacing: -0.04em;
+        }
+
+        .deal-price strong::before {
+            content: "¥";
+            margin-right: 2px;
+            font-size: 16px;
+        }
+
+        .deal-price span {
+            display: block;
+            margin-top: 4px;
+            color: rgba(45, 24, 16, 0.54);
+            font-size: 12px;
+            text-decoration: line-through;
+        }
+
+        .deal-people {
+            text-align: right;
+        }
+
+        .deal-people strong {
+            display: block;
+            font-family: var(--font-num);
+            font-size: 22px;
+            color: #8d1d1f;
+        }
+
+        .deal-people span {
+            display: block;
+            margin-top: 4px;
+            color: rgba(45, 24, 16, 0.54);
+            font-size: 12px;
+        }
+
+        .deal-btn {
+            width: 100%;
+            height: 48px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #ffd861, #dca71f);
+            color: #651f05;
+            font-size: 15px;
+            font-weight: 800;
+            box-shadow: 0 14px 24px rgba(201, 162, 39, 0.2);
+        }
+
+        .floating-bar {
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 30;
+            padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+            background: linear-gradient(180deg, rgba(255, 248, 231, 0), rgba(255, 248, 231, 0.92) 28%, rgba(255, 248, 231, 0.97) 100%);
+            transform: translateY(100%);
+            animation: slideUp 0.7s var(--ease-out) 0.35s forwards;
+        }
+
+        .floating-inner {
+            width: min(100%, 460px);
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: auto minmax(0, 1fr);
+            gap: 12px;
+            align-items: center;
+            padding: 10px;
+            border-radius: 24px;
+            background: rgba(97, 9, 14, 0.82);
+            border: 1px solid rgba(255, 215, 0, 0.18);
+            box-shadow: 0 24px 48px rgba(98, 9, 14, 0.26);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+        }
+
+        .mini-coupons {
+            display: flex;
+            align-items: center;
+            padding-left: 4px;
+        }
+
+        .mini-coupon {
+            position: relative;
+            width: 34px;
+            height: 24px;
+            border-radius: 8px;
+            border: 2px solid rgba(255, 248, 231, 0.72);
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.16);
+            filter: grayscale(1) opacity(0.42);
+            transform: translateY(0);
+            transition: transform 0.26s var(--ease-out), filter 0.26s ease;
+        }
+
+        .mini-coupon + .mini-coupon {
+            margin-left: -10px;
+        }
+
+        .mini-coupon.active {
+            filter: grayscale(0) opacity(1);
+            transform: translateY(-3px);
+        }
+
+        .mini-full {
+            background: linear-gradient(135deg, #ff6258, #b71c1c);
+        }
+
+        .mini-discount {
+            background: linear-gradient(135deg, #ffbb4f, #df7b10);
+        }
+
+        .mini-exchange {
+            background: linear-gradient(135deg, #d2b15d, #8d6512);
+        }
+
+        .claim-all-btn {
+            height: 54px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, #ffe06a, #d9a929);
+            color: #611c07;
+            font-size: 16px;
+            font-weight: 900;
+            box-shadow: 0 16px 28px rgba(201, 162, 39, 0.22);
+        }
+
+        .claim-all-btn.claimed {
+            background: linear-gradient(135deg, #67c36d, #2d8d44);
+            color: #fff;
+        }
+
+        .toast-wrap {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 50;
+            display: grid;
+            place-items: center;
+            padding: 24px;
+        }
+
+        .toast-stack {
+            display: grid;
+            gap: 10px;
+        }
+
+        .toast {
+            position: relative;
+            min-width: 220px;
+            max-width: min(86vw, 320px);
+            padding: 14px 18px;
+            border-radius: 18px;
+            color: #fff8dd;
+            background:
+                radial-gradient(circle at center, rgba(255, 215, 0, 0.18), transparent 60%),
+                rgba(76, 22, 13, 0.84);
+            border: 1px solid rgba(255, 215, 0, 0.28);
+            text-align: center;
+            box-shadow: 0 16px 38px rgba(65, 13, 8, 0.3);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            animation: toastIn 0.35s var(--ease-out) forwards;
+        }
+
+        .toast::after {
+            content: "";
+            position: absolute;
+            inset: -26% 22%;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.22), transparent 70%);
+            z-index: -1;
+        }
+
+        .toast.leave {
+            animation: toastOut 0.28s ease forwards;
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes haloSpin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes drift {
+            0% {
+                transform: translate3d(0, 10px, 0) scale(0.9);
+                opacity: 0;
+            }
+            20%,
+            80% {
+                opacity: 1;
+            }
+            100% {
+                transform: translate3d(24px, -68px, 0) scale(1.12);
+                opacity: 0;
+            }
+        }
+
+        @keyframes rainFall {
+            0% {
+                transform: translate3d(0, -30px, 0) rotate(10deg);
+                opacity: 0;
+            }
+            12%,
+            80% {
+                opacity: 0.9;
+            }
+            100% {
+                transform: translate3d(24px, 420px, 0) rotate(18deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes buttonSweep {
+            0% {
+                left: -58%;
+            }
+            18% {
+                left: 140%;
+            }
+            100% {
+                left: 140%;
+            }
+        }
+
+        @keyframes envelopePop {
+            0% {
+                transform: scale(1);
+            }
+            30% {
+                transform: scale(1.2);
+            }
+            56% {
+                transform: scale(0.92);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes slideUp {
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translateY(18px) scale(0.92);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes toastOut {
+            from {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(-14px) scale(0.94);
+            }
+        }
+
+        @media (min-width: 414px) {
+            .coupon {
+                grid-template-columns: 108px minmax(0, 1fr);
+            }
+
+            .coupon::before,
+            .coupon::after {
+                left: 108px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            body {
+                padding-bottom: 132px;
+            }
+
+            .hero {
+                padding-bottom: 30px;
+            }
+
+            .hero-main {
+                grid-template-columns: minmax(0, 1fr);
+            }
+
+            .deals {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .deal-card:nth-child(even) {
+                transform: translateY(28px);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            html {
+                scroll-behavior: auto;
+            }
+
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-shell">
+        <header class="hero">
+            <div class="spark-layer" id="spark-layer" aria-hidden="true"></div>
+            <div class="rain-layer" id="rain-layer" aria-hidden="true"></div>
+
+            <div class="hero-topbar">
+                <div class="hero-tag">限时喜庆专场</div>
+                <div class="countdown" aria-live="polite">
+                    <span class="countdown-label">距离活动结束</span>
+                    <span class="countdown-value" id="countdown">23:59:59</span>
+                </div>
+            </div>
+
+            <div class="hero-main">
+                <div class="hero-copy">
+                    <span class="hero-kicker">WECHAT H5 FESTIVAL</span>
+                    <h1>今日红包 × 团购特惠</h1>
+                    <p>拆开红包，立领满减券、折扣券、兑换券，再去拼团把今日低价一起带走。</p>
+                </div>
+
+                <div class="hero-stage">
+                    <div class="hero-glow" aria-hidden="true"></div>
+                    <button class="red-envelope" id="red-envelope" aria-expanded="false" aria-controls="envelope-result">
+                        <span class="envelope-body"></span>
+                        <span class="envelope-flap"></span>
+                        <span class="envelope-card" id="envelope-result">
+                            <strong>红包已拆开</strong>
+                            <span>三张福利券已待领取，快往下滑动看看</span>
+                        </span>
+                        <span class="seal" aria-hidden="true">開</span>
+                        <span class="sr-only">点击拆开红包</span>
+                    </button>
+                    <p class="envelope-hint">点一下拆红包，自动点亮专属福利</p>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <section class="section" aria-labelledby="coupon-title">
+                <div class="panel">
+                    <div class="section-head">
+                        <div class="section-title-wrap">
+                            <h2 id="coupon-title">红包优惠券</h2>
+                            <p>三种券可叠加参与活动，先领先得</p>
+                        </div>
+                        <span class="section-pill">今日仅限 1 次</span>
+                    </div>
+
+                    <div class="coupon-list">
+                        <article class="coupon coupon-full">
+                            <div class="coupon-aside">
+                                <span class="coupon-badge">满减券</span>
+                                <div class="coupon-amount"><small>¥</small>60</div>
+                                <div class="coupon-kind">满 299 可用</div>
+                            </div>
+                            <div class="coupon-body">
+                                <div class="coupon-top">
+                                    <strong>年中大促满减券</strong>
+                                    <p>适用于超市精选、生鲜团购和节庆礼盒，下单金额越高越划算。</p>
+                                </div>
+                                <div class="coupon-meta">
+                                    <span>有效期至 04.18 23:59</span>
+                                    <span>每人限领 1 张</span>
+                                </div>
+                                <div class="coupon-action">
+                                    <div class="coupon-stock">
+                                        <strong data-stock>1268</strong>
+                                        <span>剩余张数</span>
+                                    </div>
+                                    <button class="claim-btn" type="button" data-coupon-id="full">立即领取</button>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="coupon coupon-discount">
+                            <div class="coupon-aside">
+                                <span class="coupon-badge">折扣券</span>
+                                <div class="coupon-amount">8.8<small>折</small></div>
+                                <div class="coupon-kind">最高减 80 元</div>
+                            </div>
+                            <div class="coupon-body">
+                                <div class="coupon-top">
+                                    <strong>人气爆款折扣券</strong>
+                                    <p>热门拼团商品直接享折扣，不限新老用户，适合闭眼冲低价专区。</p>
+                                </div>
+                                <div class="coupon-meta">
+                                    <span>有效期至 04.13 23:59</span>
+                                    <span>无门槛可用</span>
+                                </div>
+                                <div class="coupon-action">
+                                    <div class="coupon-stock">
+                                        <strong data-stock>532</strong>
+                                        <span>剩余张数</span>
+                                    </div>
+                                    <button class="claim-btn" type="button" data-coupon-id="discount">立即领取</button>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="coupon coupon-exchange">
+                            <div class="coupon-aside">
+                                <span class="coupon-badge">兑换券</span>
+                                <div class="coupon-amount"><small>¥</small>1</div>
+                                <div class="coupon-kind">兑换指定好物</div>
+                            </div>
+                            <div class="coupon-body">
+                                <div class="coupon-top">
+                                    <strong>惊喜兑换神券</strong>
+                                    <p>1 元换购限定咖啡杯，支持活动门店核销，数量有限，手慢就没了。</p>
+                                </div>
+                                <div class="coupon-meta">
+                                    <span>有效期至 04.20 20:00</span>
+                                    <span>到店核销使用</span>
+                                </div>
+                                <div class="coupon-action">
+                                    <div class="coupon-stock">
+                                        <strong data-stock>88</strong>
+                                        <span>剩余张数</span>
+                                    </div>
+                                    <button class="claim-btn" type="button" data-coupon-id="exchange">立即领取</button>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section" aria-labelledby="deal-title">
+                <div class="panel">
+                    <div class="section-head">
+                        <div class="section-title-wrap">
+                            <h2 id="deal-title">热门团购好物</h2>
+                            <p>红包券领完就能用，拼团人数实时滚动</p>
+                        </div>
+                        <span class="section-pill">2 人起团</span>
+                    </div>
+
+                    <div class="deals">
+                        <article class="deal-card">
+                            <div class="deal-media">
+                                <span class="deal-badge">爆单推荐</span>
+                                <div class="deal-pattern"></div>
+                                <div class="deal-illustration" aria-hidden="true">
+                                    <svg width="120" height="120" viewBox="0 0 120 120" fill="none">
+                                        <ellipse cx="60" cy="92" rx="34" ry="10" fill="rgba(255,248,231,0.2)"></ellipse>
+                                        <circle cx="60" cy="52" r="30" fill="#7b0e12"></circle>
+                                        <path d="M31 52C31 34.9 44.9 21 62 21h0c15.5 0 28 12.5 28 28v17H31V52Z" fill="#ffd76a"></path>
+                                        <path d="M45 38C45 31.4 50.4 26 57 26h10c6.6 0 12 5.4 12 12v18H45V38Z" fill="#fff3c0"></path>
+                                        <rect x="36" y="66" width="48" height="17" rx="8.5" fill="#f6c43d"></rect>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="deal-content">
+                                <div class="deal-copy">
+                                    <strong>甄选车厘子礼盒 5 斤装</strong>
+                                    <p>智利 JJ 级果径，顺丰冷链到家，搭配满减券到手更低。</p>
+                                </div>
+                                <div class="deal-data">
+                                    <div class="deal-price">
+                                        <strong>199</strong>
+                                        <span>原价 ¥299</span>
+                                    </div>
+                                    <div class="deal-people">
+                                        <strong data-group-count="12860">12860</strong>
+                                        <span>人已参团</span>
+                                    </div>
+                                </div>
+                                <button class="deal-btn" type="button">立即参团</button>
+                            </div>
+                        </article>
+
+                        <article class="deal-card alt">
+                            <div class="deal-media">
+                                <span class="deal-badge">限时直降</span>
+                                <div class="deal-pattern"></div>
+                                <div class="deal-illustration" aria-hidden="true">
+                                    <svg width="120" height="120" viewBox="0 0 120 120" fill="none">
+                                        <rect x="22" y="36" width="76" height="52" rx="18" fill="#fff2d1"></rect>
+                                        <rect x="28" y="46" width="64" height="34" rx="14" fill="#ffd15a"></rect>
+                                        <path d="M34 48C34 39.2 41.2 32 50 32h20c8.8 0 16 7.2 16 16" stroke="#8e370c" stroke-width="6" stroke-linecap="round"></path>
+                                        <circle cx="44" cy="63" r="6" fill="#8e370c"></circle>
+                                        <circle cx="76" cy="63" r="6" fill="#8e370c"></circle>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="deal-content">
+                                <div class="deal-copy">
+                                    <strong>轻奢四件套全棉床品</strong>
+                                    <p>柔软亲肤，活动色系限定，使用折扣券后更适合拼单入手。</p>
+                                </div>
+                                <div class="deal-data">
+                                    <div class="deal-price">
+                                        <strong>89</strong>
+                                        <span>原价 ¥159</span>
+                                    </div>
+                                    <div class="deal-people">
+                                        <strong data-group-count="8930">8930</strong>
+                                        <span>人已参团</span>
+                                    </div>
+                                </div>
+                                <button class="deal-btn" type="button">立即参团</button>
+                            </div>
+                        </article>
+
+                        <article class="deal-card exchange-tone">
+                            <div class="deal-media">
+                                <span class="deal-badge">兑换专区</span>
+                                <div class="deal-pattern"></div>
+                                <div class="deal-illustration" aria-hidden="true">
+                                    <svg width="120" height="120" viewBox="0 0 120 120" fill="none">
+                                        <rect x="38" y="24" width="44" height="72" rx="18" fill="#fff0cb"></rect>
+                                        <rect x="44" y="32" width="32" height="48" rx="14" fill="#d12633"></rect>
+                                        <path d="M60 42C66.6274 42 72 47.3726 72 54V74H48V54C48 47.3726 53.3726 42 60 42Z" fill="#ffda6e"></path>
+                                        <rect x="52" y="82" width="16" height="5" rx="2.5" fill="#d6ab32"></rect>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="deal-content">
+                                <div class="deal-copy">
+                                    <strong>限定随行咖啡杯换购</strong>
+                                    <p>配合兑换券 1 元核销，杯身烫金工艺，适合节庆送礼与自用收藏。</p>
+                                </div>
+                                <div class="deal-data">
+                                    <div class="deal-price">
+                                        <strong>1</strong>
+                                        <span>原价 ¥59</span>
+                                    </div>
+                                    <div class="deal-people">
+                                        <strong data-group-count="1880">1880</strong>
+                                        <span>人已参团</span>
+                                    </div>
+                                </div>
+                                <button class="deal-btn" type="button">立即参团</button>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <div class="floating-bar">
+            <div class="floating-inner">
+                <div class="mini-coupons" id="mini-coupons" aria-hidden="true">
+                    <span class="mini-coupon mini-full" data-mini="full"></span>
+                    <span class="mini-coupon mini-discount" data-mini="discount"></span>
+                    <span class="mini-coupon mini-exchange" data-mini="exchange"></span>
+                </div>
+                <button class="claim-all-btn" id="claim-all-btn" type="button">一键领取全部优惠券</button>
+            </div>
+        </div>
+
+        <div class="toast-wrap" aria-live="polite" aria-atomic="true">
+            <div class="toast-stack" id="toast-stack"></div>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            var prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+            var countdownEl = document.getElementById("countdown");
+            var envelopeEl = document.getElementById("red-envelope");
+            var claimAllBtn = document.getElementById("claim-all-btn");
+            var claimButtons = Array.prototype.slice.call(document.querySelectorAll(".claim-btn"));
+            var miniCoupons = document.querySelectorAll(".mini-coupon");
+            var toastStack = document.getElementById("toast-stack");
+            var stockMap = {
+                full: 1268,
+                discount: 532,
+                exchange: 88
+            };
+            var claimedCoupons = {};
+            var eventEnd = new Date(Date.now() + 23 * 60 * 60 * 1000 + 58 * 60 * 1000 + 30 * 1000);
+
+            function pad(num) {
+                return String(num).padStart(2, "0");
+            }
+
+            function formatCountdown(ms) {
+                var totalSeconds = Math.max(0, Math.floor(ms / 1000));
+                var hours = Math.floor(totalSeconds / 3600);
+                var minutes = Math.floor((totalSeconds % 3600) / 60);
+                var seconds = totalSeconds % 60;
+                return pad(hours) + ":" + pad(minutes) + ":" + pad(seconds);
+            }
+
+            function updateCountdown() {
+                var diff = eventEnd.getTime() - Date.now();
+                countdownEl.textContent = formatCountdown(diff);
+            }
+
+            function showToast(message) {
+                var toast = document.createElement("div");
+                toast.className = "toast";
+                toast.textContent = message;
+                toastStack.appendChild(toast);
+
+                if (!prefersReducedMotion && navigator.vibrate) {
+                    navigator.vibrate(36);
+                }
+
+                window.setTimeout(function () {
+                    toast.classList.add("leave");
+                    toast.addEventListener("animationend", function () {
+                        toast.remove();
+                    }, { once: true });
+                }, 1800);
+            }
+
+            function updateMiniState(couponId) {
+                Array.prototype.forEach.call(miniCoupons, function (item) {
+                    if (item.getAttribute("data-mini") === couponId) {
+                        item.classList.add("active");
+                    }
+                });
+            }
+
+            function updateClaimAllState() {
+                var allClaimed = claimButtons.every(function (button) {
+                    return button.classList.contains("claimed");
+                });
+
+                if (allClaimed) {
+                    claimAllBtn.textContent = "优惠券已全部到账";
+                    claimAllBtn.classList.add("claimed");
+                }
+            }
+
+            function reduceStock(button) {
+                var card = button.closest(".coupon");
+                var couponId = button.getAttribute("data-coupon-id");
+                var stockEl = card ? card.querySelector("[data-stock]") : null;
+
+                if (!stockEl || !stockMap[couponId]) {
+                    return;
+                }
+
+                stockMap[couponId] = Math.max(0, stockMap[couponId] - 1);
+                stockEl.textContent = String(stockMap[couponId]);
+            }
+
+            function claimCoupon(button, silent) {
+                var couponId = button.getAttribute("data-coupon-id");
+
+                if (claimedCoupons[couponId]) {
+                    if (!silent) {
+                        showToast("这张券已经在你的卡包里了");
+                    }
+                    return false;
+                }
+
+                claimedCoupons[couponId] = true;
+                reduceStock(button);
+                button.classList.add("claimed");
+                button.textContent = "已领取";
+                updateMiniState(couponId);
+                updateClaimAllState();
+
+                if (!silent) {
+                    showToast("领取成功，已放入微信活动卡包");
+                }
+
+                return true;
+            }
+
+            function buildParticles() {
+                if (prefersReducedMotion) {
+                    return;
+                }
+
+                var sparkLayer = document.getElementById("spark-layer");
+                var rainLayer = document.getElementById("rain-layer");
+
+                for (var i = 0; i < 18; i += 1) {
+                    var spark = document.createElement("span");
+                    spark.className = "spark";
+                    spark.style.left = (Math.random() * 100).toFixed(2) + "%";
+                    spark.style.top = (40 + Math.random() * 54).toFixed(2) + "%";
+                    spark.style.animationDelay = (Math.random() * 4).toFixed(2) + "s";
+                    spark.style.animationDuration = (4.4 + Math.random() * 2.2).toFixed(2) + "s";
+                    sparkLayer.appendChild(spark);
+                }
+
+                for (var j = 0; j < 24; j += 1) {
+                    var rain = document.createElement("span");
+                    var height = 18 + Math.random() * 28;
+                    rain.className = "gold-rain";
+                    rain.style.left = (Math.random() * 100).toFixed(2) + "%";
+                    rain.style.height = height.toFixed(2) + "px";
+                    rain.style.animationDelay = (Math.random() * 4).toFixed(2) + "s";
+                    rain.style.animationDuration = (2.8 + Math.random() * 2.4).toFixed(2) + "s";
+                    rainLayer.appendChild(rain);
+                }
+            }
+
+            function openEnvelope(autoTriggered) {
+                if (envelopeEl.classList.contains("is-opened")) {
+                    return;
+                }
+
+                envelopeEl.classList.add("is-opened");
+                envelopeEl.setAttribute("aria-expanded", "true");
+
+                window.setTimeout(function () {
+                    showToast(autoTriggered ? "红包拆开啦，福利券已经亮相" : "手气不错，福利券正在为你派发");
+                }, prefersReducedMotion ? 0 : 620);
+            }
+
+            function setupObservers() {
+                var animatedItems = document.querySelectorAll(".coupon, .deal-card");
+
+                if (!("IntersectionObserver" in window) || prefersReducedMotion) {
+                    Array.prototype.forEach.call(animatedItems, function (item) {
+                        item.classList.add("loaded");
+                    });
+                    return;
+                }
+
+                var observer = new IntersectionObserver(function (entries, obs) {
+                    entries.forEach(function (entry, index) {
+                        if (!entry.isIntersecting) {
+                            return;
+                        }
+
+                        window.setTimeout(function () {
+                            entry.target.classList.add("loaded");
+                        }, index * 120);
+                        obs.unobserve(entry.target);
+                    });
+                }, {
+                    threshold: 0.15
+                });
+
+                Array.prototype.forEach.call(animatedItems, function (item) {
+                    observer.observe(item);
+                });
+            }
+
+            function setupGroupCounters() {
+                var counters = document.querySelectorAll("[data-group-count]");
+
+                if (prefersReducedMotion) {
+                    return;
+                }
+
+                window.setInterval(function () {
+                    Array.prototype.forEach.call(counters, function (counter) {
+                        var current = parseInt(counter.textContent, 10);
+                        var delta = Math.ceil(Math.random() * 3);
+                        counter.textContent = String(current + delta);
+                    });
+                }, 3600);
+            }
+
+            claimButtons.forEach(function (button) {
+                button.addEventListener("click", function () {
+                    claimCoupon(button, false);
+                });
+            });
+
+            claimAllBtn.addEventListener("click", function () {
+                var newlyClaimed = 0;
+
+                claimButtons.forEach(function (button) {
+                    if (claimCoupon(button, true)) {
+                        newlyClaimed += 1;
+                    }
+                });
+
+                if (newlyClaimed > 0) {
+                    showToast("一键领取成功，" + newlyClaimed + " 张优惠券已到账");
+                } else {
+                    showToast("你已经领完全部优惠券啦");
+                }
+
+                updateClaimAllState();
+            });
+
+            envelopeEl.addEventListener("click", function () {
+                openEnvelope(false);
+            });
+
+            document.querySelectorAll(".deal-btn").forEach(function (button) {
+                button.addEventListener("click", function () {
+                    showToast("参团入口已开启，可接入下单流程");
+                });
+            });
+
+            updateCountdown();
+            window.setInterval(updateCountdown, 1000);
+            buildParticles();
+            setupObservers();
+            setupGroupCounters();
+
+            if (!prefersReducedMotion) {
+                window.setTimeout(function () {
+                    openEnvelope(true);
+                }, 1200);
+            }
+        })();
+    </script>
+</body>
+</html>

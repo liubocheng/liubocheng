@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vditor Demo</title>
+  <meta name="description" content="Vditor GitHub Pages 演示站点">
+  <link rel="icon" type="image/png" href="https://cdn.jsdelivr.net/npm/vditor/dist/images/logo.png">
+  <link rel="shortcut icon" href="https://cdn.jsdelivr.net/npm/vditor/dist/images/logo.png">
+  <link rel="apple-touch-icon" href="https://cdn.jsdelivr.net/npm/vditor/dist/images/logo.png">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor/dist/index.css">
+  <style>
+    :root {
+      --bg: #f4f1ea;
+      --panel: rgba(255, 255, 255, 0.82);
+      --text: #1f2937;
+      --muted: #5b6472;
+      --line: rgba(31, 41, 55, 0.12);
+      --accent: #0f766e;
+      --accent-2: #ea580c;
+      --shadow: 0 24px 80px rgba(15, 23, 42, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(15, 118, 110, 0.18), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(234, 88, 12, 0.16), transparent 30%),
+        linear-gradient(160deg, #f8f5ee 0%, #eef6f6 100%);
+      font-family: "Avenir Next", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      min-height: 100vh;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .shell {
+      width: 100%;
+      margin: 0 auto;
+      height: 100vh;
+      padding: 0 16px;
+    }
+
+    .editor-card {
+      backdrop-filter: blur(18px);
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .editor-card {
+      overflow: hidden;
+      padding: 0;
+      width: 100%;
+      border-radius: 20px;
+      height: 100vh;
+    }
+
+    #vditor {
+      height: 100vh;
+    }
+
+    @media (max-width: 920px) {
+      .shell {
+        height: 100vh;
+        padding: 0 10px;
+      }
+
+      #vditor {
+        height: 100vh;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="editor-card">
+      <div id="vditor"></div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/vditor/dist/index.min.js"></script>
+  <script>
+    const initialValue = `# Vditor Demo
+
+欢迎来到部署在 **GitHub Pages** 上的 Vditor 演示页。
+
+## 功能速览
+
+- 所见即所得
+- 即时渲染
+- 分屏预览
+- 数学公式、流程图、代码高亮
+
+## 示例代码
+
+\`\`\`js
+function hello(name) {
+  return \`Hello, \${name}\`
+}
+\`\`\`
+
+## 数学公式
+
+$$
+E = mc^2
+$$
+
+> 你现在编辑的内容会保存到本地浏览器缓存中。`
+
+    const cacheKey = "liubocheng-vditor-demo"
+    const value = localStorage.getItem(cacheKey) || initialValue
+
+    const vditor = new Vditor("vditor", {
+      cdn: "https://cdn.jsdelivr.net/npm/vditor",
+      height: "100vh",
+      lang: "zh_CN",
+      mode: "sv",
+      theme: "classic",
+      counter: { enable: true },
+      cache: { enable: false },
+      toolbarConfig: { pin: true },
+      preview: {
+        hljs: { style: "github" },
+        math: { inlineDigit: true }
+      },
+      value,
+      after() {
+        window.vditor = vditor
+      },
+      input(markdown) {
+        localStorage.setItem(cacheKey, markdown)
+      }
+    })
+  </script>
+</body>
+</html>

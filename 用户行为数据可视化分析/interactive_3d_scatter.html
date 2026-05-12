@@ -1,0 +1,356 @@
+
+<h2 class="sr-only">Interactive 3D scatter plot with rotation, zoom, and filter controls</h2>
+
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:1.5rem;">
+  <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:1rem;text-align:center;">
+    <div style="font-size:13px;color:var(--color-text-secondary);margin-bottom:4px;">数据点</div>
+    <div id="stat-count" style="font-size:24px;font-weight:500;">100</div>
+  </div>
+  <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:1rem;text-align:center;">
+    <div style="font-size:13px;color:var(--color-text-secondary);margin-bottom:4px;">X 范围</div>
+    <div id="stat-x" style="font-size:24px;font-weight:500;">±3</div>
+  </div>
+  <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:1rem;text-align:center;">
+    <div style="font-size:13px;color:var(--color-text-secondary);margin-bottom:4px;">旋转角度</div>
+    <div id="stat-angle" style="font-size:24px;font-weight:500;">30°</div>
+  </div>
+  <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:1rem;text-align:center;">
+    <div style="font-size:13px;color:var(--color-text-secondary);margin-bottom:4px;">选中点</div>
+    <div id="stat-selected" style="font-size:24px;font-weight:500;">—</div>
+  </div>
+</div>
+
+<div style="display:flex;flex-wrap:wrap;gap:16px;margin-bottom:1rem;align-items:center;">
+  <div style="display:flex;align-items:center;gap:8px;">
+    <label style="font-size:13px;color:var(--color-text-secondary);">数据点数量</label>
+    <input type="range" id="ctrl-n" min="20" max="300" value="100" step="10" style="width:100px;">
+    <span id="ctrl-n-out" style="font-size:13px;font-weight:500;min-width:28px;">100</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <label style="font-size:13px;color:var(--color-text-secondary);">点大小</label>
+    <input type="range" id="ctrl-size" min="3" max="18" value="7" step="1" style="width:80px;">
+    <span id="ctrl-size-out" style="font-size:13px;font-weight:500;min-width:20px;">7</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <label style="font-size:13px;color:var(--color-text-secondary);">透明度</label>
+    <input type="range" id="ctrl-alpha" min="30" max="100" value="80" step="5" style="width:80px;">
+    <span id="ctrl-alpha-out" style="font-size:13px;font-weight:500;min-width:28px;">80%</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <label style="font-size:13px;color:var(--color-text-secondary);">色板</label>
+    <select id="ctrl-palette" style="font-size:13px;padding:4px 8px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);">
+      <option value="viridis">Viridis</option>
+      <option value="plasma">Plasma</option>
+      <option value="cool">Cool</option>
+      <option value="warm">Warm</option>
+    </select>
+  </div>
+  <button id="btn-regen" style="font-size:13px;padding:6px 14px;">重新生成数据</button>
+  <button id="btn-autorot" style="font-size:13px;padding:6px 14px;">自动旋转 ▶</button>
+</div>
+
+<div style="display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap;">
+  <span style="font-size:12px;color:var(--color-text-secondary);align-self:center;">过滤 Z 值:</span>
+  <input type="range" id="ctrl-zmin" min="-3" max="3" value="-3" step="0.1" style="width:100px;">
+  <span id="ctrl-zmin-out" style="font-size:12px;min-width:32px;">-3.0</span>
+  <span style="font-size:12px;color:var(--color-text-secondary);">—</span>
+  <input type="range" id="ctrl-zmax" min="-3" max="3" value="3" step="0.1" style="width:100px;">
+  <span id="ctrl-zmax-out" style="font-size:12px;min-width:32px;">3.0</span>
+</div>
+
+<div style="position:relative;width:100%;background:var(--color-background-secondary);border-radius:var(--border-radius-lg);overflow:hidden;cursor:grab;" id="canvas-wrap">
+  <canvas id="c3d" style="width:100%;display:block;"></canvas>
+  <div id="tooltip" style="position:absolute;display:none;background:var(--color-background-primary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:8px 12px;font-size:12px;pointer-events:none;box-shadow:none;z-index:10;"></div>
+  <div style="position:absolute;bottom:8px;left:12px;font-size:11px;color:var(--color-text-tertiary);">拖动旋转 · 滚轮缩放 · 点击查看详情</div>
+</div>
+
+<div style="display:flex;justify-content:center;gap:6px;margin-top:12px;flex-wrap:wrap;" id="legend"></div>
+
+<script>
+const canvas = document.getElementById('c3d');
+const wrap = document.getElementById('canvas-wrap');
+const ctx = canvas.getContext('2d');
+const tooltip = document.getElementById('tooltip');
+
+const palettes = {
+  viridis: (t) => {
+    const r = Math.round(68 + t*(59-68) + t*t*(50-2*(59-68)+(253-68)));
+    const stops = [[68,1,84],[59,82,139],[33,145,140],[94,201,98],[253,231,37]];
+    const i = Math.min(3, Math.floor(t*4));
+    const f = t*4 - i;
+    const a = stops[i], b = stops[i+1] || stops[4];
+    return `rgb(${Math.round(a[0]+(b[0]-a[0])*f)},${Math.round(a[1]+(b[1]-a[1])*f)},${Math.round(a[2]+(b[2]-a[2])*f)})`;
+  },
+  plasma: (t) => {
+    const stops = [[13,8,135],[126,3,168],[204,71,120],[248,149,64],[240,249,33]];
+    const i = Math.min(3, Math.floor(t*4));
+    const f = t*4 - i;
+    const a = stops[i], b = stops[i+1] || stops[4];
+    return `rgb(${Math.round(a[0]+(b[0]-a[0])*f)},${Math.round(a[1]+(b[1]-a[1])*f)},${Math.round(a[2]+(b[2]-a[2])*f)})`;
+  },
+  cool: (t) => `hsl(${Math.round(180+t*60)},80%,${Math.round(40+t*20)}%)`,
+  warm: (t) => `hsl(${Math.round(60-t*60)},90%,${Math.round(45+t*15)}%)`
+};
+
+let state = {
+  theta: 0.5, phi: 0.4, zoom: 1,
+  dragging: false, lastX: 0, lastY: 0,
+  autoRot: false, autoTimer: null,
+  n: 100, pointSize: 7, alpha: 80,
+  palette: 'viridis', zmin: -3, zmax: 3,
+  points: [], selected: null
+};
+
+function randn() {
+  let u=0,v=0;
+  while(!u) u=Math.random();
+  while(!v) v=Math.random();
+  return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);
+}
+
+function genPoints(n) {
+  return Array.from({length:n}, (_,i) => ({
+    x: randn()*1.2, y: randn()*1.2, z: randn()*1.2,
+    c: Math.random(), id: i
+  }));
+}
+
+function project(x, y, z, w, h) {
+  const cos0 = Math.cos(state.theta), sin0 = Math.sin(state.theta);
+  const cosp = Math.cos(state.phi), sinp = Math.sin(state.phi);
+  const x1 = x*cos0 - y*sin0;
+  const y1 = x*sin0 + y*cos0;
+  const z1 = z*cosp - y1*sinp;
+  const y2 = z*sinp + y1*cosp;
+  const scale = state.zoom * Math.min(w,h) * 0.22;
+  const fov = 4 / (4 + y2);
+  return { px: w/2 + x1*scale*fov, py: h/2 - z1*scale*fov, depth: y2, fov };
+}
+
+function drawAxes(w, h) {
+  const axes = [
+    {v:[1,0,0], label:'X Axis', color:'#e24b4a'},
+    {v:[0,1,0], label:'Y Axis', color:'#1D9E75'},
+    {v:[0,0,1], label:'Z Axis', color:'#378ADD'}
+  ];
+  const len = 2.5;
+  axes.forEach(a => {
+    const o = project(0,0,0,w,h);
+    const e = project(a.v[0]*len, a.v[1]*len, a.v[2]*len, w, h);
+    ctx.beginPath();
+    ctx.moveTo(o.px, o.py);
+    ctx.lineTo(e.px, e.py);
+    ctx.strokeStyle = a.color;
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([]);
+    ctx.stroke();
+    ctx.fillStyle = a.color;
+    ctx.font = '12px sans-serif';
+    ctx.fillText(a.label, e.px+4, e.py+4);
+    for(let t=-2; t<=2; t++) {
+      if(t===0) continue;
+      const p = project(a.v[0]*t, a.v[1]*t, a.v[2]*t, w, h);
+      ctx.beginPath();
+      ctx.arc(p.px, p.py, 2, 0, Math.PI*2);
+      ctx.fillStyle = a.color+'88';
+      ctx.fill();
+    }
+  });
+}
+
+function drawGrid(w, h) {
+  ctx.strokeStyle = 'rgba(128,128,128,0.2)';
+  ctx.lineWidth = 0.5;
+  ctx.setLineDash([3,3]);
+  for(let i=-3; i<=3; i++) {
+    let a = project(i,-3,0,w,h), b = project(i,3,0,w,h);
+    ctx.beginPath(); ctx.moveTo(a.px,a.py); ctx.lineTo(b.px,b.py); ctx.stroke();
+    a = project(-3,i,0,w,h); b = project(3,i,0,w,h);
+    ctx.beginPath(); ctx.moveTo(a.px,a.py); ctx.lineTo(b.px,b.py); ctx.stroke();
+  }
+  ctx.setLineDash([]);
+}
+
+function draw() {
+  const dpr = window.devicePixelRatio || 1;
+  const w = wrap.clientWidth;
+  const h = Math.round(w * 0.55);
+  if(canvas.width !== w*dpr || canvas.height !== h*dpr) {
+    canvas.width = w*dpr; canvas.height = h*dpr;
+    canvas.style.height = h+'px';
+    ctx.scale(dpr, dpr);
+  }
+  ctx.clearRect(0, 0, w, h);
+  drawGrid(w, h);
+  drawAxes(w, h);
+
+  const colorFn = palettes[state.palette];
+  const filtered = state.points.filter(p => p.z >= state.zmin && p.z <= state.zmax);
+  const projected = filtered.map(p => {
+    const pr = project(p.x, p.y, p.z, w, h);
+    return {...p, ...pr};
+  }).sort((a,b) => b.depth - a.depth);
+
+  projected.forEach(p => {
+    const col = colorFn(p.c);
+    const isSelected = state.selected === p.id;
+    const alpha = state.alpha / 100;
+    ctx.beginPath();
+    ctx.arc(p.px, p.py, state.pointSize * p.fov * (isSelected?1.6:1), 0, Math.PI*2);
+    ctx.fillStyle = col.replace('rgb','rgba').replace(')',`,${alpha})`).replace('hsl','hsla');
+    if(col.startsWith('hsl')) ctx.fillStyle = col.replace('hsl(','hsla(').replace(')',`,${alpha})`);
+    else ctx.fillStyle = col.replace('rgb(','rgba(').replace(')',`,${alpha})`);
+    ctx.fill();
+    if(isSelected) {
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+  });
+
+  document.getElementById('stat-count').textContent = filtered.length;
+  document.getElementById('stat-angle').textContent = Math.round(state.theta * 180 / Math.PI % 360) + '°';
+}
+
+function initPoints() {
+  state.points = genPoints(state.n);
+  state.selected = null;
+  document.getElementById('stat-selected').textContent = '—';
+  draw();
+}
+
+canvas.addEventListener('mousedown', e => {
+  state.dragging = true;
+  state.lastX = e.offsetX;
+  state.lastY = e.offsetY;
+  wrap.style.cursor = 'grabbing';
+});
+window.addEventListener('mouseup', () => { state.dragging = false; wrap.style.cursor = 'grab'; });
+canvas.addEventListener('mousemove', e => {
+  if(state.dragging) {
+    state.theta += (e.offsetX - state.lastX) * 0.01;
+    state.phi += (e.offsetY - state.lastY) * 0.01;
+    state.phi = Math.max(-1.4, Math.min(1.4, state.phi));
+    state.lastX = e.offsetX; state.lastY = e.offsetY;
+    draw();
+  } else {
+    const dpr = window.devicePixelRatio||1;
+    const w = wrap.clientWidth, h = Math.round(w*0.55);
+    const colorFn = palettes[state.palette];
+    let best = null, bestDist = 12;
+    state.points.filter(p=>p.z>=state.zmin&&p.z<=state.zmax).forEach(p => {
+      const pr = project(p.x,p.y,p.z,w,h);
+      const d = Math.hypot(pr.px - e.offsetX, pr.py - e.offsetY);
+      if(d < bestDist) { bestDist=d; best={...p,...pr}; }
+    });
+    if(best) {
+      tooltip.style.display = 'block';
+      tooltip.style.left = (best.px+12)+'px';
+      tooltip.style.top = (best.py-30)+'px';
+      tooltip.innerHTML = `<b>点 #${best.id}</b><br>X: ${best.x.toFixed(2)}&nbsp; Y: ${best.y.toFixed(2)}&nbsp; Z: ${best.z.toFixed(2)}<br>颜色值: ${best.c.toFixed(2)}`;
+    } else {
+      tooltip.style.display = 'none';
+    }
+  }
+});
+canvas.addEventListener('click', e => {
+  const w = wrap.clientWidth, h = Math.round(w*0.55);
+  let best = null, bestDist = 14;
+  state.points.filter(p=>p.z>=state.zmin&&p.z<=state.zmax).forEach(p => {
+    const pr = project(p.x,p.y,p.z,w,h);
+    const d = Math.hypot(pr.px - e.offsetX, pr.py - e.offsetY);
+    if(d < bestDist) { bestDist=d; best={...p,...pr}; }
+  });
+  if(best) {
+    state.selected = state.selected===best.id ? null : best.id;
+    document.getElementById('stat-selected').textContent = state.selected !== null ? `#${state.selected}` : '—';
+    draw();
+  }
+});
+canvas.addEventListener('wheel', e => {
+  e.preventDefault();
+  state.zoom *= e.deltaY > 0 ? 0.92 : 1.08;
+  state.zoom = Math.max(0.3, Math.min(4, state.zoom));
+  draw();
+}, {passive:false});
+
+canvas.addEventListener('touchstart', e => {
+  if(e.touches.length===1) { state.dragging=true; state.lastX=e.touches[0].clientX; state.lastY=e.touches[0].clientY; }
+}, {passive:true});
+canvas.addEventListener('touchmove', e => {
+  if(state.dragging && e.touches.length===1) {
+    state.theta += (e.touches[0].clientX - state.lastX)*0.01;
+    state.phi += (e.touches[0].clientY - state.lastY)*0.01;
+    state.phi = Math.max(-1.4,Math.min(1.4,state.phi));
+    state.lastX=e.touches[0].clientX; state.lastY=e.touches[0].clientY;
+    draw();
+  }
+}, {passive:true});
+canvas.addEventListener('touchend', () => { state.dragging=false; });
+
+document.getElementById('ctrl-n').addEventListener('input', e => {
+  state.n = +e.target.value;
+  document.getElementById('ctrl-n-out').textContent = state.n;
+  initPoints();
+});
+document.getElementById('ctrl-size').addEventListener('input', e => {
+  state.pointSize = +e.target.value;
+  document.getElementById('ctrl-size-out').textContent = state.pointSize;
+  draw();
+});
+document.getElementById('ctrl-alpha').addEventListener('input', e => {
+  state.alpha = +e.target.value;
+  document.getElementById('ctrl-alpha-out').textContent = state.alpha+'%';
+  draw();
+});
+document.getElementById('ctrl-palette').addEventListener('change', e => {
+  state.palette = e.target.value;
+  draw();
+});
+document.getElementById('ctrl-zmin').addEventListener('input', e => {
+  state.zmin = +e.target.value;
+  document.getElementById('ctrl-zmin-out').textContent = (+e.target.value).toFixed(1);
+  draw();
+});
+document.getElementById('ctrl-zmax').addEventListener('input', e => {
+  state.zmax = +e.target.value;
+  document.getElementById('ctrl-zmax-out').textContent = (+e.target.value).toFixed(1);
+  draw();
+});
+document.getElementById('btn-regen').addEventListener('click', () => initPoints());
+document.getElementById('btn-autorot').addEventListener('click', function() {
+  state.autoRot = !state.autoRot;
+  this.textContent = state.autoRot ? '停止旋转 ■' : '自动旋转 ▶';
+  if(state.autoRot) {
+    const tick = () => {
+      if(!state.autoRot) return;
+      state.theta += 0.012;
+      draw();
+      requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }
+});
+
+const legendEl = document.getElementById('legend');
+['0.0','0.25','0.5','0.75','1.0'].forEach((v,i) => {
+  const t = i/4;
+  const span = document.createElement('span');
+  span.style.cssText = 'display:flex;align-items:center;gap:4px;font-size:11px;color:var(--color-text-secondary)';
+  const dot = document.createElement('span');
+  dot.style.cssText = `width:10px;height:10px;border-radius:50%;background:${palettes.viridis(t)}`;
+  span.appendChild(dot);
+  span.appendChild(document.createTextNode(v));
+  legendEl.appendChild(span);
+});
+
+document.getElementById('ctrl-palette').addEventListener('change', e => {
+  state.palette = e.target.value;
+  const items = legendEl.querySelectorAll('span>span');
+  items.forEach((dot,i) => { dot.style.background = palettes[state.palette](i/4); });
+  draw();
+});
+
+initPoints();
+window.addEventListener('resize', draw);
+</script>

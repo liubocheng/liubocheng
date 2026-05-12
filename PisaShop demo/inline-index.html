@@ -1,0 +1,2208 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Mamma Mia Pizza 现烤手工披萨官网，支持在线点单、外卖、自取与堂食。">
+  <meta name="theme-color" content="#fffaf5">
+  <title>Mamma Mia Pizza | 现烤手工披萨</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --palette-bg-base: #fffaf5;
+  --palette-bg-surface: #ffffff;
+  --palette-bg-soft: #fff2e2;
+  --palette-bg-primary-core: #ff385c;
+  --palette-bg-primary-deep: #e00b41;
+  --palette-bg-dark: #222222;
+  --palette-bg-green: #476d4b;
+  --palette-text-primary: #222222;
+  --palette-text-secondary: #6a6a6a;
+  --palette-text-soft: #8b7f75;
+  --palette-border: rgba(34, 34, 34, 0.08);
+  --shadow-card: rgba(0, 0, 0, 0.02) 0 0 0 1px, rgba(0, 0, 0, 0.04) 0 2px 6px, rgba(0, 0, 0, 0.1) 0 4px 8px;
+  --shadow-hover: rgba(0, 0, 0, 0.08) 0 8px 24px;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 32px;
+  --radius-pill: 999px;
+  --container-width: min(1200px, calc(100vw - 32px));
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: linear-gradient(180deg, #fffdf9 0%, var(--palette-bg-base) 100%);
+  color: var(--palette-text-primary);
+  font-family: "Manrope", "PingFang SC", "Hiragino Sans GB", sans-serif;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.page-glow {
+  position: fixed;
+  inset: auto;
+  width: 360px;
+  height: 360px;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.35;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.glow-left {
+  top: 120px;
+  left: -120px;
+  background: rgba(255, 111, 76, 0.22);
+}
+
+.glow-right {
+  top: 420px;
+  right: -140px;
+  background: rgba(255, 232, 190, 0.55);
+}
+
+.container {
+  width: var(--container-width);
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.section {
+  padding: 84px 0;
+}
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  padding: 14px 0;
+  backdrop-filter: blur(16px);
+  background: rgba(255, 250, 245, 0.78);
+  transition: padding 180ms ease, background 180ms ease, box-shadow 180ms ease;
+}
+
+.site-header.is-condensed {
+  padding: 10px 0;
+  box-shadow: rgba(34, 34, 34, 0.04) 0 6px 18px;
+}
+
+.header-shell {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 18px;
+  padding: 14px 18px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.brand-mark {
+  display: inline-grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--palette-bg-primary-core), #ff7f50);
+  color: #fff;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  box-shadow: var(--shadow-card);
+}
+
+.brand-copy {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.brand-copy strong,
+.section-heading h2,
+.hero-copy h1,
+.final-cta h2,
+.store-card h2 {
+  font-family: "ZCOOL XiaoWei", "Songti SC", serif;
+}
+
+.brand-copy strong {
+  font-size: 1.05rem;
+  letter-spacing: -0.2px;
+}
+
+.brand-copy small {
+  color: var(--palette-text-secondary);
+  font-size: 0.82rem;
+}
+
+.site-nav {
+  display: inline-flex;
+  justify-content: center;
+  gap: 22px;
+  justify-self: center;
+}
+
+.site-nav a {
+  color: var(--palette-text-secondary);
+  font-size: 0.96rem;
+  font-weight: 600;
+  transition: color 180ms ease;
+}
+
+.site-nav a:hover,
+.site-nav a:focus-visible {
+  color: var(--palette-text-primary);
+}
+
+.header-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.mini-link {
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: var(--radius-pill);
+  background: #f7f7f7;
+  color: var(--palette-text-secondary);
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.status-pill i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #31b86b;
+  box-shadow: 0 0 0 6px rgba(49, 184, 107, 0.14);
+}
+
+.nav-toggle {
+  display: none;
+  width: 48px;
+  height: 48px;
+  padding: 12px;
+  border-radius: 50%;
+  background: #f2f2f2;
+  box-shadow: var(--shadow-card);
+}
+
+.nav-toggle span {
+  display: block;
+  width: 100%;
+  height: 2px;
+  margin: 4px 0;
+  border-radius: 999px;
+  background: var(--palette-bg-dark);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 20px;
+  border-radius: var(--radius-sm);
+  font-size: 0.95rem;
+  font-weight: 700;
+  transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease, color 180ms ease;
+}
+
+.btn:hover,
+.btn:focus-visible {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-hover);
+}
+
+.btn-primary {
+  background: var(--palette-bg-primary-core);
+  color: #fff;
+}
+
+.btn-primary:hover,
+.btn-primary:focus-visible {
+  background: var(--palette-bg-primary-deep);
+}
+
+.btn-secondary {
+  background: #fff4f5;
+  color: var(--palette-bg-primary-core);
+}
+
+.btn-dark {
+  background: var(--palette-bg-dark);
+  color: #fff;
+}
+
+.btn-ghost {
+  background: #ffffff;
+  color: var(--palette-text-primary);
+  box-shadow: inset 0 0 0 1px rgba(34, 34, 34, 0.12);
+}
+
+.btn-large {
+  min-height: 56px;
+  padding: 0 28px;
+  border-radius: 14px;
+}
+
+.hero {
+  padding-top: 36px;
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 28px;
+  align-items: center;
+}
+
+.hero-copy h1 {
+  margin: 12px 0 18px;
+  font-size: clamp(2.8rem, 5vw, 4.8rem);
+  line-height: 1.04;
+  letter-spacing: -0.6px;
+}
+
+.hero-lead,
+.section-heading p,
+.story-copy p,
+.map-copy p,
+.final-cta p {
+  color: var(--palette-text-secondary);
+  font-size: 1.02rem;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 56, 92, 0.08);
+  color: var(--palette-bg-primary-core);
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.hero-metrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 28px;
+}
+
+.metric-chip {
+  padding: 18px 18px 16px;
+  background: rgba(255, 255, 255, 0.88);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+
+.metric-chip strong {
+  display: block;
+  font-size: 1.05rem;
+  letter-spacing: -0.2px;
+}
+
+.metric-chip span {
+  color: var(--palette-text-secondary);
+  font-size: 0.88rem;
+}
+
+.hero-media {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 220px;
+  gap: 16px;
+}
+
+.hero-card,
+.hero-fact-card,
+.food-card,
+.promo-card,
+.reason-card,
+.testimonial-card,
+.store-card,
+.map-card,
+.faq-item,
+.final-cta,
+.proof-item {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+
+.hero-card {
+  overflow: hidden;
+  position: relative;
+}
+
+.hero-card-main {
+  min-height: 580px;
+  border-radius: 32px;
+}
+
+.hero-card-side {
+  min-height: 280px;
+}
+
+.hero-side-stack {
+  display: grid;
+  gap: 16px;
+}
+
+.image-badge,
+.overlay-note,
+.promo-label,
+.food-tag {
+  position: absolute;
+  left: 16px;
+  z-index: 1;
+}
+
+.image-badge {
+  top: 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.92);
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+
+.badge-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--palette-bg-primary-core);
+}
+
+.overlay-note {
+  right: 16px;
+  left: 16px;
+  bottom: 16px;
+  padding: 18px;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(180deg, rgba(34, 34, 34, 0.2), rgba(34, 34, 34, 0.68));
+  color: #fff;
+}
+
+.overlay-note strong {
+  display: block;
+  margin-bottom: 6px;
+}
+
+.overlay-note p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 0.88rem;
+}
+
+.hero-fact-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 24px;
+}
+
+.fact-kicker {
+  color: var(--palette-bg-primary-core);
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.hero-fact-card h3,
+.section-heading h2,
+.promo-card h3,
+.reason-card h3,
+.store-card h2,
+.map-copy h3,
+.final-cta h2 {
+  margin: 10px 0 0;
+  font-size: clamp(1.8rem, 2vw, 2.5rem);
+  line-height: 1.12;
+  letter-spacing: -0.44px;
+}
+
+.hero-fact-card ul {
+  padding-left: 18px;
+  margin: 20px 0 0;
+  color: var(--palette-text-secondary);
+}
+
+.proof-strip {
+  padding-top: 16px;
+}
+
+.proof-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.proof-item {
+  padding: 20px;
+}
+
+.proof-item span {
+  display: block;
+  color: var(--palette-text-soft);
+  font-size: 0.84rem;
+  margin-bottom: 6px;
+}
+
+.proof-item strong {
+  font-size: 1rem;
+}
+
+.section-heading {
+  max-width: 700px;
+  margin-bottom: 32px;
+}
+
+.section-heading h2 {
+  margin: 16px 0 12px;
+}
+
+.signature-grid,
+.reason-grid,
+.testimonial-grid,
+.promo-grid {
+  display: grid;
+  gap: 18px;
+}
+
+.signature-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.food-card {
+  overflow: hidden;
+}
+
+.food-image-wrap {
+  position: relative;
+  height: 250px;
+}
+
+.food-tag {
+  top: 16px;
+  padding: 8px 12px;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--palette-text-primary);
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.tag-warm {
+  background: rgba(255, 239, 231, 0.94);
+  color: #c74d1f;
+}
+
+.tag-green {
+  background: rgba(235, 245, 236, 0.96);
+  color: var(--palette-bg-green);
+}
+
+.tag-soft {
+  background: rgba(255, 246, 218, 0.94);
+  color: #8f6504;
+}
+
+.food-body {
+  padding: 20px;
+}
+
+.food-title-row,
+.menu-card-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: start;
+}
+
+.food-title-row h3,
+.menu-card h3 {
+  margin: 0;
+  font-size: 1.15rem;
+  letter-spacing: -0.2px;
+}
+
+.food-title-row strong,
+.menu-card strong {
+  color: var(--palette-bg-primary-core);
+  font-size: 1.08rem;
+}
+
+.food-body p,
+.menu-card p,
+.reason-card p,
+.testimonial-card p,
+.promo-card p,
+.store-card p,
+.faq-item p {
+  color: var(--palette-text-secondary);
+}
+
+.food-meta,
+.promo-meta,
+.service-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.food-meta span,
+.promo-meta span,
+.service-tags span,
+.ratings-bar span {
+  padding: 8px 12px;
+  border-radius: var(--radius-pill);
+  background: #f7f7f7;
+  color: var(--palette-text-secondary);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.food-actions,
+.store-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.menu-section {
+  overflow: hidden;
+}
+
+.menu-tabs {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: max-content;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 6px 0 12px;
+  scrollbar-width: none;
+}
+
+.menu-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.tab-pill {
+  padding: 14px 18px;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: var(--shadow-card);
+  color: var(--palette-text-secondary);
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.tab-pill.is-active {
+  background: var(--palette-bg-dark);
+  color: #fff;
+}
+
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: 22px;
+}
+
+.menu-card {
+  padding: 20px;
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: var(--shadow-card);
+}
+
+.menu-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 16px 0;
+}
+
+.menu-card-meta span,
+.menu-card-extra {
+  color: var(--palette-text-secondary);
+  font-size: 0.84rem;
+}
+
+.menu-card-meta span {
+  padding: 8px 12px;
+  border-radius: var(--radius-pill);
+  background: #f7f7f7;
+  font-weight: 700;
+}
+
+.menu-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.promo-grid {
+  grid-template-columns: 1.15fr 1fr 1fr;
+}
+
+.promo-card {
+  position: relative;
+  padding: 28px;
+  overflow: hidden;
+}
+
+.promo-feature {
+  grid-row: span 2;
+  background: linear-gradient(160deg, rgba(255, 56, 92, 0.08), rgba(255, 194, 87, 0.16) 55%, rgba(255, 255, 255, 0.95));
+}
+
+.promo-label {
+  position: static;
+  display: inline-flex;
+  margin-bottom: 18px;
+  padding: 8px 12px;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 56, 92, 0.1);
+  color: var(--palette-bg-primary-core);
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.promo-muted {
+  background: #f6f6f6;
+  color: var(--palette-text-secondary);
+}
+
+.promo-card h3 {
+  font-size: 1.75rem;
+}
+
+.story-grid,
+.store-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: center;
+}
+
+.story-list {
+  margin: 26px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 12px;
+}
+
+.story-list li {
+  position: relative;
+  padding-left: 22px;
+  font-weight: 700;
+}
+
+.story-list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 11px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--palette-bg-primary-core);
+}
+
+.story-media {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 16px;
+}
+
+.story-photo {
+  overflow: hidden;
+  min-height: 220px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+
+.story-photo.tall {
+  grid-row: span 2;
+  min-height: 460px;
+}
+
+.reason-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.reason-card {
+  padding: 24px;
+}
+
+.reason-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(255, 56, 92, 0.1);
+  color: var(--palette-bg-primary-core);
+  font-weight: 900;
+}
+
+.testimonials-section {
+  background: linear-gradient(180deg, rgba(255, 250, 245, 0) 0%, rgba(255, 245, 238, 0.75) 100%);
+}
+
+.ratings-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.testimonial-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.testimonial-card {
+  padding: 24px;
+}
+
+.testimonial-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.avatar {
+  display: inline-grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(255, 56, 92, 0.12), rgba(255, 196, 87, 0.28));
+  color: var(--palette-text-primary);
+  font-weight: 900;
+}
+
+.testimonial-head span {
+  display: block;
+  color: var(--palette-text-soft);
+  font-size: 0.84rem;
+}
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr 0.8fr;
+  gap: 16px;
+}
+
+.gallery-card {
+  min-height: 240px;
+  overflow: hidden;
+  border-radius: 24px;
+  box-shadow: var(--shadow-card);
+}
+
+.gallery-large {
+  grid-row: span 2;
+  min-height: 496px;
+}
+
+.store-card,
+.map-card {
+  padding: 28px;
+}
+
+.store-info-list {
+  display: grid;
+  gap: 16px;
+  margin: 24px 0;
+}
+
+.store-info-list span {
+  display: block;
+  color: var(--palette-text-soft);
+  font-size: 0.82rem;
+  margin-bottom: 4px;
+}
+
+.store-info-list strong {
+  font-size: 1rem;
+}
+
+.map-surface {
+  position: relative;
+  min-height: 280px;
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at 18% 30%, rgba(255, 56, 92, 0.18), transparent 16%),
+    radial-gradient(circle at 74% 24%, rgba(71, 109, 75, 0.18), transparent 18%),
+    linear-gradient(180deg, #fff5e8 0%, #f6eee6 100%);
+  overflow: hidden;
+}
+
+.map-surface::before,
+.map-surface::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.4) 1px, transparent 1px),
+    linear-gradient(rgba(255, 255, 255, 0.4) 1px, transparent 1px);
+  background-size: 44px 44px;
+  opacity: 0.6;
+}
+
+.map-pin {
+  position: absolute;
+  padding: 10px 14px;
+  border-radius: var(--radius-pill);
+  font-size: 0.82rem;
+  font-weight: 800;
+  box-shadow: var(--shadow-card);
+}
+
+.pin-main {
+  top: 45%;
+  left: 42%;
+  background: var(--palette-bg-primary-core);
+  color: #fff;
+}
+
+.pin-small {
+  background: rgba(255, 255, 255, 0.94);
+  color: var(--palette-text-primary);
+}
+
+.pin-small {
+  top: 20%;
+  left: 20%;
+}
+
+.pin-small.second {
+  top: 68%;
+  left: 64%;
+}
+
+.map-route {
+  position: absolute;
+  inset: 0;
+}
+
+.map-route::before {
+  content: "";
+  position: absolute;
+  top: 31%;
+  left: 28%;
+  width: 44%;
+  height: 32%;
+  border: 3px dashed rgba(255, 56, 92, 0.42);
+  border-radius: 32px;
+}
+
+.map-copy {
+  margin-top: 20px;
+}
+
+.faq-list {
+  display: grid;
+  gap: 14px;
+}
+
+.faq-item {
+  padding: 0 22px;
+}
+
+.faq-item summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 22px 0;
+  font-size: 1rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.faq-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq-item summary::after {
+  content: "+";
+  flex: none;
+  font-size: 1.4rem;
+  color: var(--palette-bg-primary-core);
+}
+
+.faq-item[open] summary::after {
+  content: "−";
+}
+
+.faq-item p {
+  margin: 0 0 22px;
+}
+
+.final-cta {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: center;
+  padding: 34px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(255, 245, 232, 0.96));
+  border-radius: 32px;
+}
+
+.site-footer {
+  padding: 0 0 120px;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1.4fr repeat(5, minmax(0, 1fr));
+  gap: 18px;
+  padding: 28px;
+  background: rgba(255, 255, 255, 0.94);
+  border-radius: 32px 32px 0 0;
+  box-shadow: var(--shadow-card);
+}
+
+.site-footer h3 {
+  margin: 0 0 10px;
+  font-size: 0.95rem;
+}
+
+.site-footer p {
+  margin: 0;
+  color: var(--palette-text-secondary);
+  font-size: 0.9rem;
+}
+
+.footer-brand .brand-copy small {
+  max-width: 230px;
+}
+
+.mobile-action-bar {
+  position: fixed;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(calc(100vw - 24px), 420px);
+  display: none;
+  gap: 10px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.94);
+  border-radius: 20px;
+  box-shadow: var(--shadow-card);
+  z-index: 30;
+}
+
+.mobile-action-bar .btn {
+  flex: 1 1 0;
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 520ms ease, transform 520ms ease;
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (max-width: 1180px) {
+  .header-shell {
+    grid-template-columns: auto auto 1fr;
+  }
+
+  .site-nav {
+    order: 4;
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding-bottom: 2px;
+  }
+
+  .header-actions {
+    justify-self: end;
+  }
+
+  .hero-grid,
+  .story-grid,
+  .store-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .signature-grid,
+  .menu-grid,
+  .testimonial-grid,
+  .reason-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .proof-grid,
+  .promo-grid,
+  .gallery-grid,
+  .footer-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .gallery-large {
+    grid-row: span 1;
+    min-height: 280px;
+  }
+
+  .promo-feature {
+    grid-row: span 1;
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 860px) {
+  .section {
+    padding: 72px 0;
+  }
+
+  .header-shell {
+    grid-template-columns: auto auto 1fr;
+    gap: 14px;
+  }
+
+  .nav-toggle {
+    display: inline-block;
+    justify-self: end;
+  }
+
+  .site-nav {
+    display: none;
+    flex-direction: column;
+    gap: 12px;
+    padding-top: 8px;
+  }
+
+  .site-nav.is-open {
+    display: flex;
+  }
+
+  .header-actions {
+    display: none;
+  }
+
+  .hero-copy h1 {
+    font-size: clamp(2.3rem, 12vw, 3.4rem);
+  }
+
+  .hero-media {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-card-main {
+    min-height: 420px;
+  }
+
+  .hero-card-side {
+    min-height: 220px;
+  }
+
+  .proof-grid,
+  .signature-grid,
+  .menu-grid,
+  .reason-grid,
+  .testimonial-grid,
+  .promo-grid,
+  .gallery-grid,
+  .footer-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .promo-feature {
+    grid-column: auto;
+  }
+
+  .story-media {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+  }
+
+  .story-photo.tall {
+    min-height: 300px;
+  }
+
+  .final-cta {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .mobile-action-bar {
+    display: flex;
+  }
+}
+
+@media (max-width: 560px) {
+  :root {
+    --container-width: min(100vw - 20px, 1200px);
+  }
+
+  .section {
+    padding: 64px 0;
+  }
+
+  .header-shell,
+  .promo-card,
+  .store-card,
+  .map-card,
+  .final-cta,
+  .footer-grid {
+    padding: 18px;
+  }
+
+  .brand-mark {
+    width: 46px;
+    height: 46px;
+  }
+
+  .brand-copy strong {
+    font-size: 0.95rem;
+  }
+
+  .eyebrow,
+  .status-pill {
+    font-size: 0.74rem;
+  }
+
+  .hero-metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .food-actions,
+  .store-actions,
+  .menu-card-footer,
+  .cta-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .menu-card-footer {
+    gap: 14px;
+  }
+
+  .gallery-card,
+  .gallery-large {
+    min-height: 220px;
+  }
+
+  .site-footer {
+    padding-bottom: 112px;
+  }
+}
+
+</style>
+  <script>
+const menuData = {
+  classic: [
+    {
+      name: "玛格丽特披萨",
+      desc: "番茄、莫扎里拉、罗勒的经典组合，轻盈耐吃。",
+      price: "¥58",
+      size: "6 / 9 / 12 寸",
+      serve: "适合 1-2 人",
+      extra: "可加芝士边、罗勒酱"
+    },
+    {
+      name: "意式风情披萨",
+      desc: "番茄底配意式香肠和甜椒，风味明快，老少都容易接受。",
+      price: "¥66",
+      size: "9 / 12 寸",
+      serve: "适合 2-3 人",
+      extra: "可加双倍香肠"
+    },
+    {
+      name: "四重芝士披萨",
+      desc: "莫扎里拉、切达、帕玛森与蓝纹，奶香饱满又不厚重。",
+      price: "¥78",
+      size: "6 / 9 / 12 寸",
+      serve: "适合 1-2 人",
+      extra: "可加蜂蜜脆核桃"
+    }
+  ],
+  meat: [
+    {
+      name: "火山辣香肠披萨",
+      desc: "意式辣香肠、双倍芝士和番茄底，香辣感干净利落。",
+      price: "¥72",
+      size: "9 / 12 寸",
+      serve: "适合 2-3 人",
+      extra: "可加墨西哥辣椒"
+    },
+    {
+      name: "培根牛肉拼盘披萨",
+      desc: "烟熏培根与牛肉粒双重咸香，聚会很受欢迎。",
+      price: "¥82",
+      size: "9 / 12 寸",
+      serve: "适合 2-4 人",
+      extra: "可加洋葱、黑橄榄"
+    },
+    {
+      name: "烤鸡青酱披萨",
+      desc: "香草烤鸡和青酱的组合，风味更清爽、更有层次。",
+      price: "¥76",
+      size: "9 / 12 寸",
+      serve: "适合 2-3 人",
+      extra: "可升级薄脆饼底"
+    }
+  ],
+  veggie: [
+    {
+      name: "松露蘑菇披萨",
+      desc: "蘑菇鲜味和松露香气平衡得刚刚好，回味很细腻。",
+      price: "¥84",
+      size: "6 / 9 / 12 寸",
+      serve: "适合 1-2 人",
+      extra: "可加温泉蛋"
+    },
+    {
+      name: "田园蔬菜披萨",
+      desc: "彩椒、洋葱、蘑菇、玉米与番茄底，口感鲜甜。",
+      price: "¥62",
+      size: "6 / 9 / 12 寸",
+      serve: "适合 1-2 人",
+      extra: "可加菲达芝士"
+    },
+    {
+      name: "青酱菠菜芝士披萨",
+      desc: "菠菜、青酱和莫扎里拉，轻盈但不会寡淡。",
+      price: "¥68",
+      size: "9 / 12 寸",
+      serve: "适合 2-3 人",
+      extra: "可加烤南瓜"
+    }
+  ],
+  snacks: [
+    {
+      name: "蒜香黄油薯角",
+      desc: "外酥里糯，搭配蒜香黄油和帕玛森碎，特别适合分享。",
+      price: "¥22",
+      size: "标准份",
+      serve: "加餐首选",
+      extra: "可加辣味蛋黄酱"
+    },
+    {
+      name: "水牛城辣鸡翅",
+      desc: "微辣开胃，表皮焦香，和冰饮一起点刚刚好。",
+      price: "¥32",
+      size: "6 只 / 12 只",
+      serve: "适合分享",
+      extra: "可选无骨版本"
+    },
+    {
+      name: "芝士焗蘑菇",
+      desc: "奶香浓郁，出炉后带一点咕嘟咕嘟的热气，口感很治愈。",
+      price: "¥28",
+      size: "标准份",
+      serve: "适合 1-2 人",
+      extra: "可加蒜香面包"
+    }
+  ],
+  salad: [
+    {
+      name: "凯撒沙拉",
+      desc: "罗马生菜、面包丁、培根脆片与凯撒酱，平衡披萨的浓郁感。",
+      price: "¥26",
+      size: "单人 / 双人",
+      serve: "轻食搭配",
+      extra: "可加烤鸡胸"
+    },
+    {
+      name: "烤南瓜芝麻菜沙拉",
+      desc: "暖烤南瓜、芝麻菜和轻乳酪，适合喜欢清爽口感的人。",
+      price: "¥29",
+      size: "单人 / 双人",
+      serve: "素食友好",
+      extra: "可加坚果碎"
+    },
+    {
+      name: "水果布拉塔沙拉",
+      desc: "布拉塔芝士搭配时令水果，甜润和奶香都很舒服。",
+      price: "¥38",
+      size: "标准份",
+      serve: "适合分享",
+      extra: "限量供应"
+    }
+  ],
+  dessert: [
+    {
+      name: "提拉米苏",
+      desc: "酒香和咖啡香恰到好处，作为一顿饭的结尾很温柔。",
+      price: "¥26",
+      size: "单份",
+      serve: "店内人气",
+      extra: "可做低糖版"
+    },
+    {
+      name: "岩浆巧克力布朗尼",
+      desc: "热热的巧克力流心搭配香草冰淇淋，甜度很满足。",
+      price: "¥28",
+      size: "单份",
+      serve: "适合分享",
+      extra: "可加榛果碎"
+    },
+    {
+      name: "肉桂苹果披萨卷",
+      desc: "披萨面团延展出的甜口小点，外脆内软，很有记忆点。",
+      price: "¥24",
+      size: "4 个装",
+      serve: "下午茶推荐",
+      extra: "可搭香草酱"
+    }
+  ],
+  drinks: [
+    {
+      name: "自制柠檬气泡饮",
+      desc: "清爽解腻，带一点果皮香，搭配芝士披萨尤其舒服。",
+      price: "¥16",
+      size: "中杯 / 大杯",
+      serve: "冰饮",
+      extra: "可做低糖"
+    },
+    {
+      name: "冰镇手冲茶",
+      desc: "带有茶香和回甘，不抢主食风头，也不会显得寡淡。",
+      price: "¥18",
+      size: "单杯 / 分享壶",
+      serve: "堂食推荐",
+      extra: "可选白桃风味"
+    },
+    {
+      name: "意式拿铁",
+      desc: "奶香柔和，适合午餐套餐和甜品搭配。",
+      price: "¥22",
+      size: "热 / 冰",
+      serve: "全天供应",
+      extra: "可加燕麦奶"
+    }
+  ]
+};
+
+const menuGrid = document.getElementById("menu-grid");
+const tabButtons = document.querySelectorAll("[data-category]");
+const navToggle = document.querySelector("[data-nav-toggle]");
+const nav = document.querySelector("[data-nav]");
+const header = document.querySelector("[data-header]");
+
+function createMenuCard(item) {
+  const article = document.createElement("article");
+  article.className = "menu-card reveal is-visible";
+
+  article.innerHTML = `
+    <div class="menu-card-head">
+      <h3>${item.name}</h3>
+      <strong>${item.price}</strong>
+    </div>
+    <p>${item.desc}</p>
+    <div class="menu-card-meta">
+      <span>${item.size}</span>
+      <span>${item.serve}</span>
+    </div>
+    <div class="menu-card-footer">
+      <span class="menu-card-extra">${item.extra}</span>
+      <a class="btn btn-primary" href="#top">加购</a>
+    </div>
+  `;
+
+  return article;
+}
+
+function renderMenu(category) {
+  const items = menuData[category] || [];
+  menuGrid.innerHTML = "";
+  items.forEach((item) => {
+    menuGrid.appendChild(createMenuCard(item));
+  });
+}
+
+tabButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    const category = button.dataset.category;
+    tabButtons.forEach((tab) => {
+      tab.classList.remove("is-active");
+      tab.setAttribute("aria-selected", "false");
+    });
+
+    button.classList.add("is-active");
+    button.setAttribute("aria-selected", "true");
+    renderMenu(category);
+  });
+});
+
+if (navToggle && nav) {
+  navToggle.addEventListener("click", () => {
+    const isOpen = nav.classList.toggle("is-open");
+    navToggle.setAttribute("aria-expanded", String(isOpen));
+  });
+
+  nav.querySelectorAll("a").forEach((link) => {
+    link.addEventListener("click", () => {
+      nav.classList.remove("is-open");
+      navToggle.setAttribute("aria-expanded", "false");
+    });
+  });
+}
+
+window.addEventListener("scroll", () => {
+  if (!header) {
+    return;
+  }
+
+  if (window.scrollY > 18) {
+    header.classList.add("is-condensed");
+  } else {
+    header.classList.remove("is-condensed");
+  }
+});
+
+const revealObserver = new IntersectionObserver(
+  (entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("is-visible");
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  },
+  {
+    threshold: 0.16
+  }
+);
+
+document.querySelectorAll(".reveal").forEach((element) => {
+  revealObserver.observe(element);
+});
+
+renderMenu("classic");
+
+</script>
+</head>
+<body id="top">
+  <div class="page-glow glow-left" aria-hidden="true"></div>
+  <div class="page-glow glow-right" aria-hidden="true"></div>
+
+  <header class="site-header" data-header>
+    <div class="container header-shell">
+      <a class="brand" href="#top" aria-label="Mamma Mia Pizza 首页">
+        <span class="brand-mark">MM</span>
+        <span class="brand-copy">
+          <strong>Mamma Mia Pizza</strong>
+          <small>现烤手工披萨</small>
+        </span>
+      </a>
+
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" data-nav-toggle>
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <nav class="site-nav" id="site-nav" data-nav>
+        <a href="#top">首页</a>
+        <a href="#menu">菜单</a>
+        <a href="#signature">招牌披萨</a>
+        <a href="#promotions">优惠活动</a>
+        <a href="#store-info">门店信息</a>
+        <a href="#reviews">用户评价</a>
+      </nav>
+
+      <div class="header-actions">
+        <a class="mini-link" href="tel:021-5555-7788">021-5555-7788</a>
+        <span class="status-pill"><i></i>营业中 11:00 - 22:30</span>
+        <a class="btn btn-secondary" href="#menu">在线点单</a>
+        <a class="btn btn-primary" href="#store-info">立即订位</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero section">
+      <div class="container hero-grid">
+        <div class="hero-copy reveal">
+          <span class="eyebrow">Airbnb 风格美食体验 · 静安人气披萨小馆</span>
+          <h1>现烤手工披萨，30 分钟把热腾腾的快乐送到你面前</h1>
+          <p class="hero-lead">
+            现揉面团、新鲜食材、经典意式风味，支持外卖、自取与到店堂食。
+            从第一口拉丝芝士到最后一块酥脆烤边，我们把一顿披萨做成让人想反复回来的小日常。
+          </p>
+          <div class="cta-row">
+            <a class="btn btn-primary btn-large" href="#menu">立即点单</a>
+            <a class="btn btn-dark btn-large" href="#signature">查看菜单</a>
+          </div>
+          <div class="hero-metrics">
+            <div class="metric-chip">
+              <strong>4.8 分</strong>
+              <span>真实好评</span>
+            </div>
+            <div class="metric-chip">
+              <strong>12,000+</strong>
+              <span>月售热单</span>
+            </div>
+            <div class="metric-chip">
+              <strong>30 分钟</strong>
+              <span>快速出餐</span>
+            </div>
+            <div class="metric-chip">
+              <strong>外卖 / 自取 / 堂食</strong>
+              <span>晚餐选择更灵活</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-media reveal">
+          <article class="hero-card hero-card-main">
+            <img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=1200&q=80" alt="融化芝士的现烤披萨">
+            <div class="image-badge">
+              <span class="badge-dot"></span>
+              刚出炉 3 分钟前
+            </div>
+          </article>
+
+          <div class="hero-side-stack">
+            <article class="hero-card hero-card-side">
+              <img src="https://images.unsplash.com/photo-1506354666786-959d6d497f1a?auto=format&fit=crop&w=900&q=80" alt="披萨出炉特写">
+              <div class="overlay-note">
+                <strong>今日推荐</strong>
+                <p>火山辣香肠披萨，香辣微冲，芝士超足。</p>
+              </div>
+            </article>
+
+            <article class="hero-fact-card">
+              <div>
+                <span class="fact-kicker">支持服务</span>
+                <h3>外卖 / 自取 / 堂食一站搞定</h3>
+              </div>
+              <ul>
+                <li>披萨现点现烤，不做长时间保温</li>
+                <li>双人餐、家庭餐、聚会订位都方便</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section proof-strip">
+      <div class="container proof-grid">
+        <div class="proof-item reveal">
+          <span>每日现揉面团</span>
+          <strong>48 小时低温发酵</strong>
+        </div>
+        <div class="proof-item reveal">
+          <span>芝士和酱料</span>
+          <strong>每天鲜配，当天现用</strong>
+        </div>
+        <div class="proof-item reveal">
+          <span>出餐速度</span>
+          <strong>高峰期平均 30 分钟</strong>
+        </div>
+        <div class="proof-item reveal">
+          <span>客群口碑</span>
+          <strong>情侣约会、亲子聚餐都适合</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="signature">
+      <div class="container">
+        <div class="section-heading reveal">
+          <span class="eyebrow">Signature Pizzas</span>
+          <h2>本店招牌</h2>
+          <p>最受欢迎的经典口味，第一次来店里也能轻松点到不出错。</p>
+        </div>
+
+        <div class="signature-grid">
+          <article class="food-card reveal">
+            <div class="food-image-wrap">
+              <img src="https://images.unsplash.com/photo-1604382355076-af4b0eb60143?auto=format&fit=crop&w=900&q=80" alt="玛格丽特披萨">
+              <span class="food-tag">经典热销</span>
+            </div>
+            <div class="food-body">
+              <div class="food-title-row">
+                <h3>玛格丽特披萨</h3>
+                <strong>¥58</strong>
+              </div>
+              <p>新鲜番茄、手撕莫扎里拉、罗勒叶，入口清爽又有奶香层次。</p>
+              <div class="food-meta">
+                <span>推荐指数 5/5</span>
+                <span>适合 1-2 人</span>
+              </div>
+              <div class="food-actions">
+                <a class="btn btn-ghost" href="#menu">查看详情</a>
+                <a class="btn btn-primary" href="#menu">加入购物车</a>
+              </div>
+            </div>
+          </article>
+
+          <article class="food-card reveal">
+            <div class="food-image-wrap">
+              <img src="https://images.unsplash.com/photo-1628840042765-356cda07504e?auto=format&fit=crop&w=900&q=80" alt="火山辣香肠披萨">
+              <span class="food-tag tag-warm">主厨推荐</span>
+            </div>
+            <div class="food-body">
+              <div class="food-title-row">
+                <h3>火山辣香肠披萨</h3>
+                <strong>¥72</strong>
+              </div>
+              <p>意式辣香肠、双倍芝士、番茄酱底，香辣风味在烤边处最迷人。</p>
+              <div class="food-meta">
+                <span>微辣</span>
+                <span>夜宵热门</span>
+              </div>
+              <div class="food-actions">
+                <a class="btn btn-ghost" href="#menu">查看详情</a>
+                <a class="btn btn-primary" href="#menu">加入购物车</a>
+              </div>
+            </div>
+          </article>
+
+          <article class="food-card reveal">
+            <div class="food-image-wrap">
+              <img src="https://images.unsplash.com/photo-1534308983496-4fabb1a015ee?auto=format&fit=crop&w=900&q=80" alt="芝士培根双拼">
+              <span class="food-tag tag-green">芝士浓郁</span>
+            </div>
+            <div class="food-body">
+              <div class="food-title-row">
+                <h3>芝士培根双拼</h3>
+                <strong>¥76</strong>
+              </div>
+              <p>一半浓郁四重芝士，一半烟熏培根洋葱，适合两种口味都想要的人。</p>
+              <div class="food-meta">
+                <span>双拼人气王</span>
+                <span>适合 2-3 人</span>
+              </div>
+              <div class="food-actions">
+                <a class="btn btn-ghost" href="#menu">查看详情</a>
+                <a class="btn btn-primary" href="#menu">加入购物车</a>
+              </div>
+            </div>
+          </article>
+
+          <article class="food-card reveal">
+            <div class="food-image-wrap">
+              <img src="https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=900&q=80" alt="松露蘑菇披萨">
+              <span class="food-tag">新品上架</span>
+            </div>
+            <div class="food-body">
+              <div class="food-title-row">
+                <h3>松露蘑菇披萨</h3>
+                <strong>¥84</strong>
+              </div>
+              <p>蘑菇的鲜香配上轻盈松露奶香，口味成熟但依旧很容易让人上头。</p>
+              <div class="food-meta">
+                <span>细腻香气</span>
+                <span>素食友好</span>
+              </div>
+              <div class="food-actions">
+                <a class="btn btn-ghost" href="#menu">查看详情</a>
+                <a class="btn btn-primary" href="#menu">加入购物车</a>
+              </div>
+            </div>
+          </article>
+
+          <article class="food-card reveal">
+            <div class="food-image-wrap">
+              <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=900&q=80" alt="夏威夷风味披萨">
+              <span class="food-tag tag-soft">家庭喜爱</span>
+            </div>
+            <div class="food-body">
+              <div class="food-title-row">
+                <h3>夏威夷风味</h3>
+                <strong>¥68</strong>
+              </div>
+              <p>火腿、菠萝、马苏里拉，酸甜风味很讨小朋友和第一次尝试的人喜欢。</p>
+              <div class="food-meta">
+                <span>低辣</span>
+                <span>亲子推荐</span>
+              </div>
+              <div class="food-actions">
+                <a class="btn btn-ghost" href="#menu">查看详情</a>
+                <a class="btn btn-primary" href="#menu">加入购物车</a>
+              </div>
+            </div>
+          </article>
+
+          <article class="food-card reveal">
+            <div class="food-image-wrap">
+              <img src="https://images.unsplash.com/photo-1511689660979-10d2b1aada49?auto=format&fit=crop&w=900&q=80" alt="海鲜拼盘披萨">
+              <span class="food-tag tag-warm">海味限定</span>
+            </div>
+            <div class="food-body">
+              <div class="food-title-row">
+                <h3>海鲜拼盘披萨</h3>
+                <strong>¥88</strong>
+              </div>
+              <p>虾仁、鱿鱼、蒜香白酱和焦香芝士组合，口感鲜甜，适合分享。</p>
+              <div class="food-meta">
+                <span>聚餐推荐</span>
+                <span>适合 2-4 人</span>
+              </div>
+              <div class="food-actions">
+                <a class="btn btn-ghost" href="#menu">查看详情</a>
+                <a class="btn btn-primary" href="#menu">加入购物车</a>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section menu-section" id="menu">
+      <div class="container">
+        <div class="section-heading reveal">
+          <span class="eyebrow">Menu Categories</span>
+          <h2>像点外卖一样快速浏览菜单</h2>
+          <p>从经典披萨到炸物甜品，支持不同尺寸、加料和多人分享场景。</p>
+        </div>
+
+        <div class="menu-tabs" role="tablist" aria-label="菜单分类">
+          <button class="tab-pill is-active" type="button" data-category="classic" aria-selected="true">经典披萨</button>
+          <button class="tab-pill" type="button" data-category="meat" aria-selected="false">肉食精选</button>
+          <button class="tab-pill" type="button" data-category="veggie" aria-selected="false">素食轻享</button>
+          <button class="tab-pill" type="button" data-category="snacks" aria-selected="false">小食炸物</button>
+          <button class="tab-pill" type="button" data-category="salad" aria-selected="false">沙拉</button>
+          <button class="tab-pill" type="button" data-category="dessert" aria-selected="false">甜品</button>
+          <button class="tab-pill" type="button" data-category="drinks" aria-selected="false">饮料</button>
+        </div>
+
+        <div class="menu-grid" id="menu-grid" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <section class="section" id="promotions">
+      <div class="container">
+        <div class="section-heading reveal">
+          <span class="eyebrow">Promotions</span>
+          <h2>今晚下单更划算</h2>
+          <p>暖暖的一顿饭，最好还能顺手省一点。活动信息清楚，决定更轻松。</p>
+        </div>
+
+        <div class="promo-grid">
+          <article class="promo-card promo-feature reveal">
+            <span class="promo-label">每周二限定</span>
+            <h3>周二披萨买一送一</h3>
+            <p>每周二 17:00 后，任选 9 寸经典披萨第二份免费。适用于到店和自取，适合下班后和朋友顺路带回家。</p>
+            <div class="promo-meta">
+              <span>有效期至 2026 年 12 月 31 日</span>
+              <span>到店 / 自取</span>
+            </div>
+            <a class="btn btn-dark" href="#menu">立即领取</a>
+          </article>
+
+          <article class="promo-card reveal">
+            <span class="promo-label promo-muted">午餐人气</span>
+            <h3>午餐双人套餐 68 元</h3>
+            <p>6 寸双拼披萨 + 凯撒沙拉 + 两杯饮料，工作日 11:30 - 14:00 供应。</p>
+            <div class="promo-meta">
+              <span>工作日午市</span>
+              <span>堂食 / 自取</span>
+            </div>
+            <a class="btn btn-ghost" href="#menu">去点单</a>
+          </article>
+
+          <article class="promo-card reveal">
+            <span class="promo-label promo-muted">新客福利</span>
+            <h3>首单立减 20 元</h3>
+            <p>首次在线下单满 99 元可用，适用于披萨、炸物和饮料组合单。</p>
+            <div class="promo-meta">
+              <span>新用户专享</span>
+              <span>线上订单</span>
+            </div>
+            <a class="btn btn-ghost" href="#menu">立即领取</a>
+          </article>
+
+          <article class="promo-card reveal">
+            <span class="promo-label promo-muted">顺路更划算</span>
+            <h3>自取享 8 折</h3>
+            <p>线上预点，到店取餐不用排队。适合下班回家顺手把热腾腾的披萨带走。</p>
+            <div class="promo-meta">
+              <span>全时段可用</span>
+              <span>部分商品除外</span>
+            </div>
+            <a class="btn btn-ghost" href="#store-info">查看门店</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section story-section">
+      <div class="container story-grid">
+        <div class="story-copy reveal">
+          <span class="eyebrow">Brand Story</span>
+          <h2>每一张披萨，都从一块好面团开始</h2>
+          <p>
+            我们坚持每日现揉面团，经过长时间低温发酵，让饼底更轻盈、更有麦香。
+            番茄酱用新鲜番茄慢熬，芝士现刨现铺，所有披萨都在你下单后现点现烤。
+          </p>
+          <p>
+            无论是工作日晚餐、周末聚会还是一个人想吃点热乎的，Mamma Mia Pizza 都希望你收到的是
+            一份刚刚好的幸福感，而不是冷冰冰的标准化商品。
+          </p>
+          <ul class="story-list">
+            <li>每日现揉面团，48 小时低温发酵</li>
+            <li>番茄酱、芝士和配料当天准备，当天售完</li>
+            <li>坚持现点现烤，保留石炉焦香和饼边空气感</li>
+            <li>厨房开放可见，出炉时的香气和温度都真实发生</li>
+          </ul>
+        </div>
+
+        <div class="story-media reveal">
+          <div class="story-photo tall">
+            <img src="https://images.unsplash.com/photo-1514326640560-7d063ef2aed5?auto=format&fit=crop&w=900&q=80" alt="厨房现烤披萨">
+          </div>
+          <div class="story-photo">
+            <img src="https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&w=900&q=80" alt="手工面团制作">
+          </div>
+          <div class="story-photo">
+            <img src="https://images.unsplash.com/photo-1541745537411-b8046dc6d66c?auto=format&fit=crop&w=900&q=80" alt="新鲜食材和烤边细节">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="section-heading reveal">
+          <span class="eyebrow">Why Choose Us</span>
+          <h2>为什么大家会一再点我们</h2>
+          <p>从速度到口感，从家庭聚餐到工作日晚餐，我们把细节都做在看得见的地方。</p>
+        </div>
+
+        <div class="reason-grid">
+          <article class="reason-card reveal">
+            <span class="reason-icon">01</span>
+            <h3>新鲜现做</h3>
+            <p>披萨下单后才进炉，拉丝芝士和焦香烤边都能在最佳状态送到你面前。</p>
+          </article>
+          <article class="reason-card reveal">
+            <span class="reason-icon">02</span>
+            <h3>30 分钟快速出餐</h3>
+            <p>标准化出炉流程配合高峰调度，忙碌工作日也能吃上一口热腾腾。</p>
+          </article>
+          <article class="reason-card reveal">
+            <span class="reason-icon">03</span>
+            <h3>高品质食材</h3>
+            <p>番茄、芝士、香肠和蘑菇都坚持新鲜采购，风味扎实，不靠重调味掩饰。</p>
+          </article>
+          <article class="reason-card reveal">
+            <span class="reason-icon">04</span>
+            <h3>外卖 / 自取 / 堂食都方便</h3>
+            <p>一个人下班、两个人约会或多人聚餐，都能找到合适的点单方式。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section testimonials-section" id="reviews">
+      <div class="container">
+        <div class="section-heading reveal">
+          <span class="eyebrow">Testimonials</span>
+          <h2>真实评价，比广告更有说服力</h2>
+          <p>我们把最常出现的反馈留在这里，方便第一次来的你更放心地下单。</p>
+        </div>
+
+        <div class="ratings-bar reveal">
+          <span>Google 4.8</span>
+          <span>大众点评 4.7</span>
+          <span>美团 4.8</span>
+          <span>Uber Eats 4.9</span>
+        </div>
+
+        <div class="testimonial-grid">
+          <article class="testimonial-card reveal">
+            <div class="testimonial-head">
+              <div class="avatar">L</div>
+              <div>
+                <strong>Lin</strong>
+                <span>Google Review · 5.0</span>
+              </div>
+            </div>
+            <p>芝士真的很足，饼底边缘酥脆但中间不会干，送到家的时候还是热的。</p>
+          </article>
+
+          <article class="testimonial-card reveal">
+            <div class="testimonial-head">
+              <div class="avatar">A</div>
+              <div>
+                <strong>Amanda</strong>
+                <span>大众点评 · 4.8</span>
+              </div>
+            </div>
+            <p>店里氛围很舒服，不会嘈杂。火山辣香肠披萨和凯撒沙拉一起点刚刚好。</p>
+          </article>
+
+          <article class="testimonial-card reveal">
+            <div class="testimonial-head">
+              <div class="avatar">J</div>
+              <div>
+                <strong>Jason</strong>
+                <span>美团 · 5.0</span>
+              </div>
+            </div>
+            <p>配送速度比预估快，小朋友超喜欢夏威夷风味，第二次又点了儿童套餐。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section gallery-section">
+      <div class="container">
+        <div class="section-heading reveal">
+          <span class="eyebrow">Gallery</span>
+          <h2>像 Airbnb 房源图墙一样，让人看了就想去店里</h2>
+          <p>披萨、烤炉、餐桌、自然光和热气腾腾的生活感，组成品牌最真实的氛围。</p>
+        </div>
+
+        <div class="gallery-grid">
+          <figure class="gallery-card gallery-large reveal">
+            <img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=1200&q=80" alt="披萨特写">
+          </figure>
+          <figure class="gallery-card reveal">
+            <img src="https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&w=900&q=80" alt="门店环境">
+          </figure>
+          <figure class="gallery-card reveal">
+            <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=900&q=80" alt="顾客用餐场景">
+          </figure>
+          <figure class="gallery-card reveal">
+            <img src="https://images.unsplash.com/photo-1528605248644-14dd04022da1?auto=format&fit=crop&w=900&q=80" alt="朋友聚餐氛围">
+          </figure>
+          <figure class="gallery-card reveal">
+            <img src="https://images.unsplash.com/photo-1566843972142-a7fcb70de55a?auto=format&fit=crop&w=900&q=80" alt="厨房烘烤过程">
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="section store-section" id="store-info">
+      <div class="container store-grid">
+        <article class="store-card reveal">
+          <span class="eyebrow">Store Info</span>
+          <h2>门店信息</h2>
+          <div class="store-info-list">
+            <div>
+              <span>地址</span>
+              <strong>上海市静安区愚园路 188 号一层</strong>
+            </div>
+            <div>
+              <span>电话</span>
+              <strong>021-5555-7788</strong>
+            </div>
+            <div>
+              <span>营业时间</span>
+              <strong>周一至周日 11:00 - 22:30</strong>
+            </div>
+            <div>
+              <span>配送范围</span>
+              <strong>静安 / 长宁 5 公里内 30-45 分钟送达</strong>
+            </div>
+            <div>
+              <span>停车信息</span>
+              <strong>商场地下停车场可停，消费可抵扣 2 小时</strong>
+            </div>
+          </div>
+          <div class="service-tags">
+            <span>堂食</span>
+            <span>外带</span>
+            <span>外送</span>
+            <span>预订聚会</span>
+            <span>儿童座椅</span>
+          </div>
+          <div class="store-actions">
+            <a class="btn btn-primary" href="https://maps.google.com/?q=%E4%B8%8A%E6%B5%B7%E5%B8%82%E9%9D%99%E5%AE%89%E5%8C%BA%E6%84%9A%E5%9B%AD%E8%B7%AF188%E5%8F%B7" target="_blank" rel="noreferrer">导航到店</a>
+            <a class="btn btn-dark" href="tel:021-5555-7788">立即拨打</a>
+          </div>
+        </article>
+
+        <article class="map-card reveal">
+          <div class="map-surface">
+            <div class="map-pin pin-main">门店</div>
+            <div class="map-pin pin-small">静安寺</div>
+            <div class="map-pin pin-small second">愚园路</div>
+            <div class="map-route"></div>
+          </div>
+          <div class="map-copy">
+            <h3>离地铁和商圈都很近</h3>
+            <p>步行到静安寺站约 8 分钟。工作日晚餐可堂食，周末更适合提前订位。</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section faq-section" id="faq">
+      <div class="container">
+        <div class="section-heading reveal">
+          <span class="eyebrow">FAQ</span>
+          <h2>常见问题</h2>
+          <p>把大家最关心的问题先回答好，点单会更轻松。</p>
+        </div>
+
+        <div class="faq-list">
+          <details class="faq-item reveal" open>
+            <summary>是否支持线上点单？</summary>
+            <p>支持。你可以通过页面里的“在线点单”入口选择外卖或自取，也可以电话预订后到店付款。</p>
+          </details>
+          <details class="faq-item reveal">
+            <summary>是否提供素食披萨？</summary>
+            <p>有。我们提供松露蘑菇披萨、田园蔬菜披萨和多款沙拉，也支持自定义去肉和加蔬菜配料。</p>
+          </details>
+          <details class="faq-item reveal">
+            <summary>是否支持提前预约？</summary>
+            <p>支持。堂食、生日小聚和 6 人以上小型聚餐建议至少提前半天联系门店。</p>
+          </details>
+          <details class="faq-item reveal">
+            <summary>配送范围多大？</summary>
+            <p>默认配送范围为门店周边 5 公里，高峰期会根据骑手运力做少量调整。</p>
+          </details>
+          <details class="faq-item reveal">
+            <summary>可以做团体订单吗？</summary>
+            <p>可以。办公室团建、生日派对和活动茶歇都能提前预定，我们会协助搭配组合套餐。</p>
+          </details>
+          <details class="faq-item reveal">
+            <summary>是否有儿童套餐？</summary>
+            <p>有。我们准备了小尺寸披萨、薯角和果汁的儿童套餐，也可按口味做少盐少辣调整。</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section class="section final-cta-section">
+      <div class="container final-cta reveal">
+        <div>
+          <span class="eyebrow">Ready To Order?</span>
+          <h2>今晚吃点热腾腾的披萨吧</h2>
+          <p>经典口味、新鲜出炉，支持外卖、自取与堂食。舒服一点的晚餐，有时候只差一张刚出炉的披萨。</p>
+        </div>
+        <div class="cta-row">
+          <a class="btn btn-primary btn-large" href="#menu">立即点单</a>
+          <a class="btn btn-dark btn-large" href="#signature">查看菜单</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div>
+        <a class="brand footer-brand" href="#top">
+          <span class="brand-mark">MM</span>
+          <span class="brand-copy">
+            <strong>Mamma Mia Pizza</strong>
+            <small>现烤手工披萨，把热腾腾的快乐送到你面前</small>
+          </span>
+        </a>
+      </div>
+      <div>
+        <h3>营业时间</h3>
+        <p>周一至周日 11:00 - 22:30</p>
+      </div>
+      <div>
+        <h3>联系方式</h3>
+        <p>021-5555-7788</p>
+        <p>hello@mammamiapizza.com</p>
+      </div>
+      <div>
+        <h3>门店地址</h3>
+        <p>上海市静安区愚园路 188 号一层</p>
+      </div>
+      <div>
+        <h3>关注我们</h3>
+        <p>小红书 / 大众点评 / 微信公众号</p>
+      </div>
+      <div>
+        <h3>说明</h3>
+        <p>隐私政策 / 配送说明 / 订位须知</p>
+      </div>
+    </div>
+  </footer>
+
+  <div class="mobile-action-bar">
+    <a class="btn btn-dark" href="#store-info">立即订位</a>
+    <a class="btn btn-primary" href="#menu">在线点单</a>
+  </div>
+</body>
+</html>

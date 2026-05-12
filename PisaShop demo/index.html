@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Mamma Mia Pizza 现烤手工披萨官网，支持在线点单、外卖、自取与堂食。">
+  <meta name="theme-color" content="#fffaf5">
+  <title>Mamma Mia Pizza | 现烤手工披萨</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./script.js" defer></script>
+</head>
+<body id="top">
+  <div class="page-glow glow-left" aria-hidden="true"></div>
+  <div class="page-glow glow-right" aria-hidden="true"></div>
+
+  <header class="site-header" data-header>
+    <div class="container header-shell">
+      <a class="brand" href="#top" aria-label="Mamma Mia Pizza 首页">
+        <span class="brand-mark">MM</span>
+        <span class="brand-copy">
+          <strong>Mamma Mia Pizza</strong>
+          <small>现烤手工披萨</small>
+        </span>
+      </a>
+
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" data-nav-toggle>
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <nav class="site-nav" id="site-nav" data-nav>
+        <a href="#top">首页</a>
+        <a href="#menu">菜单</a>
+        <a href="#signature">招牌披萨</a>
+        <a href="#promotions">优惠活动</a>
+        <a href="#store-info">门店信息</a>
+        <a href="#reviews">用户评价</a>
+      </nav>
+
+      <div class="header-actions">
+        <a class="mini-link" href="tel:021-5555-7788">021-5555-7788</a>
+        <span class="status-pill"><i></i>营业中 11:00 - 22:30</span>
+        <button class="btn btn-secondary" type="button" data-open-cart>在线点单</button>
+        <button class="cart-pill" type="button" data-open-cart aria-label="打开购物车">
+          <span>购物车</span>
+          <strong data-cart-count>0</strong>
+        </button>
+        <a class="btn btn-primary" href="#store-info">立即订位</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero section">
+      <div class="container hero-grid">
+        <div class="hero-copy reveal">
+          <span class="eyebrow">Airbnb 风格美食体验 · 静安人气披萨小馆</span>
+          <h1>现烤手工披萨，30 分钟把热腾腾的快乐送到你面前</h1>
+          <p class="hero-lead">
+            现揉面团、新鲜食材、经典意式风味，支持外卖、自取与到店堂食。
+            从第一口拉丝芝士到最后一块酥脆烤边，我们把一顿披萨做成让人想反复回来的小日常。
+          </p>
+          <div class="cta-row">
+            <button class="btn btn-primary btn-large" type="button" data-open-cart>立即点单</button>
+            <a class="btn btn-dark btn-large" href="#signature">查看菜单</a>
+          </div>
+          <div class="hero-metrics">
+            <div class="metric-chip">
+              <strong>4.8 分</strong>
+              <span>真实好评</span>
+            </div>
+            <div class="metric-chip">
+              <strong>12,000+</strong>
+              <span>月售热单</span>
+            </div>
+            <div class="metric-chip">
+              <strong>30 分钟</strong>
+              <span>快速出餐</span>
+            </div>
+            <div class="metric-chip">
+              <strong>外卖 / 自取 / 堂食</strong>
+              <span>晚餐选择更灵活</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-media reveal">
+          <article class="hero-card hero-card-main">
+            <img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=1200&q=80" alt="融化芝士的现烤披萨">
+            <div class="image-badge">
+              <span class="badge-dot"></span>
+              刚出炉 3 分钟前
+            </div>
+          </article>
+
+          <div class="hero-side-stack">
+            <article class="hero-card hero-card-side">
+              <img src="https://images.unsplash.com/photo-1506354666786-959d6d497f1a?auto=format&fit=crop&w=900&q=80" alt="披萨出炉特写">
+              <div class="overlay-note">
+                <strong>今日推荐</strong>
+                <p>火山辣香肠披萨，香辣微冲，芝士超足。</p>
+              </div>
+            </article>
+
+            <article class="hero-fact-card">
+              <div>
+                <span class="fact-kicker">支持服务</span>
+                <h3>外卖 / 自取 / 堂食一站搞定</h3>
+              </div>
+              <ul>
+                <li>披萨现点现烤，不做长时间保温</li>
+                <li>双人餐、家庭餐、聚会订位都方便</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section proof-strip">
+      <div class="container proof-grid">
+        <div class="proof-item reveal">
+          <span>每日现揉面团</span>
+          <strong>48 小时低温发酵</strong>
+        </div>
+        <div class="proof-item reveal">
+          <span>芝士和酱料</span>
+          <strong>每天鲜配，当天现用</strong>
+        </div>
+        <div class="proof-item reveal">
+          <span>出餐速度</span>
+          <strong>高峰期平均 30 分钟</strong>
+        </div>
+        <div class="proof-item reveal">
+          <span>客群口碑</span>
+          <strong>情侣约会、亲子聚餐都适合</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="signature">
+      <div class="container">
+        <div class="section-heading reveal">
+          <span class="eyebrow">Signature Pizzas</span>
+          <h2>本店招牌</h2>
+          <p>最受欢迎的经典口味，第一次来店里也能轻松点到不出错。</p>
+        </div>
+
+        <div class="signature-grid">
+          <article class="food-card reveal">
+            <div class="food-image-wrap">
+              <img src="https://images.unsplash.com/photo-1604382355076-af4b0eb60143?auto=format&fit=crop&w=900&q=80" alt="玛格丽特披萨">
+              <span class="food-tag">经典热销</span>
+            </div>
+            <div class="food-body">
+              <div class="food-title-row">
+                <h3>玛格丽特披萨</h3>
+                <strong>¥58</strong>
+              </div>
+              <p>新鲜番茄、手撕莫扎里拉、罗勒叶，入口清爽又有奶香层次。</p>
+              <div class="food-meta">
+                <span>推荐指数 5/5</span>
+                <span>适合 1-2 人</span>
+              </div>
+              <div class="food-actions">
+                <a class="btn btn-ghost" href="#menu">查看详情</a>
+                <button class="btn btn-primary" type="button" data-add-product data-product-id="margherita">加入购物车</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="food-card reveal">
+            <div class="food-image-wrap">
+              <img src="https://images.unsplash.com/photo-1628840042765-356cda07504e?auto=format&fit=crop&w=900&q=80" alt="火山辣香肠披萨">
+              <span class="food-tag tag-warm">主厨推荐</span>
+            </div>
+            <div class="food-body">
+              <div class="food-title-row">
+                <h3>火山辣香肠披萨</h3>
+                <strong>¥72</strong>
+              </div>
+              <p>意式辣香肠、双倍芝士、番茄酱底，香辣风味在烤边处最迷人。</p>
+              <div class="food-meta">
+                <span>微辣</span>
+                <span>夜宵热门</span>
+              </div>
+              <div class="food-actions">
+                <a class="btn btn-ghost" href="#menu">查看详情</a>
+                <button class="btn btn-primary" type="button" data-add-product data-product-id="volcano-sausage">加入购物车</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="food-card reveal">
+            <div class="food-image-wrap">
+              <img src="https://images.unsplash.com/photo-1534308983496-4fabb1a015ee?auto=format&fit=crop&w=900&q=80" alt="芝士培根双拼">
+              <span class="food-tag tag-green">芝士浓郁</span>
+            </div>
+            <div class="food-body">
+              <div class="food-title-row">
+                <h3>芝士培根双拼</h3>
+                <strong>¥76</strong>
+              </div>
+              <p>一半浓郁四重芝士，一半烟熏培根洋葱，适合两种口味都想要的人。</p>
+              <div class="food-meta">
+                <span>双拼人气王</span>
+                <span>适合 2-3 人</span>
+              </div>
+              <div class="food-actions">
+                <a class="btn btn-ghost" href="#menu">查看详情</a>
+                <button class="btn btn-primary" type="button" data-add-product data-product-id="cheese-bacon-half">加入购物车</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="food-card reveal">
+            <div class="food-image-wrap">
+              <img src="https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=900&q=80" alt="松露蘑菇披萨">
+              <span class="food-tag">新品上架</span>
+            </div>
+            <div class="food-body">
+              <div class="food-title-row">
+                <h3>松露蘑菇披萨</h3>
+                <strong>¥84</strong>
+              </div>
+              <p>蘑菇的鲜香配上轻盈松露奶香，口味成熟但依旧很容易让人上头。</p>
+              <div class="food-meta">
+                <span>细腻香气</span>
+                <span>素食友好</span>
+              </div>
+              <div class="food-actions">
+                <a class="btn btn-ghost" href="#menu">查看详情</a>
+                <button class="btn btn-primary" type="button" data-add-product data-product-id="truffle-mushroom">加入购物车</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="food-card reveal">
+            <div class="food-image-wrap">
+              <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=900&q=80" alt="夏威夷风味披萨">
+              <span class="food-tag tag-soft">家庭喜爱</span>
+            </div>
+            <div class="food-body">
+              <div class="food-title-row">
+                <h3>夏威夷风味</h3>
+                <strong>¥68</strong>
+              </div>
+              <p>火腿、菠萝、马苏里拉，酸甜风味很讨小朋友和第一次尝试的人喜欢。</p>
+              <div class="food-meta">
+                <span>低辣</span>
+                <span>亲子推荐</span>
+              </div>
+              <div class="food-actions">
+                <a class="btn btn-ghost" href="#menu">查看详情</a>
+                <button class="btn btn-primary" type="button" data-add-product data-product-id="hawaiian">加入购物车</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="food-card reveal">
+            <div class="food-image-wrap">
+              <img src="https://images.unsplash.com/photo-1511689660979-10d2b1aada49?auto=format&fit=crop&w=900&q=80" alt="海鲜拼盘披萨">
+              <span class="food-tag tag-warm">海味限定</span>
+            </div>
+            <div class="food-body">
+              <div class="food-title-row">
+                <h3>海鲜拼盘披萨</h3>
+                <strong>¥88</strong>
+              </div>
+              <p>虾仁、鱿鱼、蒜香白酱和焦香芝士组合，口感鲜甜，适合分享。</p>
+              <div class="food-meta">
+                <span>聚餐推荐</span>
+                <span>适合 2-4 人</span>
+              </div>
+              <div class="food-actions">
+                <a class="btn btn-ghost" href="#menu">查看详情</a>
+                <button class="btn btn-primary" type="button" data-add-product data-product-id="seafood-platter">加入购物车</button>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section menu-section" id="menu">
+      <div class="container">
+        <div class="section-heading reveal">
+          <span class="eyebrow">Menu Categories</span>
+          <h2>像点外卖一样快速浏览菜单</h2>
+          <p>从经典披萨到炸物甜品，支持不同尺寸、加料和多人分享场景。</p>
+        </div>
+
+        <div class="menu-tabs" role="tablist" aria-label="菜单分类">
+          <button class="tab-pill is-active" type="button" data-category="classic" aria-selected="true">经典披萨</button>
+          <button class="tab-pill" type="button" data-category="meat" aria-selected="false">肉食精选</button>
+          <button class="tab-pill" type="button" data-category="veggie" aria-selected="false">素食轻享</button>
+          <button class="tab-pill" type="button" data-category="snacks" aria-selected="false">小食炸物</button>
+          <button class="tab-pill" type="button" data-category="salad" aria-selected="false">沙拉</button>
+          <button class="tab-pill" type="button" data-category="dessert" aria-selected="false">甜品</button>
+          <button class="tab-pill" type="button" data-category="drinks" aria-selected="false">饮料</button>
+        </div>
+
+        <div class="menu-grid" id="menu-grid" aria-live="polite"></div>
+
+        <div class="order-live-strip reveal">
+          <div class="order-live-copy">
+            <span class="eyebrow">Order Flow</span>
+            <h3>选好口味后，直接去购物车结算</h3>
+            <p>支持外卖配送、自取和堂食预订。优惠码、配送费和订单备注都会在结算时自动计算。</p>
+          </div>
+          <div class="order-live-actions">
+            <div class="order-live-meta">
+              <span data-order-mode-badge>当前方式：外卖配送</span>
+              <span data-cart-summary-count>0 件商品</span>
+            </div>
+            <button class="btn btn-dark btn-large" type="button" data-open-cart>查看购物车</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="promotions">
+      <div class="container">
+        <div class="section-heading reveal">
+          <span class="eyebrow">Promotions</span>
+          <h2>今晚下单更划算</h2>
+          <p>暖暖的一顿饭，最好还能顺手省一点。活动信息清楚，决定更轻松。</p>
+        </div>
+
+        <div class="promo-grid">
+          <article class="promo-card promo-feature reveal">
+            <span class="promo-label">每周二限定</span>
+            <h3>周二披萨买一送一</h3>
+            <p>每周二 17:00 后，任选 9 寸经典披萨第二份免费。适用于到店和自取，适合下班后和朋友顺路带回家。</p>
+            <div class="promo-meta">
+              <span>有效期至 2026 年 12 月 31 日</span>
+              <span>到店 / 自取</span>
+            </div>
+            <button class="btn btn-dark" type="button" data-open-cart data-apply-promo="TUESDAY">立即领取</button>
+          </article>
+
+          <article class="promo-card reveal">
+            <span class="promo-label promo-muted">午餐人气</span>
+            <h3>午餐双人套餐 68 元</h3>
+            <p>6 寸双拼披萨 + 凯撒沙拉 + 两杯饮料，工作日 11:30 - 14:00 供应。</p>
+            <div class="promo-meta">
+              <span>工作日午市</span>
+              <span>堂食 / 自取</span>
+            </div>
+            <button class="btn btn-ghost" type="button" data-open-cart data-apply-promo="LUNCH68">去点单</button>
+          </article>
+
+          <article class="promo-card reveal">
+            <span class="promo-label promo-muted">新客福利</span>
+            <h3>首单立减 20 元</h3>
+            <p>首次在线下单满 99 元可用，适用于披萨、炸物和饮料组合单。</p>
+            <div class="promo-meta">
+              <span>新用户专享</span>
+              <span>线上订单</span>
+            </div>
+            <button class="btn btn-ghost" type="button" data-open-cart data-apply-promo="MAMMA20">立即领取</button>
+          </article>
+
+          <article class="promo-card reveal">
+            <span class="promo-label promo-muted">顺路更划算</span>
+            <h3>自取享 8 折</h3>
+            <p>线上预点，到店取餐不用排队。适合下班回家顺手把热腾腾的披萨带走。</p>
+            <div class="promo-meta">
+              <span>全时段可用</span>
+              <span>部分商品除外</span>
+            </div>
+            <button class="btn btn-ghost" type="button" data-open-cart data-switch-mode="pickup" data-apply-promo="SELF20">查看门店</button>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section story-section">
+      <div class="container story-grid">
+        <div class="story-copy reveal">
+          <span class="eyebrow">Brand Story</span>
+          <h2>每一张披萨，都从一块好面团开始</h2>
+          <p>
+            我们坚持每日现揉面团，经过长时间低温发酵，让饼底更轻盈、更有麦香。
+            番茄酱用新鲜番茄慢熬，芝士现刨现铺，所有披萨都在你下单后现点现烤。
+          </p>
+          <p>
+            无论是工作日晚餐、周末聚会还是一个人想吃点热乎的，Mamma Mia Pizza 都希望你收到的是
+            一份刚刚好的幸福感，而不是冷冰冰的标准化商品。
+          </p>
+          <ul class="story-list">
+            <li>每日现揉面团，48 小时低温发酵</li>
+            <li>番茄酱、芝士和配料当天准备，当天售完</li>
+            <li>坚持现点现烤，保留石炉焦香和饼边空气感</li>
+            <li>厨房开放可见，出炉时的香气和温度都真实发生</li>
+          </ul>
+        </div>
+
+        <div class="story-media reveal">
+          <div class="story-photo tall">
+            <img src="https://images.unsplash.com/photo-1514326640560-7d063ef2aed5?auto=format&fit=crop&w=900&q=80" alt="厨房现烤披萨">
+          </div>
+          <div class="story-photo">
+            <img src="https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&w=900&q=80" alt="手工面团制作">
+          </div>
+          <div class="story-photo">
+            <img src="https://images.unsplash.com/photo-1541745537411-b8046dc6d66c?auto=format&fit=crop&w=900&q=80" alt="新鲜食材和烤边细节">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="section-heading reveal">
+          <span class="eyebrow">Why Choose Us</span>
+          <h2>为什么大家会一再点我们</h2>
+          <p>从速度到口感，从家庭聚餐到工作日晚餐，我们把细节都做在看得见的地方。</p>
+        </div>
+
+        <div class="reason-grid">
+          <article class="reason-card reveal">
+            <span class="reason-icon">01</span>
+            <h3>新鲜现做</h3>
+            <p>披萨下单后才进炉，拉丝芝士和焦香烤边都能在最佳状态送到你面前。</p>
+          </article>
+          <article class="reason-card reveal">
+            <span class="reason-icon">02</span>
+            <h3>30 分钟快速出餐</h3>
+            <p>标准化出炉流程配合高峰调度，忙碌工作日也能吃上一口热腾腾。</p>
+          </article>
+          <article class="reason-card reveal">
+            <span class="reason-icon">03</span>
+            <h3>高品质食材</h3>
+            <p>番茄、芝士、香肠和蘑菇都坚持新鲜采购，风味扎实，不靠重调味掩饰。</p>
+          </article>
+          <article class="reason-card reveal">
+            <span class="reason-icon">04</span>
+            <h3>外卖 / 自取 / 堂食都方便</h3>
+            <p>一个人下班、两个人约会或多人聚餐，都能找到合适的点单方式。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section testimonials-section" id="reviews">
+      <div class="container">
+        <div class="section-heading reveal">
+          <span class="eyebrow">Testimonials</span>
+          <h2>真实评价，比广告更有说服力</h2>
+          <p>我们把最常出现的反馈留在这里，方便第一次来的你更放心地下单。</p>
+        </div>
+
+        <div class="ratings-bar reveal">
+          <span>Google 4.8</span>
+          <span>大众点评 4.7</span>
+          <span>美团 4.8</span>
+          <span>Uber Eats 4.9</span>
+        </div>
+
+        <div class="testimonial-grid">
+          <article class="testimonial-card reveal">
+            <div class="testimonial-head">
+              <div class="avatar">L</div>
+              <div>
+                <strong>Lin</strong>
+                <span>Google Review · 5.0</span>
+              </div>
+            </div>
+            <p>芝士真的很足，饼底边缘酥脆但中间不会干，送到家的时候还是热的。</p>
+          </article>
+
+          <article class="testimonial-card reveal">
+            <div class="testimonial-head">
+              <div class="avatar">A</div>
+              <div>
+                <strong>Amanda</strong>
+                <span>大众点评 · 4.8</span>
+              </div>
+            </div>
+            <p>店里氛围很舒服，不会嘈杂。火山辣香肠披萨和凯撒沙拉一起点刚刚好。</p>
+          </article>
+
+          <article class="testimonial-card reveal">
+            <div class="testimonial-head">
+              <div class="avatar">J</div>
+              <div>
+                <strong>Jason</strong>
+                <span>美团 · 5.0</span>
+              </div>
+            </div>
+            <p>配送速度比预估快，小朋友超喜欢夏威夷风味，第二次又点了儿童套餐。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section gallery-section">
+      <div class="container">
+        <div class="section-heading reveal">
+          <span class="eyebrow">Gallery</span>
+          <h2>像 Airbnb 房源图墙一样，让人看了就想去店里</h2>
+          <p>披萨、烤炉、餐桌、自然光和热气腾腾的生活感，组成品牌最真实的氛围。</p>
+        </div>
+
+        <div class="gallery-grid">
+          <figure class="gallery-card gallery-large reveal">
+            <img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=1200&q=80" alt="披萨特写">
+          </figure>
+          <figure class="gallery-card reveal">
+            <img src="https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&w=900&q=80" alt="门店环境">
+          </figure>
+          <figure class="gallery-card reveal">
+            <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=900&q=80" alt="顾客用餐场景">
+          </figure>
+          <figure class="gallery-card reveal">
+            <img src="https://images.unsplash.com/photo-1528605248644-14dd04022da1?auto=format&fit=crop&w=900&q=80" alt="朋友聚餐氛围">
+          </figure>
+          <figure class="gallery-card reveal">
+            <img src="https://images.unsplash.com/photo-1566843972142-a7fcb70de55a?auto=format&fit=crop&w=900&q=80" alt="厨房烘烤过程">
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="section store-section" id="store-info">
+      <div class="container store-grid">
+        <article class="store-card reveal">
+          <span class="eyebrow">Store Info</span>
+          <h2>门店信息</h2>
+          <div class="store-info-list">
+            <div>
+              <span>地址</span>
+              <strong>上海市静安区愚园路 188 号一层</strong>
+            </div>
+            <div>
+              <span>电话</span>
+              <strong>021-5555-7788</strong>
+            </div>
+            <div>
+              <span>营业时间</span>
+              <strong>周一至周日 11:00 - 22:30</strong>
+            </div>
+            <div>
+              <span>配送范围</span>
+              <strong>静安 / 长宁 5 公里内 30-45 分钟送达</strong>
+            </div>
+            <div>
+              <span>停车信息</span>
+              <strong>商场地下停车场可停，消费可抵扣 2 小时</strong>
+            </div>
+          </div>
+          <div class="service-tags">
+            <span>堂食</span>
+            <span>外带</span>
+            <span>外送</span>
+            <span>预订聚会</span>
+            <span>儿童座椅</span>
+          </div>
+          <div class="store-actions">
+            <a class="btn btn-primary" href="https://maps.google.com/?q=%E4%B8%8A%E6%B5%B7%E5%B8%82%E9%9D%99%E5%AE%89%E5%8C%BA%E6%84%9A%E5%9B%AD%E8%B7%AF188%E5%8F%B7" target="_blank" rel="noreferrer">导航到店</a>
+            <a class="btn btn-dark" href="tel:021-5555-7788">立即拨打</a>
+          </div>
+        </article>
+
+        <article class="map-card reveal">
+          <div class="map-surface">
+            <div class="map-pin pin-main">门店</div>
+            <div class="map-pin pin-small">静安寺</div>
+            <div class="map-pin pin-small second">愚园路</div>
+            <div class="map-route"></div>
+          </div>
+          <div class="map-copy">
+            <h3>离地铁和商圈都很近</h3>
+            <p>步行到静安寺站约 8 分钟。工作日晚餐可堂食，周末更适合提前订位。</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section faq-section" id="faq">
+      <div class="container">
+        <div class="section-heading reveal">
+          <span class="eyebrow">FAQ</span>
+          <h2>常见问题</h2>
+          <p>把大家最关心的问题先回答好，点单会更轻松。</p>
+        </div>
+
+        <div class="faq-list">
+          <details class="faq-item reveal" open>
+            <summary>是否支持线上点单？</summary>
+            <p>支持。你可以通过页面里的“在线点单”入口选择外卖或自取，也可以电话预订后到店付款。</p>
+          </details>
+          <details class="faq-item reveal">
+            <summary>是否提供素食披萨？</summary>
+            <p>有。我们提供松露蘑菇披萨、田园蔬菜披萨和多款沙拉，也支持自定义去肉和加蔬菜配料。</p>
+          </details>
+          <details class="faq-item reveal">
+            <summary>是否支持提前预约？</summary>
+            <p>支持。堂食、生日小聚和 6 人以上小型聚餐建议至少提前半天联系门店。</p>
+          </details>
+          <details class="faq-item reveal">
+            <summary>配送范围多大？</summary>
+            <p>默认配送范围为门店周边 5 公里，高峰期会根据骑手运力做少量调整。</p>
+          </details>
+          <details class="faq-item reveal">
+            <summary>可以做团体订单吗？</summary>
+            <p>可以。办公室团建、生日派对和活动茶歇都能提前预定，我们会协助搭配组合套餐。</p>
+          </details>
+          <details class="faq-item reveal">
+            <summary>是否有儿童套餐？</summary>
+            <p>有。我们准备了小尺寸披萨、薯角和果汁的儿童套餐，也可按口味做少盐少辣调整。</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section class="section final-cta-section">
+      <div class="container final-cta reveal">
+        <div>
+          <span class="eyebrow">Ready To Order?</span>
+          <h2>今晚吃点热腾腾的披萨吧</h2>
+          <p>经典口味、新鲜出炉，支持外卖、自取与堂食。舒服一点的晚餐，有时候只差一张刚出炉的披萨。</p>
+        </div>
+        <div class="cta-row">
+          <button class="btn btn-primary btn-large" type="button" data-open-cart>立即点单</button>
+          <a class="btn btn-dark btn-large" href="#signature">查看菜单</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="cart-overlay" data-cart-overlay hidden></div>
+
+  <aside class="cart-drawer" data-cart-drawer aria-hidden="true">
+    <div class="cart-drawer-shell">
+      <div class="cart-drawer-head">
+        <div>
+          <span class="eyebrow">Checkout</span>
+          <h2>下单与结算</h2>
+        </div>
+        <button class="cart-close" type="button" data-close-cart aria-label="关闭购物车">×</button>
+      </div>
+
+      <div class="cart-drawer-body">
+        <section class="cart-section">
+          <div class="cart-section-head">
+            <h3>下单方式</h3>
+            <p>切换配送、自取或堂食，费用和字段会自动变化。</p>
+          </div>
+          <div class="order-mode-switch" role="tablist" aria-label="下单方式">
+            <button class="mode-pill is-active" type="button" data-order-mode="delivery">外卖配送</button>
+            <button class="mode-pill" type="button" data-order-mode="pickup">门店自取</button>
+            <button class="mode-pill" type="button" data-order-mode="dinein">堂食预订</button>
+          </div>
+          <p class="order-mode-hint" data-order-mode-hint>当前为外卖配送，满 ¥168 免配送费，预计 30-45 分钟送达。</p>
+        </section>
+
+        <section class="cart-section">
+          <div class="cart-section-head">
+            <h3>已选商品</h3>
+            <p>购物车会自动保存到这台设备，刷新后也不会丢。</p>
+          </div>
+          <div class="cart-empty" data-cart-empty>
+            <strong>购物车还是空的</strong>
+            <p>先从菜单里挑一张喜欢的披萨，再回来结算。</p>
+          </div>
+          <div class="cart-items" data-cart-items></div>
+        </section>
+
+        <section class="cart-section">
+          <div class="cart-section-head">
+            <h3>优惠与备注</h3>
+            <p>可输入优惠码，也可以通过活动区按钮一键带入。</p>
+          </div>
+          <div class="promo-entry">
+            <input class="field-input" id="promo-code" type="text" placeholder="输入优惠码，如 MAMMA20">
+            <button class="btn btn-dark" type="button" data-apply-promo-manual>应用</button>
+          </div>
+          <p class="promo-feedback" data-promo-feedback>支持首单立减、自取折扣和午餐套餐优惠。</p>
+        </section>
+
+        <section class="cart-section">
+          <div class="cart-section-head">
+            <h3>订单信息</h3>
+            <p>填写联系人和取餐信息后，就可以提交订单。</p>
+          </div>
+
+          <form class="checkout-form" id="checkout-form" novalidate>
+            <div class="field-grid">
+              <label class="field">
+                <span>联系人</span>
+                <input class="field-input" type="text" name="customerName" placeholder="请输入姓名" required>
+              </label>
+              <label class="field">
+                <span>联系电话</span>
+                <input class="field-input" type="tel" name="customerPhone" placeholder="请输入手机号" required>
+              </label>
+            </div>
+
+            <div class="field-grid field-grid-single" data-mode-field="delivery">
+              <label class="field">
+                <span>配送地址</span>
+                <input class="field-input" type="text" name="deliveryAddress" placeholder="请输入详细地址">
+              </label>
+            </div>
+
+            <div class="field-grid">
+              <label class="field">
+                <span data-time-label>送达 / 到店时间</span>
+                <select class="field-input" name="serviceTime">
+                  <option value="尽快安排">尽快安排</option>
+                  <option value="20 分钟后">20 分钟后</option>
+                  <option value="30 分钟后">30 分钟后</option>
+                  <option value="19:00">19:00</option>
+                  <option value="19:30">19:30</option>
+                  <option value="20:00">20:00</option>
+                  <option value="20:30">20:30</option>
+                </select>
+              </label>
+              <label class="field" data-mode-field="dinein">
+                <span>用餐人数</span>
+                <select class="field-input" name="guestCount">
+                  <option value="2 位">2 位</option>
+                  <option value="3 位">3 位</option>
+                  <option value="4 位">4 位</option>
+                  <option value="5-6 位">5-6 位</option>
+                  <option value="6 位以上">6 位以上</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="field-grid">
+              <label class="field">
+                <span>支付方式</span>
+                <select class="field-input" name="paymentMethod">
+                  <option value="到店付款 / 货到付款">到店付款 / 货到付款</option>
+                  <option value="微信支付（到店确认）">微信支付（到店确认）</option>
+                  <option value="支付宝（到店确认）">支付宝（到店确认）</option>
+                </select>
+              </label>
+              <label class="field">
+                <span>餐具需求</span>
+                <select class="field-input" name="tableware">
+                  <option value="按人数准备">按人数准备</option>
+                  <option value="无需餐具">无需餐具</option>
+                  <option value="多备一点">多备一点</option>
+                </select>
+              </label>
+            </div>
+
+            <label class="field field-grid-single">
+              <span>订单备注</span>
+              <textarea class="field-input field-textarea" name="orderNote" placeholder="例如：不要洋葱、帮我切块、到店前电话联系"></textarea>
+            </label>
+
+            <div class="checkout-summary">
+              <div class="summary-row">
+                <span>商品小计</span>
+                <strong data-summary-subtotal>¥0</strong>
+              </div>
+              <div class="summary-row">
+                <span>优惠金额</span>
+                <strong data-summary-discount>-¥0</strong>
+              </div>
+              <div class="summary-row">
+                <span data-summary-fee-label>配送费</span>
+                <strong data-summary-fee>¥0</strong>
+              </div>
+              <div class="summary-row summary-row-total">
+                <span>应付合计</span>
+                <strong data-summary-total>¥0</strong>
+              </div>
+            </div>
+
+            <div class="checkout-actions">
+              <button class="btn btn-primary btn-large" type="submit" data-submit-order>提交订单</button>
+              <p class="checkout-note">当前版本支持完整下单流程和订单确认，支付采用到店或配送确认方式。</p>
+            </div>
+          </form>
+        </section>
+      </div>
+    </div>
+  </aside>
+
+  <div class="order-modal" data-order-modal hidden>
+    <div class="order-modal-card">
+      <button class="cart-close order-modal-close" type="button" data-close-order-modal aria-label="关闭订单确认">×</button>
+      <span class="eyebrow">Order Confirmed</span>
+      <h2>订单已为你准备好</h2>
+      <p data-order-success-message>我们已经记录你的订单信息，门店会按照你选择的方式开始准备。</p>
+      <div class="order-success-block">
+        <div class="summary-row">
+          <span>订单号</span>
+          <strong data-order-id>MM-000000</strong>
+        </div>
+        <div class="summary-row">
+          <span>订单金额</span>
+          <strong data-order-total>¥0</strong>
+        </div>
+      </div>
+      <div class="order-success-copy" data-order-summary-text></div>
+      <div class="order-success-actions">
+        <button class="btn btn-dark" type="button" data-copy-order>复制订单摘要</button>
+        <a class="btn btn-ghost" href="mailto:hello@mammamiapizza.com" data-order-email>邮件发送给门店</a>
+        <a class="btn btn-ghost" href="tel:021-5555-7788">电话确认门店</a>
+        <button class="btn btn-primary" type="button" data-close-order-modal>继续加购</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div>
+        <a class="brand footer-brand" href="#top">
+          <span class="brand-mark">MM</span>
+          <span class="brand-copy">
+            <strong>Mamma Mia Pizza</strong>
+            <small>现烤手工披萨，把热腾腾的快乐送到你面前</small>
+          </span>
+        </a>
+      </div>
+      <div>
+        <h3>营业时间</h3>
+        <p>周一至周日 11:00 - 22:30</p>
+      </div>
+      <div>
+        <h3>联系方式</h3>
+        <p>021-5555-7788</p>
+        <p>hello@mammamiapizza.com</p>
+      </div>
+      <div>
+        <h3>门店地址</h3>
+        <p>上海市静安区愚园路 188 号一层</p>
+      </div>
+      <div>
+        <h3>关注我们</h3>
+        <p>小红书 / 大众点评 / 微信公众号</p>
+      </div>
+      <div>
+        <h3>说明</h3>
+        <p>隐私政策 / 配送说明 / 订位须知</p>
+      </div>
+    </div>
+  </footer>
+
+  <div class="mobile-action-bar">
+    <a class="btn btn-dark" href="#store-info">立即订位</a>
+    <button class="btn btn-primary" type="button" data-open-cart>
+      在线点单
+      <span class="mobile-cart-count" data-cart-count>0</span>
+    </button>
+  </div>
+
+  <button class="floating-cart" type="button" data-open-cart aria-label="打开购物车">
+    <span>去结算</span>
+    <strong data-cart-count>0</strong>
+  </button>
+</body>
+</html>

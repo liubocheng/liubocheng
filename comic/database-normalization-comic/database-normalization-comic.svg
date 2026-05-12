@@ -1,0 +1,142 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900">
+  <defs>
+    <style>
+      .bg { fill: #ffffff; }
+      .ink { stroke: #111111; stroke-width: 4; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+      .thin { stroke: #111111; stroke-width: 2.5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+      .orange { fill: #FF6B35; }
+      .orangeStroke { stroke: #FF6B35; stroke-width: 5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+      .txt { font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; fill: #111111; font-size: 28px; font-weight: 600; }
+      .small { font-size: 23px; font-weight: 500; }
+      .tiny { font-size: 20px; font-weight: 500; }
+      .title { font-size: 44px; font-weight: 800; }
+      .label { font-size: 25px; font-weight: 800; fill: #ffffff; }
+      .panelTitle { font-size: 24px; font-weight: 800; fill: #FF6B35; }
+    </style>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M2,2 L10,6 L2,10" fill="none" stroke="#FF6B35" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1200" height="900"/>
+  <text class="txt title" x="600" y="62" text-anchor="middle">数据库范式：给数据整理书包</text>
+
+  <!-- panel frames -->
+  <rect class="ink" x="55" y="95" width="530" height="340" rx="18"/>
+  <rect class="ink" x="615" y="95" width="530" height="340" rx="18"/>
+  <rect class="ink" x="55" y="465" width="530" height="340" rx="18"/>
+  <rect class="ink" x="615" y="465" width="530" height="340" rx="18"/>
+
+  <!-- Panel 1 -->
+  <text class="panelTitle" x="80" y="130">1 起：信息全塞一起</text>
+  <!-- messy bag -->
+  <path class="ink" d="M150 285 C135 230,180 190,245 205 C300 220,325 265,310 330 C275 365,180 365,150 285 Z"/>
+  <path class="thin" d="M185 205 C190 165,260 165,270 210"/>
+  <line class="thin" x1="170" y1="255" x2="295" y2="255"/>
+  <!-- papers -->
+  <g transform="rotate(-12 190 170)"><rect class="thin" x="165" y="145" width="78" height="35"/><text class="txt tiny" x="204" y="170" text-anchor="middle">姓名</text></g>
+  <g transform="rotate(15 280 168)"><rect class="thin" x="245" y="148" width="78" height="35"/><text class="txt tiny" x="284" y="173" text-anchor="middle">电话</text></g>
+  <g transform="rotate(-22 335 230)"><rect class="thin" x="300" y="210" width="78" height="35"/><text class="txt tiny" x="339" y="235" text-anchor="middle">课程</text></g>
+  <g transform="rotate(8 330 310)"><rect class="thin" x="295" y="290" width="78" height="35"/><text class="txt tiny" x="334" y="315" text-anchor="middle">成绩</text></g>
+  <g transform="rotate(-6 210 370)"><rect class="thin" x="175" y="350" width="78" height="35"/><text class="txt tiny" x="214" y="375" text-anchor="middle">老师</text></g>
+  <!-- student stick figure -->
+  <circle class="thin" cx="410" cy="220" r="25"/>
+  <circle cx="402" cy="216" r="3" fill="#111"/><circle cx="418" cy="216" r="3" fill="#111"/>
+  <path class="thin" d="M402 230 Q410 238 420 230"/>
+  <circle class="thin" cx="400" cy="216" r="8"/><circle class="thin" cx="420" cy="216" r="8"/><line class="thin" x1="408" y1="216" x2="412" y2="216"/>
+  <line class="thin" x1="410" y1="245" x2="410" y2="315"/>
+  <line class="thin" x1="410" y1="270" x2="370" y2="290"/>
+  <line class="thin" x1="410" y1="270" x2="450" y2="290"/>
+  <line class="thin" x1="410" y1="315" x2="380" y2="355"/>
+  <line class="thin" x1="410" y1="315" x2="440" y2="355"/>
+  <!-- speech bubbles -->
+  <rect class="thin" x="350" y="130" width="195" height="54" rx="16"/>
+  <text class="txt small" x="447" y="165" text-anchor="middle">全塞一起，好乱！</text>
+  <rect class="thin" x="105" y="380" width="330" height="42" rx="14"/>
+  <text class="txt small" x="270" y="409" text-anchor="middle">像没整理的数据库。</text>
+
+  <!-- Panel 2 -->
+  <text class="panelTitle" x="640" y="130">2 承：第一范式</text>
+  <rect class="orange" x="820" y="142" width="125" height="42" rx="12"/>
+  <text class="label" x="882" y="172" text-anchor="middle">第一范式</text>
+  <!-- teacher -->
+  <circle class="thin" cx="700" cy="220" r="25"/>
+  <circle cx="692" cy="216" r="3" fill="#111"/><circle cx="708" cy="216" r="3" fill="#111"/>
+  <path class="thin" d="M690 230 Q700 236 712 230"/>
+  <line class="thin" x1="700" y1="245" x2="700" y2="320"/>
+  <line class="thin" x1="700" y1="270" x2="665" y2="295"/>
+  <line class="thin" x1="700" y1="270" x2="760" y2="240"/>
+  <line class="thin" x1="760" y1="240" x2="835" y2="205"/>
+  <line class="thin" x1="700" y1="320" x2="675" y2="360"/>
+  <line class="thin" x1="700" y1="320" x2="725" y2="360"/>
+  <!-- storage box -->
+  <rect class="ink" x="820" y="220" width="260" height="150" rx="12"/>
+  <line class="thin" x1="906" y1="220" x2="906" y2="370"/>
+  <line class="thin" x1="994" y1="220" x2="994" y2="370"/>
+  <line class="thin" x1="820" y1="295" x2="1080" y2="295"/>
+  <rect class="orange" x="836" y="242" width="55" height="30" rx="7"/><text class="label tiny" x="864" y="264" text-anchor="middle">姓名</text>
+  <text class="txt tiny" x="950" y="264" text-anchor="middle">电话</text>
+  <text class="txt tiny" x="1038" y="264" text-anchor="middle">课程</text>
+  <text class="txt tiny" x="864" y="340" text-anchor="middle">成绩</text>
+  <text class="txt tiny" x="950" y="340" text-anchor="middle">老师</text>
+  <text class="txt tiny" x="1038" y="340" text-anchor="middle">班级</text>
+  <rect class="thin" x="755" y="382" width="350" height="40" rx="14"/>
+  <text class="txt small" x="930" y="410" text-anchor="middle">一个格子，只放一个东西。</text>
+
+  <!-- Panel 3 -->
+  <text class="panelTitle" x="80" y="500">3 转：第二、第三范式</text>
+  <!-- central messy table -->
+  <rect class="thin" x="90" y="555" width="120" height="85" rx="10"/>
+  <text class="txt tiny" x="150" y="590" text-anchor="middle">大杂表</text>
+  <text class="txt tiny" x="150" y="620" text-anchor="middle">啥都有</text>
+  <!-- arrows -->
+  <line class="orangeStroke" x1="220" y1="590" x2="300" y2="545" marker-end="url(#arrow)"/>
+  <line class="orangeStroke" x1="220" y1="600" x2="300" y2="610" marker-end="url(#arrow)"/>
+  <line class="orangeStroke" x1="220" y1="615" x2="300" y2="690" marker-end="url(#arrow)"/>
+  <!-- boxes -->
+  <rect class="ink" x="320" y="520" width="110" height="58" rx="10"/>
+  <rect class="orange" x="330" y="532" width="90" height="32" rx="8"/><text class="label tiny" x="375" y="555" text-anchor="middle">学生表</text>
+  <rect class="ink" x="320" y="600" width="110" height="58" rx="10"/>
+  <rect class="orange" x="330" y="612" width="90" height="32" rx="8"/><text class="label tiny" x="375" y="635" text-anchor="middle">课程表</text>
+  <rect class="ink" x="320" y="680" width="110" height="58" rx="10"/>
+  <rect class="orange" x="330" y="692" width="90" height="32" rx="8"/><text class="label tiny" x="375" y="715" text-anchor="middle">成绩表</text>
+  <rect class="ink" x="455" y="600" width="105" height="58" rx="10"/>
+  <rect class="orange" x="465" y="612" width="85" height="32" rx="8"/><text class="label tiny" x="508" y="635" text-anchor="middle">班级表</text>
+  <text class="txt tiny" x="508" y="685" text-anchor="middle">班主任</text>
+  <!-- dialogue -->
+  <rect class="thin" x="95" y="735" width="435" height="45" rx="14"/>
+  <text class="txt small" x="312" y="765" text-anchor="middle">不同事情分开放，谁的信息放谁那里！</text>
+
+  <!-- Panel 4 -->
+  <text class="panelTitle" x="640" y="500">4 合：数据库变整齐</text>
+  <!-- tidy cabinet -->
+  <rect class="ink" x="690" y="555" width="250" height="155" rx="12"/>
+  <line class="thin" x1="690" y1="607" x2="940" y2="607"/>
+  <line class="thin" x1="690" y1="659" x2="940" y2="659"/>
+  <line class="thin" x1="815" y1="555" x2="815" y2="710"/>
+  <text class="txt tiny" x="752" y="590" text-anchor="middle">学生表</text>
+  <text class="txt tiny" x="878" y="590" text-anchor="middle">课程表</text>
+  <text class="txt tiny" x="752" y="642" text-anchor="middle">成绩表</text>
+  <text class="txt tiny" x="878" y="642" text-anchor="middle">班级表</text>
+  <rect class="orange" x="712" y="675" width="95" height="28" rx="8"/>
+  <text class="label tiny" x="760" y="696" text-anchor="middle">数学成绩</text>
+  <!-- happy student -->
+  <circle class="thin" cx="1010" cy="590" r="25"/>
+  <circle cx="1002" cy="586" r="3" fill="#111"/><circle cx="1018" cy="586" r="3" fill="#111"/>
+  <path class="thin" d="M998 600 Q1010 612 1024 600"/>
+  <circle class="thin" cx="1000" cy="586" r="8"/><circle class="thin" cx="1020" cy="586" r="8"/><line class="thin" x1="1008" y1="586" x2="1012" y2="586"/>
+  <line class="thin" x1="1010" y1="615" x2="1010" y2="685"/>
+  <line class="thin" x1="1010" y1="640" x2="965" y2="675"/>
+  <line class="thin" x1="1010" y1="640" x2="1055" y2="620"/>
+  <line class="thin" x1="1010" y1="685" x2="985" y2="725"/>
+  <line class="thin" x1="1010" y1="685" x2="1035" y2="725"/>
+  <!-- thumb teacher simple -->
+  <circle class="thin" cx="655" cy="690" r="20"/>
+  <line class="thin" x1="655" y1="710" x2="655" y2="760"/>
+  <path class="thin" d="M655 728 L625 710 L620 695"/>
+  <path class="thin" d="M655 728 L690 700 L705 700"/>
+  <rect class="thin" x="750" y="730" width="240" height="42" rx="14"/>
+  <text class="txt small" x="870" y="759" text-anchor="middle">现在一找就到！</text>
+  <rect class="orange" x="705" y="815" width="380" height="48" rx="14"/>
+  <text class="label" x="895" y="848" text-anchor="middle">少重复｜少出错｜好修改</text>
+</svg>

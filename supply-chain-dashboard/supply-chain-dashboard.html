@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+  <title>供应链数据大屏</title>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js">
+  </script>
+  <style>
+    /* ===== Reset & Base ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    html,
+    body {
+      width: 100%;
+      min-height: 100vh;
+      background: #0a1628;
+      color: #e8edf5;
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", Roboto, "Microsoft YaHei", sans-serif;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    /* ===== Scrollbar ===== */
+    ::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(24, 144, 255, .4);
+      border-radius: 2px;
+    }
+
+    /* ===== Layout ===== */
+    .dashboard {
+      max-width: 750px;
+      margin: 0 auto;
+      padding: 12px 12px 30px;
+    }
+
+    /* ===== Header ===== */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 4px 12px;
+      border-bottom: 1px solid rgba(24, 144, 255, .2);
+      margin-bottom: 16px;
+    }
+    .header h1 {
+      font-size: 20px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #1890ff, #13c2c2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 2px;
+    }
+    .header-time {
+      font-size: 12px;
+      color: rgba(232, 237, 245, .6);
+      font-variant-numeric: tabular-nums;
+    }
+    .header-badge {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #52c41a;
+      margin-right: 6px;
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+      50% {
+        opacity: .4;
+        transform: scale(.75);
+      }
+    }
+
+    /* ===== KPI Cards ===== */
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .kpi-card {
+      background: linear-gradient(135deg, rgba(24, 144, 255, .08), rgba(19, 194, 194, .05));
+      border: 1px solid rgba(24, 144, 255, .15);
+      border-radius: 12px;
+      padding: 14px 12px;
+      position: relative;
+      overflow: hidden;
+      transition: transform .2s, border-color .2s;
+    }
+    .kpi-card:active {
+      transform: scale(.97);
+    }
+    .kpi-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 3px;
+      height: 100%;
+      border-radius: 0 2px 2px 0;
+    }
+    .kpi-card:nth-child(1)::before {
+      background: #1890ff;
+    }
+    .kpi-card:nth-child(2)::before {
+      background: #13c2c2;
+    }
+    .kpi-card:nth-child(3)::before {
+      background: #52c41a;
+    }
+    .kpi-card:nth-child(4)::before {
+      background: #fa8c16;
+    }
+    .kpi-label {
+      font-size: 12px;
+      color: rgba(232, 237, 245, .6);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .kpi-label .icon {
+      font-size: 14px;
+    }
+    .kpi-value {
+      font-size: 26px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      line-height: 1.2;
+    }
+    .kpi-value .unit {
+      font-size: 13px;
+      font-weight: 400;
+      color: rgba(232, 237, 245, .5);
+      margin-left: 2px;
+    }
+    .kpi-change {
+      font-size: 11px;
+      margin-top: 6px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .kpi-change.up {
+      color: #52c41a;
+    }
+    .kpi-change.down {
+      color: #ff4d4f;
+    }
+    .kpi-sub {
+      font-size: 11px;
+      color: rgba(232, 237, 245, .35);
+      margin-top: 2px;
+    }
+
+    /* ===== Section Title ===== */
+    .section-title {
+      font-size: 15px;
+      font-weight: 600;
+      margin: 20px 0 12px 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-title::before {
+      content: '';
+      display: inline-block;
+      width: 3px;
+      height: 16px;
+      background: linear-gradient(180deg, #1890ff, #13c2c2);
+      border-radius: 2px;
+    }
+    .section-title .tag {
+      font-size: 11px;
+      font-weight: 400;
+      color: rgba(232, 237, 245, .4);
+      margin-left: auto;
+    }
+
+    /* ===== Chart Cards ===== */
+    .chart-card {
+      background: linear-gradient(135deg, rgba(255, 255, 255, .03), rgba(255, 255, 255, .01));
+      border: 1px solid rgba(255, 255, 255, .06);
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 12px;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    .chart-card .chart-title {
+      font-size: 13px;
+      font-weight: 500;
+      color: rgba(232, 237, 245, .7);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .chart-card .chart-title .extra {
+      font-size: 11px;
+      color: rgba(232, 237, 245, .35);
+      font-weight: 400;
+    }
+    .chart-container {
+      width: 100%;
+      height: 220px;
+    }
+    .chart-container.tall {
+      height: 260px;
+    }
+    .chart-container.short {
+      height: 160px;
+    }
+
+    /* ===== Bottom Summary ===== */
+    .summary-bar {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 16px;
+      padding: 14px 12px;
+      background: linear-gradient(135deg, rgba(24, 144, 255, .06), rgba(19, 194, 194, .04));
+      border: 1px solid rgba(24, 144, 255, .1);
+      border-radius: 12px;
+    }
+    .summary-item {
+      text-align: center;
+    }
+    .summary-item .num {
+      font-size: 18px;
+      font-weight: 700;
+      color: #1890ff;
+    }
+    .summary-item .label {
+      font-size: 11px;
+      color: rgba(232, 237, 245, .45);
+      margin-top: 2px;
+    }
+
+    /* ===== Loading ===== */
+    .loading-mask {
+      position: fixed;
+      inset: 0;
+      background: #0a1628;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity .6s;
+    }
+    .loading-mask.hide {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .loading-mask .spinner {
+      width: 36px;
+      height: 36px;
+      border: 3px solid rgba(24, 144, 255, .15);
+      border-top-color: #1890ff;
+      border-radius: 50%;
+      animation: spin .8s linear infinite;
+    }
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+    .loading-mask .loading-text {
+      margin-top: 14px;
+      font-size: 14px;
+      color: rgba(232, 237, 245, .5);
+      letter-spacing: 4px;
+    }
+
+    /* ===== Responsive ===== */
+    @media (min-width: 500px) {
+      .dashboard {
+        max-width: 900px;
+        padding: 20px 24px 40px;
+      }
+      .kpi-row {
+        grid-template-columns: repeat(4, 1fr);
+      }
+      .kpi-value {
+        font-size: 28px;
+      }
+      .charts-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      .charts-grid .full {
+        grid-column: 1 / -1;
+      }
+    }
+    @media (min-width: 1024px) {
+      .dashboard {
+        max-width: 1200px;
+      }
+      .chart-container {
+        height: 280px;
+      }
+      .chart-container.tall {
+        height: 320px;
+      }
+    }
+    @media (max-width: 374px) {
+      .kpi-value {
+        font-size: 20px;
+      }
+      .header h1 {
+        font-size: 16px;
+      }
+      .chart-container {
+        height: 180px;
+      }
+      .chart-container.tall {
+        height: 220px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Loading -->
+  <div class="loading-mask" id="loadingMask">
+    <div class="spinner"></div>
+    <div class="loading-text">供应链数据加载中</div>
+  </div>
+
+  <!-- Dashboard -->
+  <div class="dashboard" id="app">
+
+    <!-- Header -->
+    <header class="header">
+      <h1>📦 供应链数据大屏</h1>
+      <div class="header-time">
+        <span class="header-badge"></span>
+        <span id="liveTime">--:--:--</span>
+      </div>
+    </header>
+
+    <!-- KPI Row -->
+    <div class="kpi-row" id="kpiRow">
+      <div class="kpi-card">
+        <div class="kpi-label"><span class="icon">📊</span> 供应链总成本</div>
+        <div class="kpi-value"><span id="kpi1">0</span><span class="unit">万元</span></div>
+        <div class="kpi-change up" id="kpi1c">▲ <span>0</span>% 环比</div>
+        <div class="kpi-sub">本月累计</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label"><span class="icon">🔄</span> 库存周转率</div>
+        <div class="kpi-value"><span id="kpi2">0</span><span class="unit">次</span></div>
+        <div class="kpi-change up" id="kpi2c">▲ <span>0</span>% 环比</div>
+        <div class="kpi-sub">较上月提升</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label"><span class="icon">✅</span> 订单履约率</div>
+        <div class="kpi-value"><span id="kpi3">0</span><span class="unit">%</span></div>
+        <div class="kpi-change up" id="kpi3c">▲ <span>0</span>pp 环比</div>
+        <div class="kpi-sub">目标 98.5%</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label"><span class="icon">🚚</span> 准时交货率</div>
+        <div class="kpi-value"><span id="kpi4">0</span><span class="unit">%</span></div>
+        <div class="kpi-change down" id="kpi4c">▼ <span>0</span>pp 环比</div>
+        <div class="kpi-sub">需重点关注</div>
+      </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="charts-grid">
+
+      <!-- Procurement Trend -->
+      <div class="chart-card full">
+        <div class="chart-title">
+          <span>📈 月度采购趋势</span>
+          <span class="extra">单位：万元</span>
+        </div>
+        <div class="chart-container tall" id="chartTrend"></div>
+      </div>
+
+      <!-- Inventory Distribution -->
+      <div class="chart-card">
+        <div class="chart-title">
+          <span>🧩 库存品类分布</span>
+          <span class="extra">按金额占比</span>
+        </div>
+        <div class="chart-container" id="chartPie"></div>
+      </div>
+
+      <!-- Supplier Ranking -->
+      <div class="chart-card">
+        <div class="chart-title">
+          <span>🏆 供应商 TOP 6</span>
+          <span class="extra">准时交货率</span>
+        </div>
+        <div class="chart-container" id="chartBar"></div>
+      </div>
+
+      <!-- Warehouse Utilization -->
+      <div class="chart-card full">
+        <div class="chart-title">
+          <span>🏭 仓储容量利用率</span>
+          <span class="extra">三地仓库</span>
+        </div>
+        <div class="chart-container" id="chartGauge"></div>
+      </div>
+
+      <!-- Logistics Timeliness -->
+      <div class="chart-card full">
+        <div class="chart-title">
+          <span>⏱ 物流时效分析</span>
+          <span class="extra">平均时效 vs 目标</span>
+        </div>
+        <div class="chart-container tall" id="chartLogistics"></div>
+      </div>
+
+      <!-- Risk Heatmap placeholder -> Regional Sales -->
+      <div class="chart-card full">
+        <div class="chart-title">
+          <span>🌍 区域销售分布</span>
+          <span class="extra">七大区域</span>
+        </div>
+        <div class="chart-container tall" id="chartRegion"></div>
+      </div>
+    </div>
+
+    <!-- Summary Bar -->
+    <div class="summary-bar">
+      <div class="summary-item">
+        <div class="num" id="sum1">0</div>
+        <div class="label">供应商总数</div>
+      </div>
+      <div class="summary-item">
+        <div class="num" id="sum2">0</div>
+        <div class="label">仓库总数</div>
+      </div>
+      <div class="summary-item">
+        <div class="num" id="sum3">0</div>
+        <div class="label">运输路线</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ============================================================
+       Data & Helpers
+       ============================================================ */
+    // KPI base data
+    const KPI = {
+      kpi1: { val: 2863.5, change: 3.2, up: true }, // 总成本 万元
+      kpi2: { val: 5.8, change: 8.7, up: true }, // 库存周转率 次
+      kpi3: { val: 97.2, change: 1.5, up: true }, // 履约率 %
+      kpi4: { val: 93.6, change: 2.1, up: false }, // 准时交货率 %
+    };
+
+    // Animate counter
+    function animateNum(el, target, suffix, duration) {
+      suffix = suffix || '';
+      const start = 0;
+      const startTime = performance.now();
+
+      function tick(now) {
+        const elapsed = now - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const current = start + (target - start) * eased;
+        el.textContent = current.toFixed(1) + suffix;
+        if (progress < 1) requestAnimationFrame(tick);
+        else el.textContent = target.toFixed(1) + suffix;
+      }
+      requestAnimationFrame(tick);
+    }
+
+    function initKPI() {
+      animateNum(document.getElementById('kpi1'), KPI.kpi1.val, '', 1200);
+      animateNum(document.getElementById('kpi2'), KPI.kpi2.val, '', 1200);
+      animateNum(document.getElementById('kpi3'), KPI.kpi3.val, '', 1200);
+      animateNum(document.getElementById('kpi4'), KPI.kpi4.val, '', 1200);
+
+      document.querySelector('#kpi1c span').textContent = KPI.kpi1.change;
+      document.querySelector('#kpi2c span').textContent = KPI.kpi2.change;
+      document.querySelector('#kpi3c span').textContent = KPI.kpi3.change;
+      document.querySelector('#kpi4c span').textContent = KPI.kpi4.change;
+
+      document.getElementById('sum1').textContent = '326';
+      document.getElementById('sum2').textContent = '12';
+      document.getElementById('sum3').textContent = '89';
+    }
+
+    // Live clock
+    function updateClock() {
+      const now = new Date();
+      document.getElementById('liveTime').textContent =
+        now.toLocaleTimeString('zh-CN', { hour12: false });
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    /* ============================================================
+       ECharts Theme
+       ============================================================ */
+    const chartTheme = {
+      backgroundColor: 'transparent',
+      textStyle: { color: 'rgba(232,237,245,.7)', fontSize: 11 },
+      grid: { top: 30, bottom: 20, left: 45, right: 16, containLabel: false },
+      legend: {
+        textStyle: { color: 'rgba(232,237,245,.6)', fontSize: 11 },
+        pageIconColor: '#1890ff',
+        pageIconInactiveColor: '#2f3541',
+      },
+      tooltip: {
+        backgroundColor: 'rgba(10,22,40,.92)',
+        borderColor: 'rgba(24,144,255,.3)',
+        textStyle: { color: '#e8edf5', fontSize: 12 },
+      },
+      xAxis: {
+        axisLine: { lineStyle: { color: 'rgba(255,255,255,.08)' } },
+        axisTick: { lineStyle: { color: 'rgba(255,255,255,.08)' } },
+        axisLabel: { color: 'rgba(232,237,245,.45)', fontSize: 10 },
+        splitLine: { show: false },
+      },
+      yAxis: {
+        splitLine: { lineStyle: { color: 'rgba(255,255,255,.04)', type: 'dashed' } },
+        axisLabel: { color: 'rgba(232,237,245,.45)', fontSize: 10 },
+        axisLine: { show: false },
+        axisTick: { show: false },
+      },
+    };
+
+    /* ============================================================
+       Chart 1: Procurement Trend (Line)
+       ============================================================ */
+    function renderTrend() {
+      const dom = document.getElementById('chartTrend');
+      if (!dom) return;
+      const c = echarts.init(dom);
+      const months = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
+      const plan = [210, 225, 240, 255, 270, 285, 300, 290, 310, 320, 335, 350];
+      const actual = [195, 218, 235, 248, 265, 278, 295, 282, 305, 312, 328, 342];
+      // current month index (May = 4)
+      const cur = 4;
+
+      c.setOption({
+        ...chartTheme,
+        tooltip: {
+          ...chartTheme.tooltip,
+          trigger: 'axis',
+        },
+        legend: {
+          ...chartTheme.legend,
+          data: ['计划金额', '实际金额'],
+          bottom: 0,
+        },
+        grid: { ...chartTheme.grid, bottom: 36 },
+        xAxis: {
+          ...chartTheme.xAxis,
+          type: 'category',
+          data: months,
+        },
+        yAxis: {
+          ...chartTheme.yAxis,
+          type: 'value',
+          name: '万元',
+          nameTextStyle: { color: 'rgba(232,237,245,.3)', fontSize: 10 },
+        },
+        series: [{
+          name: '计划金额',
+          type: 'line',
+          smooth: true,
+          symbol: 'circle',
+          symbolSize: 6,
+          lineStyle: { color: 'rgba(24,144,255,.35)', width: 2, type: 'dashed' },
+          itemStyle: { color: '#1890ff' },
+          areaStyle: {
+            color: {
+              type: 'linear',
+              x: 0,
+              y: 0,
+              x2: 0,
+              y2: 1,
+              colorStops: [
+                { offset: 0, color: 'rgba(24,144,255,.08)' },
+                { offset: 1, color: 'rgba(24,144,255,0)' },
+              ],
+            },
+          },
+          data: plan,
+        }, {
+          name: '实际金额',
+          type: 'line',
+          smooth: true,
+          symbol: 'circle',
+          symbolSize: 6,
+          lineStyle: { color: '#13c2c2', width: 2 },
+          itemStyle: { color: '#13c2c2' },
+          areaStyle: {
+            color: {
+              type: 'linear',
+              x: 0,
+              y: 0,
+              x2: 0,
+              y2: 1,
+              colorStops: [
+                { offset: 0, color: 'rgba(19,194,194,.12)' },
+                { offset: 1, color: 'rgba(19,194,194,0)' },
+              ],
+            },
+          },
+          data: actual,
+          markLine: {
+            silent: true,
+            symbol: 'none',
+            label: {
+              color: 'rgba(232,237,245,.5)',
+              fontSize: 10,
+              formatter: '本月 {c} 万元',
+            },
+            lineStyle: { color: 'rgba(250,140,22,.5)', type: 'dashed' },
+            data: [{ xAxis: cur }],
+          },
+          markPoint: {
+            symbol: 'pin',
+            symbolSize: 40,
+            itemStyle: { color: '#fa8c16' },
+            label: { color: '#fff', fontSize: 10, formatter: '{c}' },
+            data: [{ type: 'max', name: '最大值' }],
+          },
+        }, ],
+      });
+      window._charts = window._charts || [];
+      window._charts.push(c);
+    }
+
+    /* ============================================================
+       Chart 2: Inventory Distribution (Pie)
+       ============================================================ */
+    function renderPie() {
+      const dom = document.getElementById('chartPie');
+      if (!dom) return;
+      const c = echarts.init(dom);
+      const data = [
+        { value: 3850, name: '电子元器件' },
+        { value: 2100, name: '金属材料' },
+        { value: 1680, name: '化工原料' },
+        { value: 1240, name: '包装材料' },
+        { value: 950, name: '备品备件' },
+        { value: 580, name: '其他' },
+      ];
+      const colors = ['#1890ff', '#13c2c2', '#52c41a', '#fa8c16', '#722ed1', '#eb2f96'];
+
+      c.setOption({
+        ...chartTheme,
+        tooltip: {
+          ...chartTheme.tooltip,
+          trigger: 'item',
+          formatter: '{b}: {c} 万元 ({d}%)',
+        },
+        legend: {
+          ...chartTheme.legend,
+          orient: 'vertical',
+          right: 4,
+          top: 'center',
+          itemWidth: 10,
+          itemHeight: 10,
+        },
+        series: [{
+          type: 'pie',
+          radius: ['38%', '68%'],
+          center: ['35%', '50%'],
+          avoidLabelOverlap: true,
+          padAngle: 2,
+          itemStyle: {
+            borderRadius: 4,
+            borderColor: '#0a1628',
+            borderWidth: 2,
+          },
+          label: {
+            show: false,
+          },
+          emphasis: {
+            label: { show: true, fontSize: 12, fontWeight: 'bold', color: '#e8edf5' },
+            itemStyle: {
+              shadowBlur: 10,
+              shadowOffsetX: 0,
+              shadowColor: 'rgba(0,0,0,.5)',
+            },
+          },
+          data: data.map((d, i) => ({ ...d, itemStyle: { color: colors[i] } })),
+        }, ],
+      });
+      window._charts.push(c);
+    }
+
+    /* ============================================================
+       Chart 3: Supplier Ranking (Bar)
+       ============================================================ */
+    function renderBar() {
+      const dom = document.getElementById('chartBar');
+      if (!dom) return;
+      const c = echarts.init(dom);
+      const names = ['宏远电子', '鑫达金属', '楚天化工', '盛邦包装', '华威精密', '振华物流'];
+      const values = [98.2, 96.5, 95.1, 93.8, 92.4, 90.6];
+
+      c.setOption({
+        ...chartTheme,
+        grid: { ...chartTheme.grid, left: 70, bottom: 16 },
+        tooltip: {
+          ...chartTheme.tooltip,
+          trigger: 'axis',
+          axisPointer: { type: 'shadow' },
+          formatter: function(params) {
+            const p = params[0];
+            return `${p.name}<br/>准时交货率: ${p.value}%`;
+          },
+        },
+        xAxis: {
+          ...chartTheme.xAxis,
+          type: 'value',
+          max: 100,
+          axisLabel: { ...chartTheme.xAxis.axisLabel, formatter: '{value}%' },
+          splitLine: { show: true, lineStyle: { color: 'rgba(255,255,255,.04)', type: 'dashed' } },
+        },
+        yAxis: {
+          ...chartTheme.yAxis,
+          type: 'category',
+          data: names.slice().reverse(),
+          axisLabel: { color: 'rgba(232,237,245,.7)', fontSize: 11 },
+          splitLine: { show: false },
+        },
+        series: [{
+          type: 'bar',
+          barWidth: 14,
+          data: values.slice().reverse().map((v, i) => ({
+            value: v,
+            itemStyle: {
+              color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
+                { offset: 0, color: `rgba(24,144,255,${0.3 + i * 0.12})` },
+                { offset: 1, color: `rgba(19,194,194,${0.3 + i * 0.12})` },
+              ]),
+              borderRadius: [0, 6, 6, 0],
+            },
+          })),
+          label: {
+            show: true,
+            position: 'right',
+            color: 'rgba(232,237,245,.6)',
+            fontSize: 11,
+            formatter: '{c}%',
+          },
+          markLine: {
+            silent: true,
+            symbol: 'none',
+            lineStyle: { color: 'rgba(250,140,22,.5)', type: 'dashed' },
+            label: {
+              color: 'rgba(232,237,245,.4)',
+              fontSize: 10,
+              formatter: '目标 95%',
+              position: 'start',
+            },
+            data: [{ xAxis: 95 }],
+          },
+        }, ],
+      });
+      window._charts.push(c);
+    }
+
+    /* ============================================================
+       Chart 4: Warehouse Utilization (Gauge - multi)
+       ============================================================ */
+    function renderGauge() {
+      const dom = document.getElementById('chartGauge');
+      if (!dom) return;
+      const c = echarts.init(dom);
+      const warehouses = [
+        { name: '华东仓', value: 87 },
+        { name: '华南仓', value: 72 },
+        { name: '华北仓', value: 54 },
+      ];
+
+      c.setOption({
+        ...chartTheme,
+        series: warehouses.map((w, idx) => {
+          const startAngle = 220 + idx * 50;
+          const endAngle = startAngle + 40;
+          const centerX = 18 + idx * 33;
+          return {
+            type: 'gauge',
+            startAngle,
+            endAngle,
+            center: [centerX + '%', '55%'],
+            radius: '70%',
+            min: 0,
+            max: 100,
+            splitNumber: 2,
+            progress: {
+              show: true,
+              width: 8,
+              itemStyle: {
+                color: {
+                  type: 'linear',
+                  x: 0,
+                  y: 0,
+                  x2: 1,
+                  y2: 0,
+                  colorStops: [
+                    { offset: 0, color: ['#1890ff', '#13c2c2', '#52c41a'][idx] },
+                    { offset: 1, color: ['#13c2c2', '#52c41a', '#fa8c16'][idx] },
+                  ],
+                },
+              },
+            },
+            axisLine: {
+              lineStyle: { width: 8, color: [
+                  [1, 'rgba(255,255,255,.06)'],
+                ] },
+            },
+            axisTick: { show: false },
+            splitLine: { show: false },
+            axisLabel: { show: false },
+            detail: {
+              offsetCenter: [0, 36],
+              valueAnimation: true,
+              color: 'rgba(232,237,245,.85)',
+              fontSize: 15,
+              fontWeight: 700,
+              formatter: w.value + '%',
+            },
+            title: {
+              offsetCenter: [0, 56],
+              color: 'rgba(232,237,245,.45)',
+              fontSize: 11,
+              formatter: w.name,
+            },
+            data: [{ value: w.value, name: w.name }],
+          };
+        }),
+      });
+      window._charts.push(c);
+    }
+
+    /* ============================================================
+       Chart 5: Logistics Timeliness (Bar + Line)
+       ============================================================ */
+    function renderLogistics() {
+      const dom = document.getElementById('chartLogistics');
+      if (!dom) return;
+      const c = echarts.init(dom);
+      const regions = ['华东', '华南', '华北', '华中', '西南', '西北', '东北'];
+      const avgTime = [2.1, 2.5, 3.2, 2.8, 4.1, 5.3, 3.8];
+      const target = [2.5, 2.5, 3.0, 3.0, 4.0, 5.0, 3.5];
+      const onTime = [96, 94, 90, 92, 85, 78, 88];
+
+      c.setOption({
+        ...chartTheme,
+        tooltip: {
+          ...chartTheme.tooltip,
+          trigger: 'axis',
+          axisPointer: { type: 'cross' },
+        },
+        legend: {
+          ...chartTheme.legend,
+          data: ['平均时效(天)', '目标时效(天)', '准时率(%)'],
+          bottom: 0,
+        },
+        grid: { ...chartTheme.grid, bottom: 36, right: 50 },
+        xAxis: {
+          ...chartTheme.xAxis,
+          type: 'category',
+          data: regions,
+        },
+        yAxis: [{
+          ...chartTheme.yAxis,
+          type: 'value',
+          name: '天',
+          min: 0,
+          max: 7,
+          nameTextStyle: { color: 'rgba(232,237,245,.3)', fontSize: 10 },
+        }, {
+          ...chartTheme.yAxis,
+          type: 'value',
+          name: '%',
+          min: 70,
+          max: 100,
+          nameTextStyle: { color: 'rgba(232,237,245,.3)', fontSize: 10 },
+          splitLine: { show: false },
+        }, ],
+        series: [{
+          name: '平均时效(天)',
+          type: 'bar',
+          barWidth: '18%',
+          itemStyle: {
+            color: {
+              type: 'linear',
+              x: 0,
+              y: 1,
+              x2: 0,
+              y2: 0,
+              colorStops: [
+                { offset: 0, color: 'rgba(24,144,255,.6)' },
+                { offset: 1, color: '#1890ff' },
+              ],
+            },
+            borderRadius: [4, 4, 0, 0],
+          },
+          data: avgTime,
+        }, {
+          name: '目标时效(天)',
+          type: 'line',
+          smooth: true,
+          symbol: 'diamond',
+          symbolSize: 10,
+          lineStyle: { color: '#fa8c16', width: 2, type: 'dashed' },
+          itemStyle: { color: '#fa8c16' },
+          data: target,
+        }, {
+          name: '准时率(%)',
+          type: 'line',
+          smooth: true,
+          yAxisIndex: 1,
+          symbol: 'circle',
+          symbolSize: 8,
+          lineStyle: { color: '#52c41a', width: 2 },
+          itemStyle: { color: '#52c41a' },
+          areaStyle: {
+            color: {
+              type: 'linear',
+              x: 0,
+              y: 0,
+              x2: 0,
+              y2: 1,
+              colorStops: [
+                { offset: 0, color: 'rgba(82,196,26,.15)' },
+                { offset: 1, color: 'rgba(82,196,26,0)' },
+              ],
+            },
+          },
+          data: onTime,
+        }, ],
+      });
+      window._charts.push(c);
+    }
+
+    /* ============================================================
+       Chart 6: Regional Sales (Horizontal Bar)
+       ============================================================ */
+    function renderRegion() {
+      const dom = document.getElementById('chartRegion');
+      if (!dom) return;
+      const c = echarts.init(dom);
+      const regions = ['华东', '华南', '华北', '华中', '西南', '西北', '东北'];
+      const sales = [12580, 9870, 7650, 5420, 4890, 3210, 2980];
+      const growth = [8.5, 12.3, 5.2, 15.8, 20.1, 9.6, 3.4];
+      const total = sales.reduce((a, b) => a + b, 0);
+
+      c.setOption({
+        ...chartTheme,
+        tooltip: {
+          ...chartTheme.tooltip,
+          trigger: 'axis',
+          axisPointer: { type: 'shadow' },
+          formatter: function(params) {
+            const p = params[0];
+            const idx = regions.indexOf(p.name);
+            const g = growth[idx];
+            const sign = g >= 0 ? '▲' : '▼';
+            const color = g >= 0 ? '#52c41a' : '#ff4d4f';
+            return `<strong>${p.name}</strong><br/>
+                    销售额: ${p.value.toLocaleString()} 万元<br/>
+                    占比: ${(p.value / total * 100).toFixed(1)}%<br/>
+                    同比增长: <span style="color:${color}">${sign} ${Math.abs(g)}%</span>`;
+          },
+        },
+        legend: {
+          ...chartTheme.legend,
+          data: ['销售额(万元)', '同比增长率(%)'],
+          bottom: 0,
+        },
+        grid: { ...chartTheme.grid, left: 56, bottom: 36, right: 50 },
+        xAxis: {
+          ...chartTheme.xAxis,
+          type: 'value',
+          axisLabel: { ...chartTheme.xAxis.axisLabel, formatter: function(v) { return v >= 1000 ? (v / 1000) + 'k' : v; } },
+        },
+        yAxis: {
+          ...chartTheme.yAxis,
+          type: 'category',
+          data: regions.slice().reverse(),
+          axisLabel: { color: 'rgba(232,237,245,.7)', fontSize: 11 },
+        },
+        series: [{
+          name: '销售额(万元)',
+          type: 'bar',
+          barWidth: 12,
+          data: sales.slice().reverse().map((v, i) => ({
+            value: v,
+            itemStyle: {
+              color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
+                { offset: 0, color: `rgba(24,144,255,${0.3 + (6 - i) * 0.1})` },
+                { offset: 1, color: `rgba(19,194,194,${0.3 + (6 - i) * 0.1})` },
+              ]),
+              borderRadius: [0, 6, 6, 0],
+            },
+          })),
+          label: {
+            show: true,
+            position: 'right',
+            color: 'rgba(232,237,245,.6)',
+            fontSize: 11,
+            formatter: function(p) { return (p.value / 10000).toFixed(1) + '亿'; },
+          },
+        }, {
+          name: '同比增长率(%)',
+          type: 'bar',
+          barWidth: 12,
+          xAxisIndex: 0,
+          data: growth.slice().reverse().map(v => ({
+            value: v,
+            itemStyle: {
+              color: v >= 0 ? 'rgba(82,196,26,.6)' : 'rgba(255,77,79,.6)',
+              borderRadius: [0, 4, 4, 0],
+            },
+          })),
+          label: {
+            show: true,
+            position: 'right',
+            color: 'rgba(232,237,245,.5)',
+            fontSize: 10,
+            formatter: '{c}%',
+          },
+        }, ],
+      });
+      window._charts.push(c);
+    }
+
+    /* ============================================================
+       Init all
+       ============================================================ */
+    function init() {
+      initKPI();
+
+      // Small delay for dramatic effect
+      setTimeout(() => {
+        renderTrend();
+        renderPie();
+        renderBar();
+        renderGauge();
+        renderLogistics();
+        renderRegion();
+
+        // Hide loading
+        document.getElementById('loadingMask').classList.add('hide');
+      }, 600);
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+
+    /* ============================================================
+       Auto resize
+       ============================================================ */
+    let resizeTimer;
+    window.addEventListener('resize', function() {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(function() {
+        (window._charts || []).forEach(function(c) {
+          try { c.resize(); } catch (e) {}
+        });
+      }, 200);
+    });
+
+    /* ============================================================
+       Simulate real-time KPI updates (every 10s)
+       ============================================================ */
+    setInterval(function() {
+      const kpi1El = document.getElementById('kpi1');
+      const current = parseFloat(kpi1El.textContent) || KPI.kpi1.val;
+      const drift = (Math.random() - 0.5) * 6;
+      const newVal = Math.round((current * 100 + drift * 10)) / 100;
+      kpi1El.textContent = newVal.toFixed(1);
+
+      const kpi3El = document.getElementById('kpi3');
+      const cur3 = parseFloat(kpi3El.textContent) || KPI.kpi3.val;
+      const d3 = (Math.random() - 0.5) * 0.4;
+      const new3 = Math.min(100, Math.max(90, Math.round((cur3 + d3) * 10) / 10));
+      kpi3El.textContent = new3.toFixed(1);
+    }, 10000);
+  </script>
+</body>
+</html>

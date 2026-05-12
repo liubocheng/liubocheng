@@ -3,3 +3,6 @@ node_modules/
 .DS_Store
 *.log
 dist/
+lingxi-claw/
+Python/
+《AI工程》代码资源/

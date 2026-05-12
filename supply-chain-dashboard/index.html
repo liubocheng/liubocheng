@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
+  <title>供应链数据大屏</title>
+  <link rel="stylesheet" href="css/app.css">
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js">
+  </script>
+</head>
+<body>
+
+  <!-- ===== Loading Screen ===== -->
+  <div class="loading" id="loadingScreen">
+    <div class="loading-ring"></div>
+    <div class="loading-text">供应链数据加载中</div>
+    <div class="loading-progress"><span id="loadProgress">0</span>%</div>
+  </div>
+
+  <!-- ===== App Shell ===== -->
+  <div id="app" class="app">
+
+    <!-- ===== Header ===== -->
+    <header class="header" id="appHeader">
+      <div class="header-left">
+        <button class="header-btn" id="menuBtn" aria-label="菜单">☰</button>
+        <div class="header-info">
+          <h1 class="header-title" id="pageTitle">总览</h1>
+          <span class="header-subtitle">供应链数据大屏</span>
+        </div>
+      </div>
+      <div class="header-right">
+        <span class="live-badge"></span>
+        <span class="header-time" id="liveTime">--:--</span>
+        <button class="header-btn" id="refreshBtn" aria-label="刷新">↻</button>
+      </div>
+    </header>
+
+    <!-- ===== Side Drawer ===== -->
+    <div class="drawer-overlay" id="drawerOverlay"></div>
+    <div class="drawer" id="drawer">
+      <div class="drawer-header">
+        <span class="drawer-title">📦 供应链大屏</span>
+        <span class="drawer-version">v2.0</span>
+      </div>
+      <div class="drawer-body">
+        <div class="drawer-section-title">数据概览</div>
+        <div class="drawer-stat">
+          <span>更新频率</span><span>实时 / 10s 轮询</span>
+        </div>
+        <div class="drawer-stat">
+          <span>数据周期</span><span>2026年1-5月</span>
+        </div>
+        <div class="drawer-stat">
+          <span>供应商总数</span><span>326 家</span>
+        </div>
+        <div class="drawer-stat">
+          <span>仓库数量</span><span>12 个</span>
+        </div>
+        <div class="drawer-section-title">图例说明</div>
+        <div class="drawer-legend"><span class="dl" style="background:#1890ff"></span>采购数据</div>
+        <div class="drawer-legend"><span class="dl" style="background:#13c2c2"></span>库存数据</div>
+        <div class="drawer-legend"><span class="dl" style="background:#52c41a"></span>物流数据</div>
+        <div class="drawer-legend"><span class="dl" style="background:#fa8c16"></span>预警数据</div>
+      </div>
+    </div>
+
+    <!-- ===== Page Container ===== -->
+    <main class="main" id="mainContent">
+
+      <!-- 总览 -->
+      <section class="page active" data-page="overview">
+        <div class="kpi-grid" id="ovKpi"></div>
+        <div class="chart-grid">
+          <div class="chart-card full">
+            <div class="chart-hd">供应链综合趋势 <span class="chart-meta">采购额 / 库存 / 物流成本</span></div>
+            <div class="chart-bd tall" id="ovTrend"></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-hd">库存品类分布 <span class="chart-meta">按金额</span></div>
+            <div class="chart-bd" id="ovPie"></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-hd">供应商评分 TOP5 <span class="chart-meta">综合评分</span></div>
+            <div class="chart-bd" id="ovBar"></div>
+          </div>
+          <div class="chart-card full">
+            <div class="chart-hd">关键指标看板 <span class="chart-meta">四维对比</span></div>
+            <div class="chart-bd tall" id="ovRadar"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 采购 -->
+      <section class="page" data-page="procurement">
+        <div class="kpi-grid" id="prKpi"></div>
+        <div class="chart-grid">
+          <div class="chart-card full">
+            <div class="chart-hd">月度采购趋势 <span class="chart-meta">计划 vs 实际</span></div>
+            <div class="chart-bd tall" id="prTrend"></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-hd">采购品类占比 <span class="chart-meta">按金额</span></div>
+            <div class="chart-bd" id="prPie"></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-hd">订单状态分布 <span class="chart-meta">当前月份</span></div>
+            <div class="chart-bd" id="prStatus"></div>
+          </div>
+          <div class="chart-card full">
+            <div class="chart-hd">供应商采购占比 <span class="chart-meta">TOP 8</span></div>
+            <div class="chart-bd tall" id="prSupplier"></div>
+          </div>
+        </div>
+        <div class="table-card">
+          <div class="table-hd">近期采购订单 <span class="chart-meta">最近 6 条</span></div>
+          <div class="table-scroll">
+            <table class="data-table" id="prTable"></table>
+          </div>
+        </div>
+      </section>
+
+      <!-- 库存 -->
+      <section class="page" data-page="inventory">
+        <div class="kpi-grid" id="invKpi"></div>
+        <div class="chart-grid">
+          <div class="chart-card full">
+            <div class="chart-hd">库存水平趋势 <span class="chart-meta">万元</span></div>
+            <div class="chart-bd tall" id="invTrend"></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-hd">ABC 分类分析 <span class="chart-meta">库存金额占比</span></div>
+            <div class="chart-bd" id="invAbc"></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-hd">库存周转天数 <span class="chart-meta">按品类</span></div>
+            <div class="chart-bd" id="invTurnover"></div>
+          </div>
+          <div class="chart-card full">
+            <div class="chart-hd">呆滞库存分析 <span class="chart-meta">超 90 天未移动</span></div>
+            <div class="chart-bd tall" id="invSlow"></div>
+          </div>
+        </div>
+        <div class="table-card">
+          <div class="table-hd">库存预警清单 <span class="chart-meta">低于安全库存</span></div>
+          <div class="table-scroll">
+            <table class="data-table" id="invTable"></table>
+          </div>
+        </div>
+      </section>
+
+      <!-- 物流 -->
+      <section class="page" data-page="logistics">
+        <div class="kpi-grid" id="lgKpi"></div>
+        <div class="chart-grid">
+          <div class="chart-card full">
+            <div class="chart-hd">区域配送时效 <span class="chart-meta">平均时效 vs 目标</span></div>
+            <div class="chart-bd tall" id="lgRegion"></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-hd">物流成本构成 <span class="chart-meta">本月</span></div>
+            <div class="chart-bd" id="lgPie"></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-hd">承运商准时率 <span class="chart-meta">TOP 6</span></div>
+            <div class="chart-bd" id="lgCarrier"></div>
+          </div>
+          <div class="chart-card full">
+            <div class="chart-hd">月度物流费用 <span class="chart-meta">万元</span></div>
+            <div class="chart-bd tall" id="lgTrend"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 供应商 -->
+      <section class="page" data-page="supplier">
+        <div class="kpi-grid" id="spKpi"></div>
+        <div class="chart-grid">
+          <div class="chart-card full">
+            <div class="chart-hd">供应商评分分布 <span class="chart-meta">综合评分区间</span></div>
+            <div class="chart-bd tall" id="spScore"></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-hd">供应商等级占比 <span class="chart-meta">A/B/C/D</span></div>
+            <div class="chart-bd" id="spLevel"></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-hd">品类覆盖 <span class="chart-meta">供应商数量</span></div>
+            <div class="chart-bd" id="spCoverage"></div>
+          </div>
+          <div class="chart-card full">
+            <div class="chart-hd">风险矩阵 <span class="chart-meta">财务风险 vs 交付风险</span></div>
+            <div class="chart-bd tall" id="spRisk"></div>
+          </div>
+        </div>
+        <div class="table-card">
+          <div class="table-hd">高风险供应商 <span class="chart-meta">需重点关注</span></div>
+          <div class="table-scroll">
+            <table class="data-table" id="spTable"></table>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- ===== Bottom Tab Bar ===== -->
+    <nav class="tabs" id="tabBar">
+      <button class="tab active" data-page="overview">
+        <span class="tab-icon">📊</span>
+        <span class="tab-label">总览</span>
+      </button>
+      <button class="tab" data-page="procurement">
+        <span class="tab-icon">📋</span>
+        <span class="tab-label">采购</span>
+      </button>
+      <button class="tab" data-page="inventory">
+        <span class="tab-icon">📦</span>
+        <span class="tab-label">库存</span>
+      </button>
+      <button class="tab" data-page="logistics">
+        <span class="tab-icon">🚚</span>
+        <span class="tab-label">物流</span>
+      </button>
+      <button class="tab" data-page="supplier">
+        <span class="tab-icon">🏢</span>
+        <span class="tab-label">供应商</span>
+      </button>
+    </nav>
+
+  </div>
+
+  <!-- ===== Drill-Down Modal ===== -->
+  <div class="modal-overlay" id="drillModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-header-left">
+          <span class="modal-icon" id="modalIcon"></span>
+          <span class="modal-title" id="modalTitle"></span>
+        </div>
+        <button class="modal-close" id="modalClose">✕</button>
+      </div>
+      <div class="modal-body" id="modalBody">
+        <!-- content rendered dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

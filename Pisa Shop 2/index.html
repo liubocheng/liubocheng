@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mamma Mia Pizza - 现烤手工披萨</title>
+    <!-- Google Fonts for a warm, modern aesthetic similar to Airbnb Cereal -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        rausch: '#ff385c',
+                        deeprausch: '#e00b41',
+                        nearblack: '#222222',
+                        focused: '#3f3f3f',
+                        secondary: '#6a6a6a',
+                        surface: '#f2f2f2',
+                        bordergray: '#c1c1c1',
+                        surfacebg: '#f7f7f9',
+                        cheeseyellow: '#fff7e6',
+                        basilgreen: '#4caf50'
+                    },
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        airbnb: 'rgba(0,0,0,0.02) 0px 0px 0px 1px, rgba(0,0,0,0.04) 0px 2px 6px, rgba(0,0,0,0.1) 0px 4px 8px',
+                        hover: 'rgba(0,0,0,0.08) 0px 4px 12px',
+                    },
+                    borderRadius: {
+                        btn: '8px',
+                        badge: '14px',
+                        card: '20px',
+                        large: '32px',
+                    },
+                    spacing: {
+                        '128': '32rem',
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { color: #222222; -webkit-font-smoothing: antialiased; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        /* Smooth scrolling */
+        html { scroll-behavior: smooth; }
+        
+        .card-hover { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .card-hover:hover { transform: translateY(-4px); box-shadow: var(--tw-shadow-hover); }
+        
+        .pill-active { position: relative; }
+        .pill-active::after {
+            content: "";
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: #222222;
+        }
+    </style>
+</head>
+<body class="bg-white text-nearblack font-sans">
+
+    <!-- 1. Header -->
+    <header class="fixed top-0 left-0 right-0 bg-white z-50 border-b border-gray-100 shadow-sm transition-all duration-300" id="header">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Logo -->
+            <div class="flex items-center gap-2 cursor-pointer">
+                <i data-lucide="pizza" class="w-8 h-8 text-rausch fill-rausch/10"></i>
+                <span class="text-xl font-bold text-rausch tracking-tight hidden sm:block">Mamma Mia</span>
+            </div>
+
+            <!-- Desktop Nav -->
+            <nav class="hidden md:flex items-center gap-8 text-[16px] font-medium text-secondary">
+                <a href="#" class="text-nearblack font-semibold pill-active">首页</a>
+                <a href="#menu" class="hover:text-nearblack transition-colors">菜单</a>
+                <a href="#signature" class="hover:text-nearblack transition-colors">招牌</a>
+                <a href="#promotions" class="hover:text-nearblack transition-colors">优惠</a>
+                <a href="#store" class="hover:text-nearblack transition-colors">门店</a>
+            </nav>
+
+            <!-- Actions -->
+            <div class="flex items-center gap-3">
+                <button class="hidden md:flex items-center justify-center bg-surface hover:bg-gray-200 text-nearblack px-4 py-2 rounded-btn font-medium transition-colors h-10">
+                    立即订位
+                </button>
+                <button class="flex items-center justify-center bg-rausch hover:bg-deeprausch text-white px-5 py-2 rounded-btn font-medium transition-colors h-10 shadow-sm">
+                    在线点单
+                </button>
+                <!-- Mobile Menu Toggle -->
+                <button class="md:hidden p-2 rounded-full border border-gray-200 text-nearblack bg-white hover:shadow-airbnb transition-shadow">
+                    <i data-lucide="menu" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="pt-20">
+        <!-- 2. Hero Section -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-16">
+            <div class="flex flex-col-reverse lg:flex-row items-center gap-12 lg:gap-8">
+                <div class="flex-1 space-y-6 text-center lg:text-left">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 bg-surface rounded-badge text-sm font-medium">
+                        <span class="flex items-center gap-1 text-rausch"><i data-lucide="star" class="w-4 h-4 fill-rausch"></i> 4.8</span>
+                        <span class="text-gray-300">|</span>
+                        <span>月售 8000+</span>
+                    </div>
+                    <h1 class="text-[36px] sm:text-[46px] lg:text-[56px] leading-[1.15] font-bold tracking-tight text-nearblack">
+                        现烤手工披萨，<br class="hidden lg:block">把热腾腾的快乐送到你面前
+                    </h1>
+                    <p class="text-lg text-secondary max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+                        坚持每日现揉面团，精选新鲜食材与经典意式风味。<br class="hidden sm:block">30 分钟快速出餐，支持外卖、小哥哥配送及到店堂食。
+                    </p>
+                    <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-4">
+                        <button class="w-full sm:w-auto px-8 py-3.5 bg-rausch hover:bg-deeprausch text-white rounded-btn font-semibold text-lg transition-colors shadow-sm flex items-center justify-center gap-2">
+                            <span>立即点单</span>
+                            <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                        </button>
+                        <button class="w-full sm:w-auto px-8 py-3.5 bg-surface hover:bg-gray-200 text-nearblack rounded-btn font-semibold text-lg transition-colors flex items-center justify-center gap-2">
+                            查看菜单
+                        </button>
+                    </div>
+                    
+                    <div class="flex items-center justify-center lg:justify-start gap-6 pt-6 text-sm font-medium text-secondary">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 rounded-full bg-surface flex items-center justify-center"><i data-lucide="clock" class="w-4 h-4 text-nearblack"></i></div>
+                            30分钟出餐
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 rounded-full bg-surface flex items-center justify-center"><i data-lucide="shopping-bag" class="w-4 h-4 text-nearblack"></i></div>
+                            外卖/自取
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex-1 w-full max-w-2xl lg:max-w-none relative">
+                    <div class="aspect-[4/3] sm:aspect-video lg:aspect-[4/3] rounded-large overflow-hidden shadow-airbnb relative group">
+                        <img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=1600&q=80" alt="Delicious hot pizza" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-in-out">
+                        <!-- Floating Badge -->
+                        <div class="absolute bottom-6 bg-white/90 backdrop-blur-md px-4 py-3 rounded-card shadow-airbnb left-1/2 -translate-x-1/2 flex items-center gap-3 w-max">
+                            <div class="w-10 h-10 bg-rausch/10 rounded-full flex items-center justify-center">
+                                <i data-lucide="flame" class="w-5 h-5 text-rausch"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-secondary font-medium">刚刚出炉</p>
+                                <p class="text-sm font-bold text-nearblack">经典意式香肠披萨</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Signature Pizzas -->
+        <section id="signature" class="py-16 bg-surfacebg">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-end mb-10">
+                    <div>
+                        <h2 class="text-3xl font-bold tracking-tight text-nearblack mb-2">本店招牌</h2>
+                        <p class="text-secondary text-lg">最受欢迎的经典口味，闭眼点不出错</p>
+                    </div>
+                    <div class="hidden sm:flex gap-2">
+                        <button class="w-10 h-10 rounded-full bg-white shadow-airbnb flex items-center justify-center hover:bg-surface transition-colors">
+                            <i data-lucide="chevron-left" class="w-5 h-5"></i>
+                        </button>
+                        <button class="w-10 h-10 rounded-full bg-white shadow-airbnb flex items-center justify-center hover:bg-surface transition-colors">
+                            <i data-lucide="chevron-right" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Product Card 1 -->
+                    <div class="bg-white rounded-card shadow-airbnb overflow-hidden card-hover group flex flex-col">
+                        <div class="aspect-[4/3] relative overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=800&q=80" alt="Margherita Pizza" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            <!-- Overlay gradients for text reading -->
+                            <div class="absolute top-4 left-4">
+                                <span class="bg-white/90 backdrop-blur-sm text-nearblack px-3 py-1 rounded-badge text-xs font-bold tracking-wide flex items-center gap-1 shadow-sm">
+                                    <i data-lucide="award" class="w-3 h-3 text-rausch"></i> 主厨推荐
+                                </span>
+                            </div>
+                        </div>
+                        <div class="p-5 flex flex-col flex-grow">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="text-xl font-bold text-nearblack">经典玛格丽特</h3>
+                                <span class="text-lg font-bold text-nearblack">¥58</span>
+                            </div>
+                            <p class="text-sm text-secondary mb-6 line-clamp-2">水牛新鲜芝士、圣马扎诺番茄酱、新鲜罗勒叶，简简单单的绝佳风味。</p>
+                            <button class="mt-auto w-full py-2.5 bg-surface hover:bg-gray-200 text-nearblack rounded-btn font-medium transition-colors">加入购物车</button>
+                        </div>
+                    </div>
+
+                    <!-- Product Card 2 -->
+                    <div class="bg-white rounded-card shadow-airbnb overflow-hidden card-hover group flex flex-col">
+                        <div class="aspect-[4/3] relative overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1628840042765-356cda07504e?auto=format&fit=crop&w=800&q=80" alt="Pepperoni Pizza" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            <div class="absolute top-4 left-4 flex gap-2">
+                                <span class="bg-rausch text-white px-3 py-1 rounded-badge text-xs font-bold tracking-wide shadow-sm">热销 No.1</span>
+                            </div>
+                        </div>
+                        <div class="p-5 flex flex-col flex-grow">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="text-xl font-bold text-nearblack flex items-center gap-1">火山辣香肠 <i data-lucide="flame" class="w-4 h-4 text-orange-500 fill-orange-500"></i></h3>
+                                <span class="text-lg font-bold text-nearblack">¥68</span>
+                            </div>
+                            <p class="text-sm text-secondary mb-6 line-clamp-2">意式辣香肠铺满饼面，配合浓郁拉丝马苏里拉，微辣刺激味蕾。</p>
+                            <button class="mt-auto w-full py-2.5 bg-surface hover:bg-gray-200 text-nearblack rounded-btn font-medium transition-colors">加入购物车</button>
+                        </div>
+                    </div>
+
+                    <!-- Product Card 3 -->
+                    <div class="bg-white rounded-card shadow-airbnb overflow-hidden card-hover group flex flex-col">
+                        <div class="aspect-[4/3] relative overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1511685363247-c0e86b248a31?auto=format&fit=crop&w=800&q=80" alt="Mushroom Pizza" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        </div>
+                        <div class="p-5 flex flex-col flex-grow">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="text-xl font-bold text-nearblack">松露蘑菇双拼</h3>
+                                <span class="text-lg font-bold text-nearblack">¥72</span>
+                            </div>
+                            <p class="text-sm text-secondary mb-6 line-clamp-2">黑松露酱为基底，搭配烘烤鲜蘑菇与百里香，香气扑鼻的素食之选。</p>
+                            <button class="mt-auto w-full py-2.5 bg-surface hover:bg-gray-200 text-nearblack rounded-btn font-medium transition-colors">加入购物车</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Promotions & Offers -->
+        <section id="promotions" class="py-16">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="bg-cheeseyellow/50 rounded-large p-8 md:p-12 shadow-sm border border-orange-100 flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden">
+                    <!-- Background decor -->
+                    <div class="absolute -right-20 -top-20 w-64 h-64 bg-yellow-200/40 rounded-full blur-3xl pointer-events-none"></div>
+                    <div class="absolute -left-10 -bottom-10 w-48 h-48 bg-rausch/10 rounded-full blur-3xl pointer-events-none"></div>
+                    
+                    <div class="relative z-10 space-y-4 max-w-xl text-center md:text-left">
+                        <span class="inline-block px-3 py-1 bg-white text-rausch rounded-badge text-sm font-bold shadow-sm">限时限额</span>
+                        <h2 class="text-3xl md:text-4xl font-bold text-nearblack">午间双人套餐 仅需 ¥68</h2>
+                        <p class="text-secondary text-lg">内含 9尺招牌披萨 1 份 + 黄金炸鸡块 1 份 + 饮品 2 杯。<br>工作日 11:00-14:00 专享。</p>
+                        <div class="pt-2">
+                            <button class="px-6 py-3 bg-rausch hover:bg-deeprausch text-white rounded-btn font-semibold shadow-hover transition-all">立即领取</button>
+                        </div>
+                    </div>
+                    
+                    <div class="relative z-10 flex-shrink-0 w-full max-w-[300px] md:max-w-[400px]">
+                        <img src="https://images.unsplash.com/photo-1590947132387-155cc02f3212?auto=format&fit=crop&w=800&q=80" alt="Pizza Combo" class="rounded-large shadow-airbnb rotate-2">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. Menu Categories (Horizontal Scroll) -->
+        <section id="menu" class="py-16 bg-white border-t border-gray-100">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl font-bold tracking-tight text-nearblack mb-8">完整菜单</h2>
+                
+                <!-- Category Pills -->
+                <div class="flex gap-4 overflow-x-auto no-scrollbar pb-4 -mx-4 px-4 sm:mx-0 sm:px-0">
+                    <button class="whitespace-nowrap px-6 py-2.5 bg-nearblack text-white rounded-full font-medium shadow-sm">经典披萨</button>
+                    <button class="whitespace-nowrap px-6 py-2.5 bg-surface hover:bg-gray-200 text-nearblack rounded-full font-medium transition-colors">肉食精选</button>
+                    <button class="whitespace-nowrap px-6 py-2.5 bg-surface hover:bg-gray-200 text-nearblack rounded-full font-medium transition-colors">素食轻享</button>
+                    <button class="whitespace-nowrap px-6 py-2.5 bg-surface hover:bg-gray-200 text-nearblack rounded-full font-medium transition-colors">小食炸物</button>
+                    <button class="whitespace-nowrap px-6 py-2.5 bg-surface hover:bg-gray-200 text-nearblack rounded-full font-medium transition-colors">沙拉</button>
+                    <button class="whitespace-nowrap px-6 py-2.5 bg-surface hover:bg-gray-200 text-nearblack rounded-full font-medium transition-colors">饮品</button>
+                </div>
+
+                <!-- Menu Items List -->
+                <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                    <!-- Item -->
+                    <div class="flex items-center gap-4 py-4 border-b border-gray-100">
+                        <img src="https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=200&q=80" class="w-24 h-24 rounded-card object-cover" alt="item">
+                        <div class="flex-1">
+                            <div class="flex justify-between">
+                                <h4 class="text-lg font-bold">夏威夷双重风味</h4>
+                                <span class="font-bold">¥55</span>
+                            </div>
+                            <p class="text-sm text-secondary mt-1">香甜菠萝、多汁火腿，配合现烤拉丝芝士。</p>
+                            <p class="text-xs text-gray-400 mt-2">标配 9 寸 · 适合 1-2 人</p>
+                        </div>
+                    </div>
+                    <!-- Item -->
+                    <div class="flex items-center gap-4 py-4 border-b border-gray-100">
+                        <img src="https://images.unsplash.com/photo-1511685363247-c0e86b248a31?auto=format&fit=crop&w=200&q=80" class="w-24 h-24 rounded-card object-cover" alt="item">
+                        <div class="flex-1">
+                            <div class="flex justify-between">
+                                <h4 class="text-lg font-bold">芝士四重奏</h4>
+                                <span class="font-bold">¥65</span>
+                            </div>
+                            <p class="text-sm text-secondary mt-1">马苏里拉、车达、帕玛森、蓝纹，极限拉丝的芝士暴击。</p>
+                            <p class="text-xs text-gray-400 mt-2">标配 9 寸 · 适合 1-2 人</p>
+                        </div>
+                    </div>
+                    <!-- Item -->
+                    <div class="flex items-center gap-4 py-4 border-b border-gray-100">
+                        <div class="w-24 h-24 rounded-card bg-surface flex items-center justify-center text-gray-400">
+                            <i data-lucide="image" class="w-8 h-8"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex justify-between">
+                                <h4 class="text-lg font-bold">黑椒牛肉披萨</h4>
+                                <span class="font-bold">¥75</span>
+                            </div>
+                            <p class="text-sm text-secondary mt-1">大块腌制黑椒牛肉，搭配青红椒，大口吃肉首选。</p>
+                            <p class="text-xs text-gray-400 mt-2">标配 9 寸 · 适合 1-2 人</p>
+                        </div>
+                    </div>
+                    <!-- Item -->
+                    <div class="flex items-center gap-4 py-4 border-b border-gray-100">
+                        <div class="w-24 h-24 rounded-card bg-surface flex items-center justify-center text-gray-400">
+                            <i data-lucide="image" class="w-8 h-8"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex justify-between">
+                                <h4 class="text-lg font-bold">金枪鱼海鲜拼</h4>
+                                <span class="font-bold">¥78</span>
+                            </div>
+                            <p class="text-sm text-secondary mt-1">深海金枪鱼、大虾仁、黑橄榄，清爽不腻。</p>
+                            <p class="text-xs text-gray-400 mt-2">标配 9 寸 · 适合 1-2 人</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-10 text-center">
+                    <button class="px-6 py-2.5 border border-nearblack text-nearblack rounded-btn font-medium hover:bg-surface transition-colors">查看全部 24 款产品</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. Brand Story -->
+        <section class="py-16 bg-nearblack text-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex flex-col lg:flex-row items-center gap-12">
+                    <div class="flex-1 space-y-6">
+                        <h2 class="text-3xl md:text-4xl font-bold">每一张披萨，都从一块好面团开始</h2>
+                        <div class="space-y-4 text-gray-300 text-lg">
+                            <p>我们坚信，美味的秘密在于时间与诚意。</p>
+                            <p>每天清晨，选用进口高筋面粉，经过 24 小时低温发酵，手工揉制拍打。不使用冷冻面坯，只为每一口饼边都充满空气感与麦香。</p>
+                            <p>新鲜捣碎的圣马扎诺番茄，配上空运马苏里拉芝士，送入 300 度的烤炉。现点现烤，热腾腾地装入盒中，送达你的手上。</p>
+                        </div>
+                    </div>
+                    <div class="flex-1 w-full grid grid-cols-2 gap-4">
+                        <img src="https://images.unsplash.com/photo-1509315811345-672d83ef2fbc?auto=format&fit=crop&w=600&q=80" alt="Making dough" class="rounded-card w-full h-48 object-cover shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1590947132387-155cc02f3212?auto=format&fit=crop&w=600&q=80" alt="Baking pizza" class="rounded-card w-full h-48 object-cover shadow-lg mt-8">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. Why Choose Us -->
+        <section class="py-16 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <div class="space-y-3">
+                        <div class="w-12 h-12 bg-surface rounded-full flex items-center justify-center text-nearblack mb-4">
+                            <i data-lucide="chef-hat" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="font-bold text-xl">新鲜现做</h3>
+                        <p class="text-secondary text-sm">拒绝预制菜，每一张底都是点单后手工拉伸，充满诚意与温度。</p>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="w-12 h-12 bg-surface rounded-full flex items-center justify-center text-nearblack mb-4">
+                            <i data-lucide="watch" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="font-bold text-xl">30分钟送达</h3>
+                        <p class="text-secondary text-sm">高效后厨配合专业骑手，保证您吃到的每一口都拉丝热腾腾。</p>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="w-12 h-12 bg-surface rounded-full flex items-center justify-center text-nearblack mb-4">
+                            <i data-lucide="leaf" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="font-bold text-xl">高品质食材</h3>
+                        <p class="text-secondary text-sm">精选进口乳酪搭配本地农场新鲜直供蔬果，健康看得见。</p>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="w-12 h-12 bg-surface rounded-full flex items-center justify-center text-nearblack mb-4">
+                            <i data-lucide="map-pin" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="font-bold text-xl">多场景服务</h3>
+                        <p class="text-secondary text-sm">支持线上点单外卖、路过顺手自取、或者在温馨门店坐下来慢慢品尝。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 8. Testimonials -->
+        <section class="py-16 bg-surfacebg">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl font-bold tracking-tight text-nearblack mb-10">听听大家怎么说</h2>
+                <div class="flex overflow-x-auto gap-6 pb-8 no-scrollbar snap-x">
+                    <!-- Review 1 -->
+                    <div class="bg-white p-6 rounded-card shadow-airbnb min-w-[300px] w-[350px] snap-center shrink-0">
+                        <div class="flex gap-1 mb-4 text-rausch">
+                            <i data-lucide="star" class="w-4 h-4 fill-rausch"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-rausch"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-rausch"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-rausch"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-rausch"></i>
+                        </div>
+                        <p class="text-nearblack mb-6">"芝士给得超级足！饼底是我最喜欢的薄脆口感，边边烤得有点焦香，小朋友一个人干掉了大半个。"</p>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-gray-200 overflow-hidden">
+                                <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="User">
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-sm">Jessica W.</h4>
+                                <p class="text-xs text-secondary">大众点评 Lv.5</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Review 2 -->
+                    <div class="bg-white p-6 rounded-card shadow-airbnb min-w-[300px] w-[350px] snap-center shrink-0">
+                        <div class="flex gap-1 mb-4 text-rausch">
+                            <i data-lucide="star" class="w-4 h-4 fill-rausch"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-rausch"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-rausch"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-rausch"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-rausch"></i>
+                        </div>
+                        <p class="text-nearblack mb-6">"外卖送到的时候还是烫嘴的，绝了！包装很严实。火山辣香肠真的很带劲，周末追剧必备。"</p>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-gray-200 overflow-hidden">
+                                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User">
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-sm">David Chen</h4>
+                                <p class="text-xs text-secondary">美团外卖用户</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Review 3 -->
+                    <div class="bg-white p-6 rounded-card shadow-airbnb min-w-[300px] w-[350px] snap-center shrink-0">
+                        <div class="flex gap-1 mb-4 text-rausch">
+                            <i data-lucide="star" class="w-4 h-4 fill-rausch"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-rausch"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-rausch"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-rausch"></i>
+                            <i data-lucide="star-half" class="w-4 h-4 fill-rausch"></i>
+                        </div>
+                        <p class="text-nearblack mb-6">"店里的氛围超级好，暖黄色的灯光很适合约会。披萨现烤的味道太香了，店员都很热情亲切！推荐堂食。"</p>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-gray-200 overflow-hidden">
+                                <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="User">
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-sm">小红书用户</h4>
+                                <p class="text-xs text-secondary">打卡探店达人</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 10. Store Info / Map -->
+        <section id="store" class="py-16 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <h2 class="text-3xl font-bold tracking-tight text-nearblack mb-6">Mamma Mia 总店</h2>
+                        <div class="space-y-6">
+                            <div class="flex gap-4 items-start">
+                                <i data-lucide="map-pin" class="w-6 h-6 text-rausch mt-1"></i>
+                                <div>
+                                    <h4 class="font-bold text-lg">门店地址</h4>
+                                    <p class="text-secondary mt-1">上海市静安区延平路 123 号<br>地铁 7 号线昌平路站步行 500 米</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex gap-4 items-start">
+                                <i data-lucide="clock" class="w-6 h-6 text-rausch mt-1"></i>
+                                <div>
+                                    <h4 class="font-bold text-lg">营业时间</h4>
+                                    <p class="text-secondary mt-1">周一至周日<br>10:30 - 22:30</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex gap-4 items-start">
+                                <i data-lucide="phone" class="w-6 h-6 text-rausch mt-1"></i>
+                                <div>
+                                    <h4 class="font-bold text-lg">联系电话</h4>
+                                    <p class="text-secondary mt-1 font-medium text-nearblack">021 - 8888 6666</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-8 flex gap-4">
+                            <button class="px-6 py-3 bg-surface hover:bg-gray-200 text-nearblack rounded-btn font-semibold transition-colors flex items-center gap-2">
+                                <i data-lucide="navigation" class="w-4 h-4"></i>
+                                导航到店
+                            </button>
+                            <button class="px-6 py-3 bg-rausch hover:bg-deeprausch text-white rounded-btn font-semibold transition-colors shadow-sm flex items-center gap-2">
+                                <i data-lucide="phone-call" class="w-4 h-4"></i>
+                                立即拨打
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="h-[400px] w-full rounded-large bg-gray-200 overflow-hidden shadow-airbnb relative">
+                        <!-- Placeholder for Map -->
+                        <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=1000&q=80" alt="Map Area" class="w-full h-full object-cover grayscale opacity-80">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="w-16 h-16 bg-rausch rounded-full flex items-center justify-center shadow-lg border-4 border-white animate-bounce shadow-airbnb">
+                                <i data-lucide="pizza" class="w-8 h-8 text-white"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 11. FAQ -->
+        <section class="py-16 bg-surfacebg">
+            <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl font-bold tracking-tight text-center text-nearblack mb-10">常见问题</h2>
+                <div class="space-y-4">
+                    <!-- FAQ Items -->
+                    <details class="bg-white rounded-card shadow-airbnb group p-6 cursor-pointer" open>
+                        <summary class="font-bold text-lg flex justify-between items-center list-none outline-none">
+                            是否支持线上点单？
+                            <i data-lucide="chevron-down" class="w-5 h-5 text-gray-400 group-open:rotate-180 transition-transform"></i>
+                        </summary>
+                        <p class="mt-4 text-secondary leading-relaxed">
+                            支持！您可以直接点击页面上的“在线点单”按钮，进入我们的小程序进行外送或自取点单。
+                        </p>
+                    </details>
+                    
+                    <details class="bg-white rounded-card shadow-airbnb group p-6 cursor-pointer">
+                        <summary class="font-bold text-lg flex justify-between items-center list-none outline-none">
+                            是否提供素食披萨？
+                            <i data-lucide="chevron-down" class="w-5 h-5 text-gray-400 group-open:rotate-180 transition-transform"></i>
+                        </summary>
+                        <p class="mt-4 text-secondary leading-relaxed">
+                            当然！我们有经典的玛格丽特、松露蘑菇等全素食选择，而且使用的奶酪均使用健康发酵工艺。
+                        </p>
+                    </details>
+
+                    <details class="bg-white rounded-card shadow-airbnb group p-6 cursor-pointer">
+                        <summary class="font-bold text-lg flex justify-between items-center list-none outline-none">
+                            配送范围多大？可以做团体订单吗？
+                            <i data-lucide="chevron-down" class="w-5 h-5 text-gray-400 group-open:rotate-180 transition-transform"></i>
+                        </summary>
+                        <p class="mt-4 text-secondary leading-relaxed">
+                            门店周边 3 公里范围内通过自营和小程序直配送达。团体订单（如公司下午茶、生日派对）需提供提前 1 天联系客服预约，可享专属折扣和全城专车派送服务。
+                        </p>
+                    </details>
+                </div>
+            </div>
+        </section>
+
+        <!-- 12. Final CTA -->
+        <section class="py-24 bg-white relative overflow-hidden">
+            <!-- Decorative Elements -->
+            <div class="absolute top-1/2 left-0 -translate-y-1/2 w-64 h-64 bg-rausch/5 rounded-full blur-3xl rounded-r-full pointer-events-none"></div>
+            <div class="absolute top-1/2 right-0 -translate-y-1/2 w-80 h-80 bg-orange-100/40 rounded-full blur-3xl rounded-l-full pointer-events-none"></div>
+            
+            <div class="max-w-3xl mx-auto px-4 text-center relative z-10">
+                <h2 class="text-[40px] md:text-[52px] font-bold tracking-tight text-nearblack leading-[1.1] mb-6">今晚，吃点热腾腾的披萨吧</h2>
+                <p class="text-xl text-secondary mb-10">经典口味、新鲜现烤，支持外卖、自取与堂食</p>
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <button class="w-full sm:w-auto px-10 py-4 bg-rausch hover:bg-deeprausch text-white rounded-btn font-bold text-lg transition-colors shadow-hover flex items-center justify-center gap-2">
+                        立即点单
+                    </button>
+                    <button class="w-full sm:w-auto px-10 py-4 bg-surface hover:bg-gray-200 text-nearblack rounded-btn font-bold text-lg transition-colors flex items-center justify-center">
+                        查看菜单
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- 13. Footer -->
+    <footer class="bg-nearblack text-white py-16 border-t border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+                <!-- Brand -->
+                <div class="space-y-4">
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="pizza" class="w-6 h-6 text-white"></i>
+                        <span class="text-xl font-bold tracking-tight">Mamma Mia Pizza</span>
+                    </div>
+                    <p class="text-gray-400 text-sm leading-relaxed max-w-xs">
+                        把纯正意式风味与城市快节奏完美结合，打造属于你的社区披萨聚落。
+                    </p>
+                </div>
+                
+                <!-- Links -->
+                <div>
+                    <h4 class="font-bold text-lg mb-4">快速链接</h4>
+                    <ul class="space-y-3 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-white transition-colors">在线点单</a></li>
+                        <li><a href="#menu" class="hover:text-white transition-colors">浏览菜单</a></li>
+                        <li><a href="#promotions" class="hover:text-white transition-colors">最新活动</a></li>
+                        <li><a href="#store" class="hover:text-white transition-colors">门店列表</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact -->
+                <div>
+                    <h4 class="font-bold text-lg mb-4">联系我们</h4>
+                    <ul class="space-y-3 text-sm text-gray-400">
+                        <li>静安区延平路 123 号</li>
+                        <li>021 - 8888 6666</li>
+                        <li>hello@mammamiapizza.com</li>
+                        <li>每天 10:30 - 22:30</li>
+                    </ul>
+                </div>
+
+                <!-- Social -->
+                <div>
+                    <h4 class="font-bold text-lg mb-4">关注我们</h4>
+                    <div class="flex gap-4">
+                        <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-rausch transition-colors">
+                            <i data-lucide="instagram" class="w-5 h-5 text-white"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-blue-500 transition-colors">
+                            <i data-lucide="twitter" class="w-5 h-5 text-white"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-green-500 transition-colors">
+                            <i data-lucide="message-circle" class="w-5 h-5 text-white"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-400">
+                <p>&copy; 2026 Mamma Mia Pizza. All rights reserved.</p>
+                <div class="flex gap-6">
+                    <a href="#" class="hover:text-white transition-colors">隐私政策</a>
+                    <a href="#" class="hover:text-white transition-colors">服务条款</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Sticky Header Shrink Effect on Scroll
+        window.addEventListener('scroll', () => {
+            const header = document.getElementById('header');
+            if (window.scrollY > 50) {
+                header.classList.add('py-2', 'h-16');
+                header.classList.remove('h-20');
+            } else {
+                header.classList.add('h-20');
+                header.classList.remove('py-2', 'h-16');
+            }
+        });
+    </script>
+</body>
+</html>

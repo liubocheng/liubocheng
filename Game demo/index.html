@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>10秒赚多少钱</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+SC:wght@400;500;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <div class="ambient ambient--left"></div>
+      <div class="ambient ambient--right"></div>
+
+      <main class="game-card" id="gameCard">
+        <header class="status-bar">
+          <div class="metric">
+            <span class="metric-label">剩余时间</span>
+            <strong class="metric-value" id="timeDisplay">10.0s</strong>
+          </div>
+          <div class="metric">
+            <span class="metric-label">连击</span>
+            <strong class="metric-value" id="comboDisplay">x1</strong>
+          </div>
+          <div class="metric">
+            <span class="metric-label">暴击率</span>
+            <strong class="metric-value" id="critDisplay">18%</strong>
+          </div>
+        </header>
+
+        <section class="hero-panel">
+          <p class="eyebrow">H5 小游戏</p>
+          <h1>10秒赚多少钱</h1>
+          <p class="subtitle">10 秒内疯狂点击，连击越高越值钱，随机暴击直接一波起飞。</p>
+
+          <div class="score-panel">
+            <span class="score-label">当前收入</span>
+            <div class="score-value" id="moneyDisplay">¥0</div>
+            <p class="score-hint" id="streakHint">准备开赚</p>
+          </div>
+
+          <div class="time-track" aria-hidden="true">
+            <div class="time-fill" id="timeFill"></div>
+          </div>
+        </section>
+
+        <section class="play-zone">
+          <div class="effects-layer" id="effectsLayer" aria-hidden="true"></div>
+
+          <button class="tap-button" id="tapButton" type="button" aria-label="疯狂点击赚钱">
+            <span class="tap-button__ring tap-button__ring--outer"></span>
+            <span class="tap-button__ring tap-button__ring--inner"></span>
+            <span class="tap-button__face">
+              <span class="tap-button__money">¥</span>
+              <span class="tap-button__text">狂点暴富</span>
+            </span>
+          </button>
+
+          <div class="play-copy">
+            <p class="play-copy__title" id="phaseText">点击按钮，开始你的 10 秒暴富挑战</p>
+            <p class="play-copy__desc">每次点击都有收益，保持连击还能叠加倍率，暴击更是赚翻。</p>
+            <button class="primary-button" id="startButton" type="button">开始挑战</button>
+          </div>
+        </section>
+
+        <section class="result-card" id="resultCard" hidden>
+          <span class="result-label">结算结果</span>
+          <h2 class="result-title" id="titleDisplay">打工人</h2>
+          <p class="result-money" id="resultMoney">¥0</p>
+          <p class="result-description" id="resultDescription">今天先这样，明天继续卷。</p>
+
+          <div class="result-stats">
+            <div class="result-stat">
+              <span>点击次数</span>
+              <strong id="clickCountDisplay">0</strong>
+            </div>
+            <div class="result-stat">
+              <span>最高连击</span>
+              <strong id="maxComboDisplay">x1</strong>
+            </div>
+            <div class="result-stat">
+              <span>暴击次数</span>
+              <strong id="critCountDisplay">0</strong>
+            </div>
+          </div>
+
+          <button class="secondary-button" id="restartButton" type="button">再来一局</button>
+        </section>
+      </main>
+    </div>
+
+    <script src="./script.js"></script>
+  </body>
+</html>

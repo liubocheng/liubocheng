@@ -1,0 +1,138 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900">
+  <defs>
+    <style>
+      .bg { fill: #ffffff; }
+      .ink { stroke: #111111; stroke-width: 4; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+      .thin { stroke: #111111; stroke-width: 2.5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+      .orange { fill: #FF6B35; }
+      .orangeStroke { stroke: #FF6B35; stroke-width: 5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+      .txt { font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; fill: #111111; font-size: 28px; font-weight: 600; }
+      .small { font-size: 23px; font-weight: 500; }
+      .tiny { font-size: 20px; font-weight: 500; }
+      .title { font-size: 46px; font-weight: 800; }
+      .label { font-size: 24px; font-weight: 800; fill: #ffffff; }
+      .panelTitle { font-size: 24px; font-weight: 800; fill: #FF6B35; }
+    </style>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M2,2 L10,6 L2,10" fill="none" stroke="#FF6B35" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1200" height="900"/>
+  <text class="txt title" x="600" y="62" text-anchor="middle">AI 大模型怎么工作？</text>
+
+  <rect class="ink" x="55" y="95" width="530" height="340" rx="18"/>
+  <rect class="ink" x="615" y="95" width="530" height="340" rx="18"/>
+  <rect class="ink" x="55" y="465" width="530" height="340" rx="18"/>
+  <rect class="ink" x="615" y="465" width="530" height="340" rx="18"/>
+
+  <!-- Panel 1 -->
+  <text class="panelTitle" x="80" y="130">1 起：先给一句提示词</text>
+  <!-- child -->
+  <circle class="thin" cx="160" cy="230" r="26"/>
+  <circle cx="151" cy="225" r="3" fill="#111"/><circle cx="169" cy="225" r="3" fill="#111"/>
+  <path class="thin" d="M150 240 Q160 248 172 240"/>
+  <circle class="thin" cx="150" cy="225" r="8"/><circle class="thin" cx="170" cy="225" r="8"/><line class="thin" x1="158" y1="225" x2="162" y2="225"/>
+  <line class="thin" x1="160" y1="256" x2="160" y2="326"/>
+  <line class="thin" x1="160" y1="280" x2="125" y2="305"/>
+  <line class="thin" x1="160" y1="280" x2="200" y2="295"/>
+  <line class="thin" x1="160" y1="326" x2="132" y2="365"/>
+  <line class="thin" x1="160" y1="326" x2="190" y2="365"/>
+  <!-- computer -->
+  <rect class="ink" x="305" y="190" width="200" height="135" rx="12"/>
+  <line class="thin" x1="370" y1="325" x2="350" y2="365"/>
+  <line class="thin" x1="440" y1="325" x2="460" y2="365"/>
+  <line class="thin" x1="335" y1="365" x2="475" y2="365"/>
+  <!-- robot face -->
+  <rect class="thin" x="365" y="225" width="80" height="55" rx="12"/>
+  <circle cx="388" cy="252" r="4" fill="#111"/><circle cx="422" cy="252" r="4" fill="#111"/>
+  <path class="thin" d="M390 268 Q405 278 420 268"/>
+  <line class="thin" x1="405" y1="225" x2="405" y2="210"/><circle class="orange" cx="405" cy="207" r="6"/>
+  <!-- input label -->
+  <rect class="orange" x="245" y="143" width="100" height="38" rx="11"/>
+  <text class="label" x="295" y="170" text-anchor="middle">提示词</text>
+  <path class="orangeStroke" d="M245 180 C230 200,220 215,205 230" marker-end="url(#arrow)"/>
+  <rect class="thin" x="85" y="380" width="190" height="42" rx="14"/>
+  <text class="txt small" x="180" y="409" text-anchor="middle">我问一句话。</text>
+  <rect class="thin" x="330" y="380" width="185" height="42" rx="14"/>
+  <text class="txt small" x="422" y="409" text-anchor="middle">收到提示词！</text>
+
+  <!-- Panel 2 -->
+  <text class="panelTitle" x="640" y="130">2 承：从大量文字学规律</text>
+  <!-- robot brain -->
+  <rect class="thin" x="835" y="170" width="135" height="95" rx="18"/>
+  <circle cx="875" cy="210" r="4" fill="#111"/><circle cx="930" cy="210" r="4" fill="#111"/>
+  <path class="thin" d="M880 235 Q902 248 925 235"/>
+  <path class="orangeStroke" d="M855 185 C875 155,930 155,950 185"/>
+  <path class="thin" d="M870 185 C875 200,880 210,895 210 C910 210,915 195,925 187"/>
+  <!-- books/cards -->
+  <g>
+    <rect class="thin" x="690" y="205" width="95" height="42" rx="6"/><text class="txt tiny" x="737" y="232" text-anchor="middle">课本</text>
+    <rect class="thin" x="705" y="260" width="95" height="42" rx="6"/><text class="txt tiny" x="752" y="287" text-anchor="middle">文章</text>
+    <rect class="thin" x="1005" y="205" width="95" height="42" rx="6"/><text class="txt tiny" x="1052" y="232" text-anchor="middle">网页</text>
+    <rect class="thin" x="990" y="260" width="95" height="42" rx="6"/><text class="txt tiny" x="1037" y="287" text-anchor="middle">故事</text>
+  </g>
+  <line class="orangeStroke" x1="800" y1="230" x2="835" y2="220" marker-end="url(#arrow)"/>
+  <line class="orangeStroke" x1="990" y1="230" x2="970" y2="220" marker-end="url(#arrow)"/>
+  <rect class="orange" x="837" y="292" width="130" height="40" rx="12"/>
+  <text class="label" x="902" y="320" text-anchor="middle">学习规律</text>
+  <!-- teacher -->
+  <circle class="thin" cx="665" cy="340" r="22"/>
+  <circle cx="658" cy="336" r="3" fill="#111"/><circle cx="672" cy="336" r="3" fill="#111"/>
+  <path class="thin" d="M657 350 Q665 356 675 350"/>
+  <line class="thin" x1="665" y1="362" x2="665" y2="410"/>
+  <line class="thin" x1="665" y1="380" x2="705" y2="360"/>
+  <line class="thin" x1="665" y1="380" x2="635" y2="398"/>
+  <rect class="thin" x="720" y="355" width="350" height="42" rx="14"/>
+  <text class="txt small" x="895" y="383" text-anchor="middle">它读过很多文字，学语言规律。</text>
+
+  <!-- Panel 3 -->
+  <text class="panelTitle" x="80" y="500">3 转：关键是预测下一个词</text>
+  <rect class="orange" x="196" y="520" width="190" height="42" rx="12"/>
+  <text class="label" x="291" y="550" text-anchor="middle">预测下一个词</text>
+  <!-- word cards chain -->
+  <rect class="thin" x="95" y="590" width="80" height="42" rx="8"/><text class="txt tiny" x="135" y="618" text-anchor="middle">月亮</text>
+  <line class="orangeStroke" x1="180" y1="611" x2="215" y2="611" marker-end="url(#arrow)"/>
+  <rect class="thin" x="225" y="590" width="80" height="42" rx="8"/><text class="txt tiny" x="265" y="618" text-anchor="middle">像</text>
+  <line class="orangeStroke" x1="310" y1="611" x2="345" y2="611" marker-end="url(#arrow)"/>
+  <rect class="thin" x="355" y="590" width="80" height="42" rx="8"/><text class="txt tiny" x="395" y="618" text-anchor="middle">一个</text>
+  <line class="orangeStroke" x1="440" y1="611" x2="475" y2="611" marker-end="url(#arrow)"/>
+  <rect class="orange" x="485" y="590" width="80" height="42" rx="8"/><text class="label tiny" x="525" y="618" text-anchor="middle">银盘</text>
+  <!-- options -->
+  <text class="txt tiny" x="332" y="680" text-anchor="middle">从候选词里选最可能的一个</text>
+  <rect class="thin" x="165" y="705" width="70" height="38" rx="8"/><text class="txt tiny" x="200" y="730" text-anchor="middle">苹果</text>
+  <rect class="thin" x="260" y="705" width="70" height="38" rx="8"/><text class="txt tiny" x="295" y="730" text-anchor="middle">银盘</text>
+  <rect class="thin" x="355" y="705" width="70" height="38" rx="8"/><text class="txt tiny" x="390" y="730" text-anchor="middle">桌子</text>
+  <rect class="thin" x="450" y="705" width="70" height="38" rx="8"/><text class="txt tiny" x="485" y="730" text-anchor="middle">火车</text>
+  <!-- kid small -->
+  <circle class="thin" cx="105" cy="715" r="18"/>
+  <line class="thin" x1="105" y1="733" x2="105" y2="770"/>
+  <line class="thin" x1="105" y1="748" x2="130" y2="735"/>
+  <rect class="thin" x="250" y="755" width="190" height="38" rx="14"/>
+  <text class="txt small" x="345" y="781" text-anchor="middle">像文字接龙！</text>
+
+  <!-- Panel 4 -->
+  <text class="panelTitle" x="640" y="500">4 合：拼出答案，但要检查</text>
+  <!-- answer scroll -->
+  <rect class="thin" x="690" y="555" width="315" height="135" rx="14"/>
+  <text class="txt tiny" x="848" y="595" text-anchor="middle">月亮像一个银盘，</text>
+  <text class="txt tiny" x="848" y="630" text-anchor="middle">晚上挂在天空。</text>
+  <line class="thin" x1="720" y1="650" x2="975" y2="650"/>
+  <line class="thin" x1="720" y1="670" x2="920" y2="670"/>
+  <!-- robot -->
+  <rect class="thin" x="1035" y="555" width="75" height="60" rx="12"/>
+  <circle cx="1058" cy="582" r="4" fill="#111"/><circle cx="1088" cy="582" r="4" fill="#111"/>
+  <path class="thin" d="M1060 600 Q1072 610 1086 600"/>
+  <line class="thin" x1="1072" y1="555" x2="1072" y2="540"/><circle class="orange" cx="1072" cy="537" r="6"/>
+  <!-- teacher warning -->
+  <circle class="thin" cx="680" cy="735" r="22"/>
+  <line class="thin" x1="680" y1="757" x2="680" y2="798"/>
+  <line class="thin" x1="680" y1="772" x2="725" y2="745"/>
+  <line class="thin" x1="680" y1="772" x2="650" y2="790"/>
+  <rect class="orange" x="735" y="720" width="110" height="42" rx="12"/>
+  <text class="label" x="790" y="750" text-anchor="middle">要检查</text>
+  <rect class="thin" x="865" y="720" width="240" height="42" rx="14"/>
+  <text class="txt small" x="985" y="749" text-anchor="middle">可能会错，人要检查。</text>
+  <rect class="orange" x="720" y="815" width="390" height="48" rx="14"/>
+  <text class="label" x="915" y="848" text-anchor="middle">输入 → 预测 → 生成 → 检查</text>
+</svg>

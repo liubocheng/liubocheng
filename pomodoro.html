@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>番茄钟</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #f0f0f0;
+    transition: background 0.5s;
+  }
+  body.work { background: #fef6f0; }
+  body.break { background: #f0f7f4; }
+
+  .container {
+    text-align: center;
+    padding: 40px;
+  }
+
+  .timer-circle {
+    position: relative;
+    width: 280px;
+    height: 280px;
+    margin: 0 auto 32px;
+  }
+
+  .timer-circle svg {
+    transform: rotate(-90deg);
+    width: 100%;
+    height: 100%;
+  }
+
+  .timer-circle .bg { fill: none; stroke: #e8e8e8; stroke-width: 6; }
+  .timer-circle .progress {
+    fill: none;
+    stroke: #e67e22;
+    stroke-width: 6;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.3s, stroke 0.5s;
+  }
+  body.break .timer-circle .progress { stroke: #27ae60; }
+
+  .timer-display {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+  }
+
+  .timer-display .time {
+    font-size: 60px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: #333;
+    letter-spacing: 2px;
+  }
+
+  .timer-display .label {
+    font-size: 14px;
+    color: #999;
+    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+
+  .controls { display: flex; gap: 12px; justify-content: center; margin-bottom: 24px; }
+
+  .controls button {
+    padding: 10px 28px;
+    font-size: 15px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+  }
+
+  .controls button:active { transform: scale(0.96); }
+
+  .btn-start {
+    background: #e67e22;
+    color: #fff;
+    min-width: 100px;
+  }
+  body.break .btn-start { background: #27ae60; }
+  .btn-start:hover { opacity: 0.9; }
+
+  .btn-secondary {
+    background: #e8e8e8;
+    color: #666;
+  }
+  .btn-secondary:hover { background: #ddd; }
+
+  .btn-reset {
+    background: transparent;
+    color: #999;
+    padding: 10px 16px;
+  }
+  .btn-reset:hover { color: #666; }
+
+  .sessions {
+    font-size: 14px;
+    color: #aaa;
+  }
+  .sessions span { margin: 0 2px; }
+
+  .settings {
+    margin-top: 28px;
+  }
+  .settings summary {
+    font-size: 13px;
+    color: #bbb;
+    cursor: pointer;
+    user-select: none;
+  }
+  .settings summary:hover { color: #999; }
+
+  .settings-row {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    margin-top: 12px;
+    font-size: 13px;
+    color: #888;
+  }
+  .settings-row label { display: flex; align-items: center; gap: 6px; }
+  .settings-row input {
+    width: 48px;
+    padding: 4px 6px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 13px;
+    text-align: center;
+  }
+  .settings-row input:focus { outline: none; border-color: #e67e22; }
+</style>
+</head>
+<body class="work">
+<div class="container">
+  <div class="timer-circle">
+    <svg viewBox="0 0 280 280">
+      <circle class="bg" cx="140" cy="140" r="120"/>
+      <circle class="progress" id="progress" cx="140" cy="140" r="120"
+        stroke-dasharray="753.98" stroke-dashoffset="0"/>
+    </svg>
+    <div class="timer-display">
+      <div class="time" id="time">25:00</div>
+      <div class="label" id="phase-label">专注</div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button class="btn-start" id="start-btn">开始</button>
+    <button class="btn-secondary" id="pause-btn" disabled>暂停</button>
+    <button class="btn-reset" id="reset-btn">重置</button>
+  </div>
+
+  <div class="sessions" id="sessions"></div>
+
+  <details class="settings">
+    <summary>设置</summary>
+    <div class="settings-row">
+      <label>专注 <input type="number" id="work-min" value="25" min="1" max="120"></label>
+      <label>休息 <input type="number" id="break-min" value="5" min="1" max="60"></label>
+    </div>
+  </details>
+</div>
+
+<script>
+  const CIRCUMFERENCE = 2 * Math.PI * 120;
+  let state = {
+    phase: 'work',        // work | break
+    seconds: 25 * 60,
+    totalSeconds: 25 * 60,
+    running: false,
+    sessions: 0,
+    interval: null,
+  };
+
+  const $ = id => document.getElementById(id);
+  const timeEl = $('time');
+  const phaseLabel = $('phase-label');
+  const progressEl = $('progress');
+  const startBtn = $('start-btn');
+  const pauseBtn = $('pause-btn');
+  const resetBtn = $('reset-btn');
+  const sessionsEl = $('sessions');
+  const workMinInput = $('work-min');
+  const breakMinInput = $('break-min');
+
+  function formatTime(s) {
+    const m = Math.floor(s / 60);
+    const sec = s % 60;
+    return `${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+  }
+
+  function updateDisplay() {
+    timeEl.textContent = formatTime(state.seconds);
+    const frac = state.totalSeconds > 0 ? state.seconds / state.totalSeconds : 0;
+    progressEl.style.strokeDashoffset = CIRCUMFERENCE * (1 - frac);
+  }
+
+  function updatePhaseLabel() {
+    phaseLabel.textContent = state.phase === 'work' ? '专注' : '休息';
+    document.body.className = state.phase;
+  }
+
+  function updateSessions() {
+    sessionsEl.innerHTML = '已完成: ' +
+      Array.from({ length: state.sessions }, () => '🍅').join(' ') +
+      (state.sessions === 0 ? '0 个番茄' : '');
+  }
+
+  function notify(title, body) {
+    if (Notification.permission === 'granted') {
+      new Notification(title, { body, icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🍅</text></svg>' });
+    }
+  }
+
+  function phaseComplete() {
+    state.running = false;
+    clearInterval(state.interval);
+    startBtn.textContent = '开始';
+    pauseBtn.disabled = true;
+
+    if (state.phase === 'work') {
+      state.sessions++;
+      updateSessions();
+      notify('番茄钟', '专注结束，该休息一下了！');
+      // auto switch to break
+      state.phase = 'break';
+    } else {
+      notify('番茄钟', '休息结束，开始新的专注吧！');
+      state.phase = 'work';
+    }
+
+    const min = state.phase === 'work' ? parseInt(workMinInput.value) : parseInt(breakMinInput.value);
+    state.seconds = min * 60;
+    state.totalSeconds = state.seconds;
+    updatePhaseLabel();
+    updateDisplay();
+  }
+
+  function tick() {
+    state.seconds--;
+    updateDisplay();
+    if (state.seconds <= 0) {
+      phaseComplete();
+    }
+  }
+
+  function startTimer() {
+    if (state.running) return;
+    // request notification permission on first start
+    if ('Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission();
+    }
+    state.running = true;
+    startBtn.textContent = '运行中';
+    pauseBtn.disabled = false;
+    state.interval = setInterval(tick, 1000);
+  }
+
+  function pauseTimer() {
+    if (!state.running) return;
+    state.running = false;
+    clearInterval(state.interval);
+    startBtn.textContent = '继续';
+    pauseBtn.disabled = true;
+  }
+
+  function resetTimer() {
+    state.running = false;
+    clearInterval(state.interval);
+    startBtn.textContent = '开始';
+    pauseBtn.disabled = true;
+
+    const min = state.phase === 'work' ? parseInt(workMinInput.value) : parseInt(breakMinInput.value);
+    state.seconds = min * 60;
+    state.totalSeconds = state.seconds;
+    updateDisplay();
+  }
+
+  function onSettingChange() {
+    if (!state.running && state.phase === 'work') {
+      state.seconds = parseInt(workMinInput.value) * 60;
+      state.totalSeconds = state.seconds;
+      updateDisplay();
+    } else if (!state.running && state.phase === 'break') {
+      state.seconds = parseInt(breakMinInput.value) * 60;
+      state.totalSeconds = state.seconds;
+      updateDisplay();
+    }
+  }
+
+  // events
+  startBtn.addEventListener('click', startTimer);
+  pauseBtn.addEventListener('click', pauseTimer);
+  resetBtn.addEventListener('click', resetTimer);
+  workMinInput.addEventListener('change', onSettingChange);
+  breakMinInput.addEventListener('change', onSettingChange);
+
+  // init
+  updateDisplay();
+  updateSessions();
+</script>
+</body>
+</html>
