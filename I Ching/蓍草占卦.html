@@ -1,0 +1,1317 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>蓍草易占</title>
+  <style>
+    :root {
+      --bg: #e8dcc0;
+      --bg-soft: #f3ead5;
+      --panel: rgba(249, 243, 229, 0.86);
+      --header: #5d3123;
+      --primary: #8d3a22;
+      --primary-deep: #6f2519;
+      --gold: #b79253;
+      --gold-soft: #d7bc7d;
+      --line: rgba(132, 88, 47, 0.22);
+      --text: #4e2d1f;
+      --text-soft: #8d6541;
+      --muted: #9d8868;
+      --white: #faf4e6;
+      --shadow: 0 14px 28px rgba(80, 48, 26, 0.16);
+      --shadow-soft: 0 10px 20px rgba(95, 64, 33, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      background:
+        radial-gradient(circle at top, rgba(255, 248, 228, 0.65), transparent 28%),
+        linear-gradient(180deg, #d8c8a8 0%, #e7dbc0 24%, #e0d0b0 100%);
+      color: var(--text);
+      font-family: "Songti SC", "STSong", "Noto Serif SC", serif;
+    }
+
+    .app {
+      position: relative;
+      width: min(100%, 420px);
+      min-height: 100vh;
+      background:
+        linear-gradient(180deg, rgba(88, 48, 31, 0.08), rgba(88, 48, 31, 0) 110px),
+        radial-gradient(circle at 50% 18%, rgba(255, 248, 231, 0.92), rgba(242, 232, 209, 0.95) 34%, rgba(231, 217, 186, 0.98) 100%);
+      overflow: hidden;
+    }
+
+    .app::before,
+    .app::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .app::before {
+      background:
+        linear-gradient(90deg, rgba(109, 73, 42, 0.08), transparent 26px, transparent calc(100% - 26px), rgba(109, 73, 42, 0.08)),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.18), transparent 120px);
+      opacity: 0.7;
+    }
+
+    .app::after {
+      background-image:
+        radial-gradient(circle at 20% 16%, rgba(122, 80, 43, 0.06) 0, rgba(122, 80, 43, 0.06) 1px, transparent 1px),
+        radial-gradient(circle at 72% 38%, rgba(122, 80, 43, 0.05) 0, rgba(122, 80, 43, 0.05) 1px, transparent 1px);
+      background-size: 18px 18px, 22px 22px;
+      mix-blend-mode: multiply;
+      opacity: 0.4;
+    }
+
+    .topbar {
+      position: relative;
+      background:
+        linear-gradient(180deg, rgba(255, 232, 182, 0.16), rgba(255, 232, 182, 0)),
+        linear-gradient(180deg, #603323 0%, #4c271c 100%);
+      color: var(--white);
+      padding: 22px 18px 20px;
+      box-shadow: 0 8px 18px rgba(60, 31, 21, 0.18);
+      border-bottom: 1px solid rgba(215, 188, 125, 0.3);
+    }
+
+    .brand-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .brand-title {
+      margin: 0;
+      font-size: 30px;
+      line-height: 1.1;
+      font-weight: 700;
+      letter-spacing: 3px;
+    }
+
+    .brand-subtitle {
+      margin: 8px 0 0;
+      font-size: 13px;
+      color: rgba(233, 213, 182, 0.8);
+      letter-spacing: 2px;
+    }
+
+    .leaf-mark {
+      width: 34px;
+      height: 34px;
+      color: var(--gold-soft);
+      flex: none;
+      opacity: 0.95;
+    }
+
+    .content {
+      position: relative;
+      padding: 18px 16px 112px;
+    }
+
+    .screen {
+      display: none;
+    }
+
+    .screen.is-active {
+      display: block;
+    }
+
+    .question-card,
+    .result-card {
+      background:
+        linear-gradient(180deg, rgba(251, 246, 234, 0.96), rgba(242, 232, 211, 0.98));
+      border: 1px solid rgba(171, 132, 77, 0.55);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      position: relative;
+    }
+
+    .question-card::before,
+    .result-card::before,
+    .detail-card::before,
+    .gua-box::before,
+    .empty-card::before,
+    .history-card::before {
+      content: "";
+      position: absolute;
+      inset: 7px;
+      border: 1px solid rgba(183, 146, 83, 0.18);
+      border-radius: inherit;
+      pointer-events: none;
+    }
+
+    .question-card {
+      padding: 16px;
+      margin-bottom: 18px;
+    }
+
+    .question-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      border: none;
+      background: transparent;
+      width: 100%;
+      padding: 0;
+      color: var(--text);
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      text-align: left;
+      font-family: inherit;
+    }
+
+    .toggle-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .icon-box {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      color: var(--primary);
+      background: rgba(141, 58, 34, 0.08);
+      border: 1px solid rgba(141, 58, 34, 0.08);
+    }
+
+    .question-panel {
+      display: none;
+      margin-top: 12px;
+    }
+
+    .question-card.is-open .question-panel {
+      display: block;
+    }
+
+    .question-input {
+      width: 100%;
+      min-height: 88px;
+      resize: vertical;
+      border: 1px solid rgba(132, 88, 47, 0.24);
+      border-radius: 14px;
+      padding: 14px 15px;
+      background: rgba(250, 245, 234, 0.92);
+      color: var(--text);
+      font: inherit;
+      box-shadow: inset 0 1px 4px rgba(95, 64, 33, 0.06);
+    }
+
+    .question-input:focus {
+      outline: 2px solid rgba(183, 146, 83, 0.4);
+      border-color: rgba(111, 37, 25, 0.28);
+    }
+
+    .question-tip {
+      margin: 10px 2px 0;
+      color: var(--text-soft);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .hero-section {
+      min-height: calc(100vh - 290px);
+      display: grid;
+      place-items: center;
+      padding: 26px 12px 18px;
+    }
+
+    .hero {
+      text-align: center;
+      max-width: 290px;
+      position: relative;
+    }
+
+    .hero-mark {
+      width: 90px;
+      height: 90px;
+      margin: 0 auto 20px;
+      color: var(--primary);
+      filter: drop-shadow(0 8px 14px rgba(111, 37, 25, 0.14));
+    }
+
+    .hero-title {
+      margin: 0;
+      font-size: 38px;
+      font-weight: 700;
+      letter-spacing: 6px;
+    }
+
+    .hero-subtitle {
+      margin: 10px 0 0;
+      color: var(--text-soft);
+      font-size: 15px;
+      line-height: 1.7;
+      letter-spacing: 2px;
+    }
+
+    .primary-btn,
+    .share-btn {
+      border: none;
+      cursor: pointer;
+      transition: transform 0.16s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+      font: inherit;
+    }
+
+    .primary-btn {
+      margin-top: 24px;
+      min-width: 152px;
+      padding: 15px 30px;
+      border-radius: 999px;
+      color: #f6ecdd;
+      font-size: 19px;
+      font-weight: 700;
+      letter-spacing: 4px;
+      background:
+        linear-gradient(180deg, rgba(238, 216, 176, 0.12), rgba(238, 216, 176, 0)),
+        linear-gradient(180deg, #8d3a22 0%, #6f2519 100%);
+      box-shadow: 0 12px 20px rgba(111, 37, 25, 0.2);
+    }
+
+    .primary-btn:hover,
+    .share-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .primary-btn:active,
+    .share-btn:active {
+      transform: translateY(1px) scale(0.99);
+    }
+
+    .result-section {
+      padding-top: 8px;
+    }
+
+    .empty-state {
+      min-height: 320px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 24px 18px;
+      color: var(--text-soft);
+    }
+
+    .empty-card {
+      width: 100%;
+      padding: 26px 18px;
+      border-radius: 18px;
+      background: rgba(248, 241, 228, 0.82);
+      border: 1px solid rgba(171, 132, 77, 0.4);
+      box-shadow: var(--shadow-soft);
+      position: relative;
+    }
+
+    .empty-card h3 {
+      margin: 14px 0 8px;
+      color: var(--text);
+      font-size: 22px;
+    }
+
+    .empty-card p {
+      margin: 0;
+      font-size: 15px;
+      line-height: 1.8;
+    }
+
+    .section-heading {
+      margin: 8px 2px 18px;
+    }
+
+    .section-heading h2 {
+      margin: 0;
+      font-size: 28px;
+      color: var(--text);
+      letter-spacing: 3px;
+    }
+
+    .section-heading p {
+      margin: 8px 0 0;
+      color: var(--text-soft);
+      font-size: 14px;
+      letter-spacing: 1px;
+    }
+
+    .result-card {
+      padding: 22px 20px 22px;
+    }
+
+    .fortune-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 92px;
+      height: 38px;
+      margin: 0 auto 16px;
+      border-radius: 999px;
+      background:
+        linear-gradient(180deg, rgba(234, 213, 173, 0.16), rgba(234, 213, 173, 0)),
+        linear-gradient(180deg, #9a4a2d 0%, #7d2b1c 100%);
+      color: #f7eddd;
+      font-weight: 700;
+      letter-spacing: 2px;
+      box-shadow: 0 8px 16px rgba(104, 45, 27, 0.18);
+    }
+
+    .fortune-title {
+      margin: 0;
+      font-size: 28px;
+      line-height: 1.4;
+      text-align: center;
+      color: var(--text);
+      letter-spacing: 2px;
+    }
+
+    .fortune-copy,
+    .fortune-tip {
+      border-radius: 14px;
+      padding: 14px 15px;
+      font-size: 15px;
+      line-height: 1.9;
+      margin-top: 14px;
+    }
+
+    .fortune-copy {
+      background: rgba(251, 246, 236, 0.94);
+      border: 1px solid rgba(171, 132, 77, 0.28);
+      color: #755131;
+    }
+
+    .fortune-tip {
+      background: linear-gradient(180deg, rgba(226, 203, 159, 0.34) 0%, rgba(239, 227, 197, 0.78) 100%);
+      border: 1px solid rgba(171, 132, 77, 0.42);
+      color: #77512d;
+    }
+
+    .tip-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .tip-body {
+      margin: 0;
+    }
+
+    .share-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 18px;
+      padding: 14px 18px;
+      border-radius: 999px;
+      background:
+        linear-gradient(180deg, rgba(238, 216, 176, 0.12), rgba(238, 216, 176, 0)),
+        linear-gradient(180deg, #8d3a22 0%, #6f2519 100%);
+      color: #f7eddd;
+      font-weight: 700;
+      box-shadow: var(--shadow-soft);
+      letter-spacing: 2px;
+    }
+
+    .next-tip {
+      margin: 14px 0 0;
+      text-align: center;
+      color: var(--text-soft);
+      font-size: 15px;
+    }
+
+    .detail-grid {
+      display: grid;
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .interpret-grid {
+      display: grid;
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .detail-card {
+      position: relative;
+      background: rgba(249, 242, 229, 0.84);
+      border: 1px solid rgba(171, 132, 77, 0.38);
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: 0 8px 16px rgba(91, 62, 31, 0.08);
+    }
+
+    .detail-card h3 {
+      margin: 0 0 12px;
+      color: var(--primary-deep);
+      font-size: 18px;
+      letter-spacing: 2px;
+    }
+
+    .result-panel {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .gua-box {
+      position: relative;
+      padding: 16px 12px;
+      border-radius: 16px;
+      background: linear-gradient(180deg, rgba(246, 238, 224, 0.96), rgba(252, 247, 238, 0.92));
+      border: 1px solid rgba(171, 132, 77, 0.46);
+    }
+
+    .gua-title {
+      margin-bottom: 12px;
+      text-align: center;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.6;
+      letter-spacing: 1px;
+    }
+
+    .gua-title span {
+      color: var(--primary);
+      font-size: 18px;
+      letter-spacing: 2px;
+    }
+
+    .yao-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .yao-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .yao-symbol {
+      flex: 1;
+      display: flex;
+      justify-content: space-between;
+      height: 12px;
+    }
+
+    .yao-solid,
+    .yao-part {
+      height: 100%;
+      border-radius: 999px;
+    }
+
+    .yao-solid {
+      width: 100%;
+    }
+
+    .yao-part {
+      width: 42%;
+    }
+
+    .yao-text {
+      width: 22px;
+      text-align: right;
+      color: var(--text-soft);
+      font-size: 15px;
+      font-family: "Kaiti SC", "Kaiti", serif;
+    }
+
+    .color-red {
+      background: linear-gradient(180deg, #98442b 0%, #7b2d1f 100%);
+    }
+
+    .color-black {
+      background: linear-gradient(180deg, #5d4735 0%, #413024 100%);
+    }
+
+    .text-red {
+      color: var(--primary);
+    }
+
+    .text-black {
+      color: #84522b;
+    }
+
+    .info-text {
+      margin: 0;
+      color: var(--text-soft);
+      font-size: 14px;
+      line-height: 1.8;
+      word-break: break-word;
+    }
+
+    .bullet-list {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding-left: 18px;
+      color: var(--text-soft);
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    .history-list {
+      display: grid;
+      gap: 14px;
+      margin-top: 8px;
+    }
+
+    .history-card {
+      position: relative;
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(249, 242, 229, 0.84);
+      border: 1px solid rgba(171, 132, 77, 0.38);
+      box-shadow: 0 8px 16px rgba(91, 62, 31, 0.08);
+    }
+
+    .history-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .history-title {
+      margin: 0;
+      font-size: 17px;
+      color: var(--text);
+    }
+
+    .history-time {
+      color: var(--muted);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .history-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 12px 0;
+    }
+
+    .history-tag {
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: rgba(141, 58, 34, 0.09);
+      color: var(--primary-deep);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .history-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .ghost-btn {
+      flex: 1;
+      min-height: 42px;
+      border: 1px solid rgba(132, 88, 47, 0.28);
+      border-radius: 12px;
+      background: rgba(250, 244, 233, 0.92);
+      color: var(--primary-deep);
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .daily-note {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+    }
+
+    .daily-placeholder {
+      text-align: center;
+      padding: 12px 4px 2px;
+    }
+
+    .daily-placeholder-copy {
+      margin: 12px 0 0;
+      color: var(--text-soft);
+      font-size: 15px;
+      line-height: 1.8;
+    }
+
+    .daily-draw-btn {
+      width: 100%;
+      margin-top: 20px;
+      padding: 16px 18px;
+      border: none;
+      border-radius: 999px;
+      background:
+        linear-gradient(180deg, rgba(238, 216, 176, 0.12), rgba(238, 216, 176, 0)),
+        linear-gradient(180deg, #8d3a22 0%, #6f2519 100%);
+      box-shadow: var(--shadow-soft);
+      color: #f7eddd;
+      font: inherit;
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 4px;
+      cursor: pointer;
+    }
+
+    .bottom-nav {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 4px;
+      padding: 10px 12px calc(12px + env(safe-area-inset-bottom));
+      background:
+        linear-gradient(180deg, rgba(251, 245, 233, 0.95), rgba(243, 233, 214, 0.98));
+      border-top: 1px solid rgba(132, 88, 47, 0.14);
+      backdrop-filter: blur(8px);
+    }
+
+    .nav-item {
+      border: none;
+      background: transparent;
+      display: grid;
+      justify-items: center;
+      gap: 5px;
+      color: #9d8052;
+      font-size: 13px;
+      cursor: pointer;
+      font: inherit;
+      letter-spacing: 1px;
+    }
+
+    .nav-item.is-active {
+      color: var(--primary-deep);
+      font-weight: 700;
+    }
+
+    .nav-icon {
+      width: 22px;
+      height: 22px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @media (min-width: 700px) {
+      body {
+        padding: 20px 0;
+      }
+
+      .app {
+        min-height: calc(100vh - 40px);
+        border-radius: 28px;
+        box-shadow: 0 18px 38px rgba(133, 97, 42, 0.18);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand-row">
+        <div>
+          <h1 class="brand-title">蓍草易占</h1>
+          <p class="brand-subtitle">四营十八变，正宗周易占卜</p>
+        </div>
+        <svg class="leaf-mark" viewBox="0 0 64 64" aria-hidden="true">
+          <path fill="currentColor" d="M53 10C33 11 18 21 14 38c-3 13 4 21 18 17 18-5 27-19 21-45ZM18 45c8-10 16-17 25-23-5 9-9 18-10 28-5 2-10 1-15-5Z"/>
+        </svg>
+      </div>
+    </header>
+
+    <main class="content">
+      <section class="question-card" id="question-card">
+        <button class="question-toggle" id="question-toggle" type="button" aria-expanded="false" aria-controls="question-panel">
+          <span class="toggle-left">
+            <span class="icon-box" aria-hidden="true">
+              <svg class="nav-icon" viewBox="0 0 24 24">
+                <path fill="currentColor" d="M3 6.75A2.75 2.75 0 0 1 5.75 4h12.5A2.75 2.75 0 0 1 21 6.75v10.5A2.75 2.75 0 0 1 18.25 20H5.75A2.75 2.75 0 0 1 3 17.25V6.75Zm2.2-.55 6.36 4.72a.75.75 0 0 0 .88 0l6.36-4.72a1.25 1.25 0 0 0-.55-.12H5.75c-.2 0-.39.04-.55.12Z"/>
+              </svg>
+            </span>
+            <span>点击输入占卜问题</span>
+          </span>
+          <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="currentColor" d="m7 10 5 5 5-5z"/>
+          </svg>
+        </button>
+        <div class="question-panel" id="question-panel">
+          <textarea class="question-input" id="question-input" placeholder="例如：我接下来三个月的事业运势如何？"></textarea>
+          <p class="question-tip">问题越明确，解读越容易聚焦。可不填，系统会按今日运势起卦。</p>
+        </div>
+      </section>
+
+      <section class="hero-section" id="hero-section">
+        <div class="hero">
+          <svg class="hero-mark" viewBox="0 0 64 64" aria-hidden="true">
+            <path fill="currentColor" d="M53 10C33 11 18 21 14 38c-3 13 4 21 18 17 18-5 27-19 21-45ZM18 45c8-10 16-17 25-23-5 9-9 18-10 28-5 2-10 1-15-5Z"/>
+          </svg>
+          <h2 class="hero-title">蓍草易占</h2>
+          <p class="hero-subtitle">四营十八变，正宗周易占卜</p>
+          <button class="primary-btn" id="divine-btn" type="button">开始占卜</button>
+        </div>
+      </section>
+
+      <section class="screen result-section" id="screen-daily" aria-live="polite"></section>
+      <section class="screen result-section" id="screen-interpret"></section>
+      <section class="screen result-section" id="screen-history"></section>
+    </main>
+
+    <nav class="bottom-nav" aria-label="主要功能">
+      <button class="nav-item is-active" type="button" data-screen="divine">
+        <svg class="nav-icon" viewBox="0 0 64 64" aria-hidden="true">
+          <path fill="currentColor" d="M53 10C33 11 18 21 14 38c-3 13 4 21 18 17 18-5 27-19 21-45ZM18 45c8-10 16-17 25-23-5 9-9 18-10 28-5 2-10 1-15-5Z"/>
+        </svg>
+        <span>占卜</span>
+      </button>
+      <button class="nav-item" type="button" data-screen="daily">
+        <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="currentColor" d="m12 3 1.8 4.2L18 9l-4.2 1.8L12 15l-1.8-4.2L6 9l4.2-1.8L12 3Zm6 10 1.2 2.8L22 17l-2.8 1.2L18 21l-1.2-2.8L14 17l2.8-1.2L18 13ZM6 14l1.2 2.8L10 18l-2.8 1.2L6 22l-1.2-2.8L2 18l2.8-1.2L6 14Z"/>
+        </svg>
+        <span>每日一签</span>
+      </button>
+      <button class="nav-item" type="button" data-screen="interpret">
+        <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="currentColor" d="M7 3.75A2.75 2.75 0 0 0 4.25 6.5v11A2.75 2.75 0 0 0 7 20.25h10A2.75 2.75 0 0 0 19.75 17.5v-11A2.75 2.75 0 0 0 17 3.75H7Zm1.5 4a.75.75 0 0 1 .75-.75h5.5a.75.75 0 0 1 0 1.5h-5.5a.75.75 0 0 1-.75-.75Zm0 4a.75.75 0 0 1 .75-.75h5.5a.75.75 0 0 1 0 1.5h-5.5a.75.75 0 0 1-.75-.75Zm0 4a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 0 1.5h-3.5a.75.75 0 0 1-.75-.75Z"/>
+        </svg>
+        <span>解卦</span>
+      </button>
+      <button class="nav-item" type="button" data-screen="history">
+        <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="currentColor" d="M12 4a8 8 0 1 0 7.75 10h-1.56a6.5 6.5 0 1 1-1.43-6.9L14 10h7V3l-2.96 2.96A7.96 7.96 0 0 0 12 4Z"/>
+        </svg>
+        <span>历史</span>
+      </button>
+    </nav>
+  </div>
+
+  <script>
+    // ========== 数据字典 ==========
+    const hexagramMap = Object.freeze({
+      "000000": "坤为地", "000001": "山地剥", "000010": "水地比", "000011": "风地观",
+      "000100": "雷地豫", "000101": "火地晋", "000110": "泽地萃", "000111": "天地否",
+      "001000": "地山谦", "001001": "艮为山", "001010": "水山蹇", "001011": "风山渐",
+      "001100": "雷山小过","001101": "火山旅", "001110": "泽山咸", "001111": "天山遁",
+      "010000": "地水师", "010001": "山水蒙", "010010": "坎为水", "010011": "风水涣",
+      "010100": "雷水解", "010101": "火水未济","010110": "泽水困", "010111": "天水讼",
+      "011000": "地风升", "011001": "山风蛊", "011010": "水风井", "011011": "巽为风",
+      "011100": "雷风恒", "011101": "火风鼎", "011110": "泽风大过","011111": "天风姤",
+      "100000": "地雷复", "100001": "山雷颐", "100010": "水雷屯", "100011": "风雷益",
+      "100100": "震为雷", "100101": "火雷噬嗑","100110": "泽雷随", "100111": "天雷无妄",
+      "101000": "地火明夷","101001": "山火贲", "101010": "水火既济","101011": "风火家人",
+      "101100": "雷火丰", "101101": "离为火", "101110": "泽火革", "101111": "天火同人",
+      "110000": "地泽临", "110001": "山泽损", "110010": "水泽节", "110011": "风泽中孚",
+      "110100": "雷泽归妹","110101": "火泽睽", "110110": "兑为泽", "110111": "天泽履",
+      "111000": "地天泰", "111001": "山天大畜","111010": "水天需", "111011": "风天小畜",
+      "111100": "雷天大壮","111101": "火天大有","111110": "泽天夬", "111111": "乾为天"
+    });
+
+    const CHINESE_NUMBERS = Object.freeze({
+      6: "六",
+      7: "七",
+      8: "八",
+      9: "九"
+    });
+
+    const YANG_VALUES = new Set([7, 9]);
+    const MOVING_VALUES = new Set([6, 9]);
+    const TOTAL_YAO_COUNT = 6;
+    const TOTAL_DIVISION_ROUNDS = 3;
+    const INITIAL_POINTS = 49;
+    const FORTUNE_TITLES = Object.freeze([
+      "喜气洋洋，好运连连",
+      "静水流深，时来运转",
+      "顺势而为，自有佳音",
+      "心定神宁，万事渐明",
+      "蓄势待发，前景可期"
+    ]);
+    const FORTUNE_SUMMARIES = Object.freeze([
+      "今日运势大吉，宜大胆行动。无论是事业、财运还是感情，都将迎来好消息。保持积极心态，好运自然来。",
+      "眼下更适合稳住节奏、细看局势。把手头事务一件件理顺，后面的推进会明显轻松许多。",
+      "贵人运正在抬头，适合沟通、发问、建立联系。你主动迈出的一步，很可能换来关键回应。",
+      "宜先安顿内心，再处理外部变化。耐心和分寸感，会让你在复杂情境里占得先机。",
+      "整体气象向上，机会正在汇聚。只要不急于求成，原本卡住的地方很快就会松动。"
+    ]);
+    const TIP_POOL = Object.freeze([
+      "贵人：生肖马；颜色：赭金；方位：西南",
+      "贵人：生肖兔；颜色：米白；方位：正西",
+      "贵人：生肖龙；颜色：暖橙；方位：东南",
+      "贵人：生肖鸡；颜色：松绿；方位：正南",
+      "贵人：生肖牛；颜色：浅金；方位：西北"
+    ]);
+    const STORAGE_KEYS = Object.freeze({
+      history: "iching-history",
+      daily: "iching-daily-fortune"
+    });
+    const MAX_HISTORY_ITEMS = 12;
+
+    // ========== 算法逻辑 ==========
+    const getRandomIntBetween = (min, max) => {
+      const lowerBound = Math.ceil(min);
+      const upperBound = Math.floor(max);
+
+      if (lowerBound > upperBound) {
+        throw new Error("min must be smaller than or equal to max");
+      }
+
+      return Math.floor(Math.random() * (upperBound - lowerBound + 1)) + lowerBound;
+    };
+
+    const getYao = () => {
+      let remainedPoints = INITIAL_POINTS;
+
+      for (let i = 0; i < TOTAL_DIVISION_ROUNDS; i++) {
+        const leftPoints = getRandomIntBetween(1, remainedPoints - 1);
+        const rightPoints = remainedPoints - leftPoints - 1;
+        const leftRemainder = (leftPoints % 4) || 4;
+        const rightRemainder = (rightPoints % 4) || 4;
+        remainedPoints = remainedPoints - leftRemainder - rightRemainder - 1;
+      }
+
+      return remainedPoints / 4;
+    };
+
+    const createHexagram = () => Array.from({ length: TOTAL_YAO_COUNT }, getYao);
+
+    // 获取变卦数组 (9变8, 6变7)
+    const getChangedHexagram = (arr) => arr.map(yao => yao === 9 ? 8 : (yao === 6 ? 7 : yao));
+    // 转二进制字符串 (7/9为阳1, 6/8为阴0)
+    const getBinaryString = (arr) => arr.map(yao => YANG_VALUES.has(yao) ? "1" : "0").join("");
+    const getChineseNumber = (num) => CHINESE_NUMBERS[num] || "";
+    const getHexagramName = (hexagramArray) => hexagramMap[getBinaryString(hexagramArray)] || "未知";
+    const pickByNumber = (items, seed) => items[seed % items.length];
+    const getQuestionText = (question) => question.trim() || "未填写问题，系统按今日心念起卦";
+    const toIsoDate = (date = new Date()) => {
+      const offset = date.getTimezoneOffset();
+      const adjusted = new Date(date.getTime() - offset * 60 * 1000);
+
+      return adjusted.toISOString().slice(0, 10);
+    };
+    const formatDateTime = (dateString) => new Date(dateString).toLocaleString("zh-CN", {
+      month: "numeric",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit"
+    });
+    const safeReadJSON = (key, fallback) => {
+      try {
+        const raw = localStorage.getItem(key);
+        return raw ? JSON.parse(raw) : fallback;
+      } catch {
+        return fallback;
+      }
+    };
+    const safeWriteJSON = (key, value) => {
+      try {
+        localStorage.setItem(key, JSON.stringify(value));
+      } catch {
+        // ignore persistence failures
+      }
+    };
+
+    // ========== 动态渲染图形的核心逻辑 ==========
+    const createElement = (tagName, className, textContent) => {
+      const element = document.createElement(tagName);
+
+      if (className) {
+        element.className = className;
+      }
+
+      if (textContent !== undefined) {
+        element.textContent = textContent;
+      }
+
+      return element;
+    };
+
+    const createIcon = (pathData) => {
+      const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+
+      svg.setAttribute("viewBox", "0 0 24 24");
+      svg.setAttribute("class", "nav-icon");
+      svg.setAttribute("aria-hidden", "true");
+      path.setAttribute("fill", "currentColor");
+      path.setAttribute("d", pathData);
+      svg.appendChild(path);
+
+      return svg;
+    };
+
+    const createYaoRow = (num) => {
+      const isYang = YANG_VALUES.has(num);
+      const isMoving = MOVING_VALUES.has(num);
+      const colorClass = isMoving ? "color-red" : "color-black";
+      const textColorClass = isMoving ? "text-red" : "text-black";
+      const row = createElement("div", "yao-row");
+      const symbol = createElement("div", "yao-symbol");
+      const text = createElement("div", `yao-text ${textColorClass}`, getChineseNumber(num));
+
+      if (isYang) {
+        symbol.appendChild(createElement("div", `yao-solid ${colorClass}`));
+      } else {
+        symbol.append(
+          createElement("div", `yao-part ${colorClass}`),
+          createElement("div", `yao-part ${colorClass}`)
+        );
+      }
+
+      row.append(symbol, text);
+      return row;
+    };
+
+    const createHexagramCard = (hexagramArray, title, name) => {
+      const card = createElement("div", "gua-box");
+      const titleElement = createElement("div", "gua-title");
+      const nameElement = createElement("span", "", name);
+
+      titleElement.append(title, document.createElement("br"), nameElement);
+      card.appendChild(titleElement);
+
+      for (let i = hexagramArray.length - 1; i >= 0; i--) {
+        card.appendChild(createYaoRow(hexagramArray[i]));
+      }
+
+      return card;
+    };
+
+    const createSectionHeading = (titleText, subtitleText) => {
+      const wrapper = createElement("div", "section-heading");
+      const title = createElement("h2", "", titleText);
+      const text = createElement("p", "", subtitleText);
+
+      wrapper.append(title, text);
+      return wrapper;
+    };
+
+    const createFortuneCard = (fortuneTitle, summary, tipText) => {
+      const card = createElement("div", "result-card");
+      const badge = createElement("div", "fortune-badge", "上吉签");
+      const title = createElement("h3", "fortune-title", fortuneTitle);
+      const copy = createElement("div", "fortune-copy", summary);
+      const tip = createElement("div", "fortune-tip");
+      const tipTitle = createElement("div", "tip-title", "今日幸运提示");
+      const tipBody = createElement("p", "tip-body", tipText);
+      const shareButton = createElement("button", "share-btn", "分享签文给朋友");
+      const nextTip = createElement("p", "next-tip", "今日已抽签，明日再来");
+
+      tipTitle.prepend(createIcon("M11.25 3.75c.52 0 1.02.27 1.3.75l1.54 2.7 3.05.69c1.22.28 1.7 1.76.88 2.72l-2.08 2.45.31 3.24c.13 1.3-1.2 2.28-2.38 1.74L11.25 16.5l-2.87 1.79c-1.18.54-2.5-.44-2.38-1.74l.31-3.24-2.08-2.45c-.82-.96-.34-2.44.88-2.72l3.05-.69 1.54-2.7c.28-.48.78-.75 1.3-.75Z"));
+      tip.append(tipTitle, tipBody);
+      shareButton.prepend(createIcon("M15.75 5a3.25 3.25 0 1 0 2.82 4.87l-7.06 3.53a3.25 3.25 0 0 0 0 1.2l7.06 3.53a3.25 3.25 0 1 0 .67-1.34l-7.07-3.54a3.28 3.28 0 0 0 0-.5c0-.17-.01-.34-.04-.5l7.07-3.54A3.24 3.24 0 0 0 15.75 5Z"));
+      card.append(badge, title, copy, tip, shareButton, nextTip);
+
+      return card;
+    };
+
+    const createDailyInitialCard = (onDraw) => {
+      const card = createElement("div", "result-card");
+      const placeholder = createElement("div", "daily-placeholder");
+      const badge = createElement("div", "fortune-badge", "未抽签");
+      const title = createElement("h3", "fortune-title", "今日尚未抽签");
+      const copy = createElement("p", "daily-placeholder-copy", "今日签文尚未开启。轻点下方按钮抽取今日专属运势签，查看当日提示与幸运指引。");
+      const drawButton = createElement("button", "daily-draw-btn", "开始抽签");
+
+      drawButton.type = "button";
+      drawButton.addEventListener("click", onDraw);
+      placeholder.append(badge, title, copy, drawButton);
+      card.appendChild(placeholder);
+
+      return card;
+    };
+
+    const createDetailCard = (title, content) => {
+      const card = createElement("div", "detail-card");
+      const heading = createElement("h3", "", title);
+
+      card.appendChild(heading);
+      if (content instanceof Node) {
+        card.appendChild(content);
+      } else {
+        card.appendChild(createElement("p", "info-text", content));
+      }
+
+      return card;
+    };
+
+    const createEmptyState = (title, text) => {
+      const wrapper = createElement("div", "empty-state");
+      const card = createElement("div", "empty-card");
+      const icon = createElement("div", "fortune-badge", "待启");
+      const heading = createElement("h3", "", title);
+      const content = createElement("p", "", text);
+
+      card.append(icon, heading, content);
+      wrapper.appendChild(card);
+      return wrapper;
+    };
+
+    const createBulletList = (items) => {
+      const list = createElement("ul", "bullet-list");
+
+      items.forEach((item) => {
+        list.appendChild(createElement("li", "", item));
+      });
+
+      return list;
+    };
+
+    const summarizeHexagram = (record) => {
+      const key = getBinaryString(record.hexagram);
+      const changedKey = getBinaryString(record.changedHexagram);
+      const lower = key.slice(0, 3);
+      const upper = key.slice(3);
+      const polarity = YANG_VALUES.has(record.hexagram[5]) ? "上爻显阳，宜主动出击。" : "上爻显阴，宜先守后动。";
+      const movingText = record.movingCount === 0 ? "本卦无动爻，以守正为先。" : `动爻 ${record.movingCount} 个，说明局势正在变化。`;
+      const relationText = key === changedKey ? "本卦与变卦相同，主题较为单纯，关键在稳步执行。" : `由 ${record.originalName} 变为 ${record.changedName}，意味着事情会经历一次明显转向。`;
+      const trigramText = `下三爻为 ${hexagramMap[lower + lower] ? "内势" : "内在"}，上三爻映照外部环境，当前更适合先处理眼前能掌控的部分。`;
+
+      return [movingText, relationText, polarity, trigramText];
+    };
+
+    const createInterpretationSection = (record) => {
+      const grid = createElement("div", "interpret-grid");
+      const resultPanel = createElement("div", "result-panel");
+
+      resultPanel.append(
+        createHexagramCard(record.hexagram, "【本卦】", record.originalName),
+        createHexagramCard(record.changedHexagram, "【变卦】", record.changedName)
+      );
+
+      grid.append(
+        createDetailCard("所问事项", `所问：${record.question}`),
+        createDetailCard("卦象排布", resultPanel),
+        createDetailCard("解卦提示", createBulletList(summarizeHexagram(record))),
+        createDetailCard("起卦记录", `本卦数组：[${record.hexagram.join(", ")}]；变卦数组：[${record.changedHexagram.join(", ")}]`)
+      );
+
+      return grid;
+    };
+
+    const getHistory = () => safeReadJSON(STORAGE_KEYS.history, []);
+    const saveHistory = (history) => safeWriteJSON(STORAGE_KEYS.history, history.slice(0, MAX_HISTORY_ITEMS));
+
+    const buildRecord = (question, hexagram, changedHexagram) => {
+      const movingCount = hexagram.filter((yao) => MOVING_VALUES.has(yao)).length;
+      const seed = hexagram.reduce((sum, value) => sum + value, 0) + movingCount;
+
+      return {
+        id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+        createdAt: new Date().toISOString(),
+        question,
+        hexagram,
+        changedHexagram,
+        originalName: getHexagramName(hexagram),
+        changedName: getHexagramName(changedHexagram),
+        movingCount,
+        seed,
+        fortuneTitle: pickByNumber(FORTUNE_TITLES, seed),
+        summary: pickByNumber(FORTUNE_SUMMARIES, seed),
+        tipText: pickByNumber(TIP_POOL, seed)
+      };
+    };
+
+    const getLatestRecord = () => getHistory()[0] || null;
+
+    const getDailyRecord = () => {
+      const today = toIsoDate();
+      const current = safeReadJSON(STORAGE_KEYS.daily, null);
+
+      if (current && current.date === today) {
+        return current;
+      }
+
+      return { date: today, drawn: false, record: null };
+    };
+
+    const drawDailyRecord = () => {
+      const today = toIsoDate();
+      const hexagram = createHexagram();
+      const changedHexagram = getChangedHexagram(hexagram);
+      const record = buildRecord("今日运势", hexagram, changedHexagram);
+      const dailyRecord = { date: today, drawn: true, record };
+
+      safeWriteJSON(STORAGE_KEYS.daily, dailyRecord);
+      return dailyRecord;
+    };
+
+    const renderDailyScreen = (screen, shouldDraw = false) => {
+      const dailyData = shouldDraw ? drawDailyRecord() : getDailyRecord();
+      const note = createElement("p", "daily-note", `今日签文日期：${dailyData.date}`);
+
+      if (!dailyData.drawn || !dailyData.record) {
+        screen.replaceChildren(
+          createSectionHeading("每日一签", "每日一次，运势指引"),
+          createDailyInitialCard(() => renderDailyScreen(screen, true)),
+          note
+        );
+        return;
+      }
+
+      screen.replaceChildren(
+        createSectionHeading("每日一签", "每日一次，运势指引"),
+        createFortuneCard(dailyData.record.fortuneTitle, dailyData.record.summary, dailyData.record.tipText),
+        note
+      );
+    };
+
+    const renderInterpretScreen = (screen, record = getLatestRecord()) => {
+      if (!record) {
+        screen.replaceChildren(
+          createSectionHeading("解卦", "根据最近一次起卦结果进行解读"),
+          createEmptyState("还没有可解读的卦象", "先回到“占卜”完成一次起卦，这里会自动展示本卦、变卦和解卦提示。")
+        );
+        return;
+      }
+
+      screen.replaceChildren(
+        createSectionHeading("解卦", "结合本卦、变卦与动爻给出提示"),
+        createInterpretationSection(record)
+      );
+    };
+
+    const renderHistoryScreen = (screen) => {
+      const history = getHistory();
+
+      if (!history.length) {
+        screen.replaceChildren(
+          createSectionHeading("历史", "最近起卦记录会保存在本地"),
+          createEmptyState("还没有历史记录", "完成起卦后，问题、本卦、变卦和时间都会保存在这里，方便回看。")
+        );
+        return;
+      }
+
+      const list = createElement("div", "history-list");
+
+      history.forEach((record) => {
+        const card = createElement("article", "history-card");
+        const meta = createElement("div", "history-meta");
+        const title = createElement("h3", "history-title", record.question);
+        const time = createElement("span", "history-time", formatDateTime(record.createdAt));
+        const summary = createElement("p", "info-text", `${record.originalName} -> ${record.changedName}`);
+        const tags = createElement("div", "history-tags");
+        const actions = createElement("div", "history-actions");
+        const viewButton = createElement("button", "ghost-btn", "查看解卦");
+        const reuseButton = createElement("button", "ghost-btn", "带回占卜");
+
+        meta.append(title, time);
+        ["本卦 " + record.originalName, "变卦 " + record.changedName, `动爻 ${record.movingCount} 个`].forEach((tag) => {
+          tags.appendChild(createElement("span", "history-tag", tag));
+        });
+        viewButton.addEventListener("click", () => {
+          switchScreen("interpret");
+          renderInterpretScreen(interpretScreen, record);
+        });
+        reuseButton.addEventListener("click", () => {
+          questionInput.value = record.question === "今日运势" ? "" : record.question;
+          switchScreen("divine");
+        });
+        actions.append(viewButton, reuseButton);
+        card.append(meta, summary, tags, actions);
+        list.appendChild(card);
+      });
+
+      screen.replaceChildren(
+        createSectionHeading("历史", "最近起卦记录会保存在本地"),
+        list
+      );
+    };
+
+    // 主渲染流程
+    const renderHexagram = () => {
+      const hexagram = createHexagram();
+      const changedHexagram = getChangedHexagram(hexagram);
+      const questionText = getQuestionText(questionInput.value);
+      const record = buildRecord(questionText, hexagram, changedHexagram);
+      const history = getHistory();
+
+      saveHistory([record, ...history]);
+      heroSection.classList.add("hidden");
+      renderInterpretScreen(interpretScreen, record);
+      renderHistoryScreen(historyScreen);
+      switchScreen("interpret");
+    };
+
+    const divineButton = document.getElementById("divine-btn");
+    const heroSection = document.getElementById("hero-section");
+    const questionInput = document.getElementById("question-input");
+    const questionToggle = document.getElementById("question-toggle");
+    const questionCard = document.getElementById("question-card");
+    const dailyScreen = document.getElementById("screen-daily");
+    const interpretScreen = document.getElementById("screen-interpret");
+    const historyScreen = document.getElementById("screen-history");
+    const navItems = Array.from(document.querySelectorAll(".nav-item"));
+    const screenMap = {
+      daily: dailyScreen,
+      interpret: interpretScreen,
+      history: historyScreen
+    };
+
+    const switchScreen = (screenName) => {
+      const isDivine = screenName === "divine";
+
+      heroSection.classList.toggle("hidden", !isDivine);
+      questionCard.classList.toggle("hidden", !isDivine);
+      dailyScreen.classList.toggle("is-active", screenName === "daily");
+      interpretScreen.classList.toggle("is-active", screenName === "interpret");
+      historyScreen.classList.toggle("is-active", screenName === "history");
+
+      navItems.forEach((item) => {
+        item.classList.toggle("is-active", item.dataset.screen === screenName);
+      });
+    };
+
+    questionToggle.addEventListener("click", () => {
+      const isOpen = questionCard.classList.toggle("is-open");
+      questionToggle.setAttribute("aria-expanded", String(isOpen));
+    });
+
+    navItems.forEach((item) => {
+      item.addEventListener("click", () => {
+        const { screen } = item.dataset;
+
+        if (screen === "daily") {
+          renderDailyScreen(dailyScreen);
+        } else if (screen === "interpret") {
+          renderInterpretScreen(interpretScreen);
+        } else if (screen === "history") {
+          renderHistoryScreen(historyScreen);
+        }
+
+        switchScreen(screen);
+      });
+    });
+
+    divineButton.addEventListener("click", renderHexagram);
+
+    renderDailyScreen(dailyScreen);
+    renderInterpretScreen(interpretScreen);
+    renderHistoryScreen(historyScreen);
+    switchScreen("divine");
+
+  </script>
+</body>
+</html>
