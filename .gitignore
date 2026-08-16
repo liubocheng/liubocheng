@@ -3,6 +3,10 @@ node_modules/
 .DS_Store
 *.log
 dist/
+# 灵犀 Claw 工具会话输出目录（不入库）
 lingxi-claw/
-Python/
-《AI工程》代码资源/
+# 学习资料（不入库）
+learning/Python/
+learning/《AI工程》代码资源/
+# 个人数据归档（不入库）
+archive/
